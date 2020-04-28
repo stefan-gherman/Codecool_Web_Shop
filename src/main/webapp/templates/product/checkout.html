@@ -35,11 +35,22 @@
     <h1>Order details</h1>
 </div>
 
+<div class="container">
+    <ul class="list-group" th:each="item,iterStat : ${items}">
+        <li class="list-group-item disabled" th:text="${item.name} + ${' '} + ${item.getPrice()}">Item name</li>
+    </ul>
+</div>
+<div class="container">
+    <ul class="list-group">
+        <li class="list-group-item disabled" th:text="${'Total: '} + ${total} +${' '} +${currency}">Item total</li>
+    </ul>
+</div>
+
+<br>
 <div class="text-center">
     <h2><strong>Please fill in the order details.</strong></h2>
 </div>
-
-
+<br>
 <div class="container">
     <form>
         <div class="form-group">

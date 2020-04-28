@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Currency;
 import java.util.List;
 
 @WebServlet(urlPatterns = {"/checkout"})
@@ -68,45 +69,18 @@ public class CheckoutController extends HttpServlet {
         temp.add(p1);
         temp.add(p2);
         temp.add(p3);
-
-//        String tempTest = "gg";
-        List<Integer> numbers = new ArrayList<>();
-        numbers.add(1);
-        numbers.add(3);
-        numbers.add(42);
-        context.setVariable("nums", numbers);
         context.setVariable("items", temp);
 
+        double total=0;
+        Currency orderCurrency;
+        for (Product item:temp) {
+            total += item.getDefaultPrice();
+        }
+        orderCurrency = temp.get(0).getDefaultCurrency();
+        context.setVariable("total", total);
+        context.setVariable("currency", orderCurrency);
 
         engine.process("product/checkout.html", context, resp.getWriter());
-//        context.setVariable("first", p1);
-
-//        ProductDao productDataStore = ProductDaoMem.getInstance();
-//        ProductCategoryDao productCategoryDataStore = ProductCategoryDaoMem.getInstance();
-//
-//        TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
-//        WebContext context = new WebContext(req, resp, req.getServletContext());
-//
-//        if(req.getParameter("productCategory") == null){
-//            context.setVariable("category", productCategoryDataStore.find(1));
-//            context.setVariable("products", productDataStore.getBy(productCategoryDataStore.find(1)));
-//            engine.process("product/index.html", context, resp.getWriter());
-//
-//        } else if(req.getParameter("productCategory").equalsIgnoreCase("laptop")) {
-//            context.setVariable("category", productCategoryDataStore.find(2));
-//            context.setVariable("products", productDataStore.getBy(productCategoryDataStore.find(2)));
-//            engine.process("product/index.html", context, resp.getWriter());
-//
-//
-//        } else if(req.getParameter("productCategory").equalsIgnoreCase("tablet")){
-//            context.setVariable("category", productCategoryDataStore.find(1));
-//            context.setVariable("products", productDataStore.getBy(productCategoryDataStore.find(1)));
-//            engine.process("product/index.html", context, resp.getWriter());
-//
-//        } else {
-//            engine.process("product/notFound.html", context, resp.getWriter());
-//        }
-
 
         // // Alternative setting of the template context
         // Map<String, Object> params = new HashMap<>();
