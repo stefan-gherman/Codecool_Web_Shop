@@ -10,7 +10,8 @@ public interface CartDao {
     void add(Product product);
     void remove(Product product);
     Map<Product, Integer> getCartContents();
-
+    int getCartNumberOfProducts();
+    void eraseMe();
 
 
 }

@@ -2,6 +2,7 @@ package com.codecool.shop.dao.implementation;
 
 import com.codecool.shop.dao.CartDao;
 import com.codecool.shop.model.Product;
+import com.codecool.shop.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,6 +48,14 @@ public class CartDaoMem implements CartDao {
 
     @Override
     public Map<Product, Integer> getCartContents() {
-        return cartContents;
+        return Utils.sortMap(cartContents);
+    }
+
+    public int getCartNumberOfProducts() {
+        return this.cartContents.size();
+    }
+
+    public void eraseMe() {
+        this.cartContents = new HashMap<>();
     }
 }

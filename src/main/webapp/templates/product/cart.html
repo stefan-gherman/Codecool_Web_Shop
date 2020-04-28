@@ -32,6 +32,11 @@
 
 </div>
 
+<div th:each="test,iterStat : ${testList}">
+    <p th:text="${test}">
+
+    </p>
+</div>
 <div th:replace="footer.html::copy">
 
 </div>
