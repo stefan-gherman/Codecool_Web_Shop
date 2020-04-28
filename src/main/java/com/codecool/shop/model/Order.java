@@ -1,5 +1,7 @@
 package com.codecool.shop.model;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.List;
 
 public class Order {
@@ -7,7 +9,7 @@ public class Order {
     private List<Product> items;
     private int id;
     private static int numberOfOrders=0;
-    private double total;
+    private String total;
 
     {
         numberOfOrders +=1;
@@ -19,11 +21,22 @@ public class Order {
         this.total = getTotal();
     }
 
-    private double getTotal() {
+    public String getTotal() {
+        double temp = 0;
         for (Product item : this.items) {
-            total += item.getDefaultPrice();
+            temp += item.getDefaultPrice();
         }
+        NumberFormat formatter = new DecimalFormat("#.00");
+        total = formatter.format(temp);
         return total;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public List<Product> getItems() {
+        return items;
     }
 
 }

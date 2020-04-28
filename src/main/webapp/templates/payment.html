@@ -33,6 +33,10 @@
     <h1>Choose Payment Method</h1>
 </div>
 
+<div class="text-center">
+    <h2 th:text="${'Order number '} +${order.getId()} + ${' totalling '} + ${order.getTotal()} + ${' '} + ${currency}" >Order number</h2>
+</div>
+
 
 <div th:replace="footer.html :: copy"></div>
 </body>

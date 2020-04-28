@@ -80,7 +80,12 @@ public class CheckoutController extends HttpServlet {
         context.setVariable("total", total);
         context.setVariable("currency", orderCurrency);
 
+
+
         engine.process("checkout.html", context, resp.getWriter());
+
+
+
 
         // // Alternative setting of the template context
         // Map<String, Object> params = new HashMap<>();

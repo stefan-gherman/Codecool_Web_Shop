@@ -1,6 +1,8 @@
 package com.codecool.shop.controller;
 
+import com.codecool.shop.config.Initializer;
 import com.codecool.shop.config.TemplateEngineUtil;
+import com.codecool.shop.model.Order;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -10,6 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Currency;
 
 @WebServlet(urlPatterns = {"/payment"})
 public class PaymentController extends HttpServlet {
@@ -19,6 +22,10 @@ public class PaymentController extends HttpServlet {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
+
+        Order currentOrder = Initializer.getOrder();
+        context.setVariable("order", currentOrder);
+
         engine.process("payment.html", context, resp.getWriter());
     }
 
@@ -27,7 +34,13 @@ public class PaymentController extends HttpServlet {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
-        engine.process("paymentUnavailable.html", context, resp.getWriter());
+        Order currentOrder = Initializer.getOrder();
+        Currency orderCurrency = currentOrder.getItems().get(0).getDefaultCurrency();
+        context.setVariable("order", currentOrder);
+        context.setVariable("currency", orderCurrency);
+
+        engine.process("payment.html", context, resp.getWriter());
+//        engine.process("paymentUnavailable.html", context, resp.getWriter()); // temporarily out until tests are done
 
 
         // // Alternative setting of the template context
