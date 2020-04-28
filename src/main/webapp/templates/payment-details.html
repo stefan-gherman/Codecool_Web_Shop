@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta name="author" content="Codecool" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <!-- Bootstrap components -->
+    <!-- Latest compiled and minified Jquery -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+
+    <!--Latest compiled and minified Popper -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+            integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+            integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+
+    <!-- Latest compiled and minified CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <!-- End of Bootstrap components -->
+
+    <link rel="stylesheet" type="text/css" href="/static/css/custom.css" />
+    <script src="/static/js/main.js"></script>
+    <title>Web Shop Payment</title>
+</head>
+<body>
+
+<div class="jumbotron text-center">
+    <h1>Please fill in the payment details</h1>
+</div>
+<br>
+<div class="text-center">
+    <h2 th:text="${'Order number '} +${order.getId()} + ${' totalling '} + ${order.getTotal()} + ${' '} + ${currency}" >Order number</h2>
+</div>
+<br>
+<div class="container">
+    <form>
+        <div class="form-group">
+            <label for="exmapleInputCardHolder">Card holder</label>
+            <input type="text" class="form-control" id="exmapleInputCardHolder" aria-describedby="cardHolderHelp" placeholder="Enter the card holder's name">
+            <small id="cardHolderHelp" class="form-text text-muted">The full name of the card holder as it is on the card.</small>
+        </div>
+        <div class="form-group">
+            <label for="exmapleInputCardNumber">Card number</label>
+            <input type="text" class="form-control" id="exmapleInputCardNumber" aria-describedby="cardNumberHelp" placeholder="Enter the card number">
+            <small id="cardNumberHelp" class="form-text text-muted">The 16 digit card number as it is on the card.</small>
+        </div>
+        <div class="form-group">
+            <label for="exmapleInputCardExpiration">Card expiration date</label>
+            <input type="text" class="form-control" id="exmapleInputCardExpiration" aria-describedby="cardExpirationHelp" placeholder="Enter the card expiration date">
+            <small id="cardExpirationHelp" class="form-text text-muted">The XX/XX card expiration date as it is on the card.</small>
+        </div>
+        <div class="form-group">
+            <label for="exmapleInputCardSecurity">Card security code</label>
+            <input type="text" class="form-control" id="exmapleInputCardSecurity" aria-describedby="cardSecurityHelp" placeholder="Enter the card security code">
+            <small id="cardSecurityHelp" class="form-text text-muted">The card security code as it is on the back of the card.</small>
+        </div>
+        <button type="submit" class="btn btn-primary">Continue</button>
+    </form>
+</div>
+
+<br>
+<div th:replace="footer.html :: copy"></div>
+</body>
+</html>
