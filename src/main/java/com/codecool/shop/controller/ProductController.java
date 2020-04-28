@@ -27,14 +27,34 @@ public class ProductController extends HttpServlet {
 
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
-        context.setVariable("category", productCategoryDataStore.find(1));
-        context.setVariable("products", productDataStore.getBy(productCategoryDataStore.find(1)));
+
+        if(req.getParameter("productCategory") == null){
+            context.setVariable("category", productCategoryDataStore.find(1));
+            context.setVariable("products", productDataStore.getBy(productCategoryDataStore.find(1)));
+            engine.process("product/index.html", context, resp.getWriter());
+
+        } else if(req.getParameter("productCategory").equalsIgnoreCase("laptop")) {
+            context.setVariable("category", productCategoryDataStore.find(2));
+            context.setVariable("products", productDataStore.getBy(productCategoryDataStore.find(2)));
+            engine.process("product/index.html", context, resp.getWriter());
+
+
+        } else if(req.getParameter("productCategory").equalsIgnoreCase("tablet")){
+            context.setVariable("category", productCategoryDataStore.find(1));
+            context.setVariable("products", productDataStore.getBy(productCategoryDataStore.find(1)));
+            engine.process("product/index.html", context, resp.getWriter());
+
+        } else {
+            engine.process("product/notFound.html", context, resp.getWriter());
+        }
+
+
         // // Alternative setting of the template context
         // Map<String, Object> params = new HashMap<>();
         // params.put("category", productCategoryDataStore.find(1));
         // params.put("products", productDataStore.getBy(productCategoryDataStore.find(1)));
         // context.setVariables(params);
-        engine.process("product/index.html", context, resp.getWriter());
+
     }
 
 }
