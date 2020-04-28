@@ -44,7 +44,10 @@ public class ProductController extends HttpServlet {
             context.setVariable("products", productDataStore.getBy(productCategoryDataStore.find(1)));
             engine.process("product/index.html", context, resp.getWriter());
 
-        } else {
+        } else if(req.getParameter("productCategory").equalsIgnoreCase("cart")) {
+            engine.process("product/cart.html", context, resp.getWriter());
+        }
+        else {
             engine.process("product/notFound.html", context, resp.getWriter());
         }
 
