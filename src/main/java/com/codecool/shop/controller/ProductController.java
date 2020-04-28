@@ -28,26 +28,23 @@ public class ProductController extends HttpServlet {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
-        if(req.getParameter("productCategory") == null){
+        if (req.getParameter("productCategory") == null) {
             context.setVariable("category", productCategoryDataStore.find(1));
             context.setVariable("products", productDataStore.getBy(productCategoryDataStore.find(1)));
             engine.process("product/index.html", context, resp.getWriter());
 
-        } else if(req.getParameter("productCategory").equalsIgnoreCase("laptop")) {
+        } else if (req.getParameter("productCategory").equalsIgnoreCase("laptop")) {
             context.setVariable("category", productCategoryDataStore.find(2));
             context.setVariable("products", productDataStore.getBy(productCategoryDataStore.find(2)));
             engine.process("product/index.html", context, resp.getWriter());
 
 
-        } else if(req.getParameter("productCategory").equalsIgnoreCase("tablet")){
+        } else if (req.getParameter("productCategory").equalsIgnoreCase("tablet")) {
             context.setVariable("category", productCategoryDataStore.find(1));
             context.setVariable("products", productDataStore.getBy(productCategoryDataStore.find(1)));
             engine.process("product/index.html", context, resp.getWriter());
 
-        } else if(req.getParameter("productCategory").equalsIgnoreCase("cart")) {
-            engine.process("product/cart.html", context, resp.getWriter());
-        }
-        else {
+        } else {
             engine.process("product/notFound.html", context, resp.getWriter());
         }
 
