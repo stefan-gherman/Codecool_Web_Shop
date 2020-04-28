@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8" />
     <meta name="author" content="Codecool" />
@@ -31,7 +31,50 @@
 </head>
 <body>
 
-<H1>checkout page</H1>
+<div class="jumbotron text-center">
+    <h1>Order details</h1>
+</div>
 
+<div class="text-center">
+    <h2><strong>Please fill in the order details.</strong></h2>
+</div>
+
+
+<div class="container">
+    <form>
+        <div class="form-group">
+            <label for="full-name">First and last name</label>
+            <input type="text" class="form-control" id="full-name" aria-describedby="full-name-help" placeholder="First and last name">
+            <small id="full-name-help" class="form-text text-muted">First and last name of the person receiving the order.</small>
+        </div>
+        <div class="form-group">
+            <label for="exampleInputEmail1">Email address</label>
+            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+        </div>
+        <div class="form-group">
+            <label for="phone">Phone number</label>
+            <input type="text" class="form-control" id="phone" aria-describedby="phone-help" placeholder="Phone number">
+            <small id="phone-help" class="form-text text-muted">Phone number of the person receiving the order.</small>
+        </div>
+        <div class="form-group">
+            <label for="billing-address">Billing address</label>
+            <input type="text" class="form-control" id="billing-address" aria-describedby="billing-address-help" placeholder="Billing address">
+            <small id="billing-address-help" class="form-text text-muted">Billing address for accounting purposes. Country, city, zip code, address. </small>
+        </div>
+        <div class="form-group">
+            <label for="shipping-address">Shipping address</label>
+            <input type="text" class="form-control" id="shipping-address" aria-describedby="shipping-address-help" placeholder="Shipping address">
+            <small id="shipping-address-help" class="form-text text-muted">Shipping address for the product delivery. Country, city, zip code, address. </small>
+        </div>
+        <button type="submit" class="btn btn-primary">Complete order</button>
+    </form>
+</div>
+
+</div>
+
+<br>
+
+<div th:replace="footer.html :: copy"></div>
 </body>
 </html>
