@@ -34,44 +34,57 @@
 
 </div>
 
-<div class="container" align="center">
-
-    <div th:if="${cartSize} > 0">
-        <table class="table">
-            <thead class="table-info">
-            <th>
-                Product Name
-            </th>
-            <th>
-                Product ID
-            </th>
-            <th>
-                Item Count
-            </th>
-            <th>
-                Subtotal
-            </th>
-            </thead>
-            <tbody>
+<div class="container">
+    <div class="row">
+        <div class="col text-center">
+        <div th:if="${cartSize} > 0">
+            <p class="alert alert-warning">Please change only one product quantity at a time</p>
+            <table class="table table-borderless">
+                <thead class="table-info">
+                <th>
+                    Product Name
+                </th>
+                <th>
+                    Product ID
+                </th>
+                <th>
+                    Item Count
+                </th>
+                <th>
+                    Subtotal
+                </th>
+                </thead>
+                <tbody>
                 <tr th:each="instance : ${cartContents}">
                     <td th:text="${instance.key.getName()}"></td>
                     <td th:text="${instance.key.getId()}"></td>
                     <td th:text="${instance.value}"></td>
                     <td th:text="${instance.value} * ${instance.key.getDefaultPrice()} + ' ' + ${defaultCurrency}"></td>
+                    <td>
+                        <form action="/cart" method="post">
+                            <input type="number" th:value="${instance.value}" name="valueChanged">
+                            <input type="hidden" onkeydown="return false" th:value="${instance.key.getId()}" name="objectId">
+                            <input class="btn btn-primary" type="Submit" value="Change Quantity">
+                        </form>
+                    </td>
+                    <td></td>
                 </tr>
-            </tbody>
-        </table>
-        <h1 class="display-5" th:text="'You have a total of ' + ${cartSize} + ' items worth:' + ${cartTotal} + ' ' + ${defaultCurrency}"></h1>
-        <a href="#">
-            <button class="btn btn-success cart_button">Proceed to Checkout</button>
+                </tbody>
+            </table>
+            <h1 class="display-5"
+                th:text="'You have a total of ' + ${cartSize} + ' items worth:' + ${cartTotal} + ' ' + ${defaultCurrency}"></h1>
+            <a href="#">
+                <button class="btn btn-success cart_button">Proceed to Checkout</button>
+            </a>
+        </div>
+        <div th:if="${cartSize} <= 0">
+            <p>Your cart is empty</p>
+        </div>
+        <a href="/">
+            <button class="btn btn-warning cart_button">Keep Shopping</button>
         </a>
+        </div>
     </div>
-    <div th:if="${cartSize} <= 0">
-        <p>Your cart is empty</p>
-    </div>
-    <a href="/">
-        <button class="btn btn-warning cart_button">Keep Shopping</button>
-    </a>
 </div>
 
 <div th:replace="footer.html::copy">

@@ -13,6 +13,9 @@ public interface CartDao {
     int getCartNumberOfProducts();
     void eraseMe();
     float getTotalSum();
+    void add(int id, int quantity);
+
+
 
 
 }
