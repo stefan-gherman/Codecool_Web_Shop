@@ -60,3 +60,16 @@
 {
     margin: 0 0 11px;
 }
+
+.nav_links
+{
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.cart_button
+{
+    margin: 6px;
+}
+
+
