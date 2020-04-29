@@ -25,6 +25,19 @@ public class PaymentMethodSelectController extends HttpServlet {
 
         OrderDao orderDataStore = OrderDaoMem.getInstance();
         Currency orderCurrency = orderDataStore.getItems().get(0).getDefaultCurrency();
+
+        // filling order information from checkout form
+        orderDataStore.setFullName(req.getParameter("full-name"));
+        orderDataStore.setEmail(req.getParameter("input-email"));
+        orderDataStore.setPhoneNumber(req.getParameter("input-phone"));
+        orderDataStore.setBillingAddress(req.getParameter("billing-address"));
+        orderDataStore.setShippingAddress(req.getParameter("shipping-address"));
+
+
+
+
+
+
         context.setVariable("order", orderDataStore);
         context.setVariable("currency", orderCurrency);
 
