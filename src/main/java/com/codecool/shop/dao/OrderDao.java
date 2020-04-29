@@ -12,9 +12,13 @@ public interface OrderDao {
     void setFullName(String fullName);
     String getFullName();
     void setEmail(String email);
+    String getEmail();
     void setPhoneNumber(String phoneNumber);
     void setBillingAddress(String billingAddress);
+    String getBillingAddress();
     void setShippingAddress(String shippingAddress);
+    String getShippingAddress();
     void clear();
+    List<Product> setItems();
 
 }

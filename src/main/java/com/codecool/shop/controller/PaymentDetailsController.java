@@ -24,6 +24,10 @@ public class PaymentDetailsController extends HttpServlet {
 
         OrderDao orderDataStore = OrderDaoMem.getInstance();
         Currency orderCurrency = orderDataStore.getItems().get(0).getDefaultCurrency();
+
+        double total = Double.parseDouble(orderDataStore.getTotal());
+
+        context.setVariable("total", total);
         context.setVariable("order", orderDataStore);
         context.setVariable("currency", orderCurrency);
 
