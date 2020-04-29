@@ -13,7 +13,6 @@ import com.codecool.shop.model.Supplier;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
-import javax.swing.text.html.ListView;
 
 @WebListener
 public class Initializer implements ServletContextListener {
@@ -123,4 +122,8 @@ public class Initializer implements ServletContextListener {
                 monitors, amazon));
     }
 
+    @Override
+    public void contextDestroyed(ServletContextEvent sce) {
+
+    }
 }

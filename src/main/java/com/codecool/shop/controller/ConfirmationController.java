@@ -9,6 +9,12 @@ import org.json.simple.JSONObject;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -17,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Currency;
+import java.util.Properties;
 
 @WebServlet(urlPatterns = {"/payment-confirmation"})
 public class ConfirmationController extends HttpServlet {
@@ -31,12 +38,54 @@ public class ConfirmationController extends HttpServlet {
         // transform Order into JSON and export to file
         jsonify(orderDataStore);
 
+        // send confirmation email to customer
+        String custEmail = "dandumitriu33@gmail.com";
+        sendEmailConfirmation(custEmail);
+
         context.setVariable("order", orderDataStore);
 
         engine.process("payment-confirmation.html", context, resp.getWriter());
     }
 
-    private JSONObject jsonify(OrderDao orderDataStore) throws IOException {
+    private void sendEmailConfirmation(String custEmail) {
+        String to = custEmail;
+        String host = "smtp.gmail.com";
+        String subject = "EDUCATIONAL PROJECT - shop order confirmation";
+        String body =  "EDUCATIONAL PROJECT - content with order details";
+        final String user = "ionionescu2020demo@gmail.com";
+        final String pass = "verystrongpassword";
+
+        Properties props = new Properties();
+        props.put("mail.smtp.host", host);
+//        props.put("mail.smtp.port", "587");
+        props.put("mail.smtp.auth", "true");
+//        props.put("mail.smtp.starttls.enable", "true");
+
+        Session session = Session.getDefaultInstance(props,
+                new javax.mail.Authenticator() {
+                    protected javax.mail.PasswordAuthentication getPasswordAuthentication() {
+                        return new javax.mail.PasswordAuthentication(user,pass);
+                    }
+                });
+
+        //Compose the message
+        try {
+            MimeMessage message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(user));
+            message.addRecipient(Message.RecipientType.TO,new InternetAddress(to));
+            message.setSubject("javatpoint");
+            message.setText("This is simple program of sending email using JavaMail API");
+
+            //send the message
+            Transport.send(message);
+
+            System.out.println("message sent successfully...");
+
+        } catch (MessagingException e) {e.printStackTrace();
+        }
+    }
+
+    private void jsonify(OrderDao orderDataStore) throws IOException {
         FileWriter file = new FileWriter("/home/dan/Downloads/shop_order.txt");
         JSONObject obj = new JSONObject();
         obj.put("ID", orderDataStore.getId());
@@ -56,9 +105,6 @@ public class ConfirmationController extends HttpServlet {
             file.flush();
             file.close();
         }
-
-
-        return obj;
     }
 
     @Override
