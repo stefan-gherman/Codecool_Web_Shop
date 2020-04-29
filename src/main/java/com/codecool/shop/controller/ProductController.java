@@ -40,10 +40,8 @@ public class ProductController extends HttpServlet {
         ProductCategoryDao productCategoryDataStore = ProductCategoryDaoMem.getInstance();
         CartDao cartDataStore = CartDaoMem.getInstance();
         SupplierDao supplierDao = SupplierDaoMem.getInstance();
-
         int cartSize = cartDataStore.getCartNumberOfProducts();
-
-        System.out.println(req.getParameterMap());
+        System.out.println(req.getParameter("addToCart"));
         if(req.getParameter("addToCart")!=null) {
             try{
                 int prodIdParses = Integer.parseInt(req.getParameter("addToCart"));
@@ -60,15 +58,11 @@ public class ProductController extends HttpServlet {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
-
         try {
             int categoryId = getIdFromCategory(req, productCategoryDataStore);
             int supplierId = getIdFromSupplier(req, supplierDao);
-//            productCategoryDataStore.find(categoryId);
-
-            displayProducts(context, engine, resp, "category", productCategoryDataStore, productDataStore,
+            displayProducts(context, engine, resp, productCategoryDataStore, productDataStore,
                     categoryId, supplierId, cartSize, supplierDao );
-
         } catch (Exception notFound) {
             engine.process("product/notFound.html", context, resp.getWriter());
 
@@ -83,7 +77,6 @@ public class ProductController extends HttpServlet {
      * @param context                  context
      * @param engine                   engine
      * @param resp                     resp
-     * @param name                     category or supplier
      * @param productCategoryDataStore productCategoryDataStore
      * @param productDataStore         productDataStore
      * @param categoryId                       category id
@@ -91,12 +84,12 @@ public class ProductController extends HttpServlet {
      * @throws IOException exception
      */
     private void displayProducts(WebContext context, TemplateEngine engine, HttpServletResponse resp,
-                                 String name, ProductCategoryDao productCategoryDataStore,
+                                 ProductCategoryDao productCategoryDataStore,
                                  ProductDao productDataStore, int categoryId, int supplierId,
                                  int cartSize, SupplierDao supplierDao)
             throws IOException {
 
-        context.setVariable(name, productCategoryDataStore.find(categoryId));
+        context.setVariable("category", productCategoryDataStore.find(categoryId));
         context.setVariable("supplier", supplierDao.find(supplierId));
         context.setVariable("products", productDataStore.getBy(categoryId, supplierId));
         context.setVariable("cartSize", cartSize);
@@ -109,11 +102,11 @@ public class ProductController extends HttpServlet {
 
 
     /**
-     * Get id from category or supplier
+     * Get id from category
      *
      * @param req                      req from HttpServletRequest
      * @param productCategoryDataStore productCategory Interface using DAO pattern
-     * @return id from product category
+     * @return category id
      */
     private int getIdFromCategory(HttpServletRequest req, ProductCategoryDao productCategoryDataStore) {
         int defaultCategory = 1;
@@ -137,6 +130,12 @@ public class ProductController extends HttpServlet {
 
     }
 
+    /**
+     * Get id from supplier
+     * @param req req from HttpServletRequest
+     * @param supplierDao supplier interface using DAO pattern
+     * @return supplier id
+     */
     private int getIdFromSupplier(HttpServletRequest req, SupplierDao supplierDao){
 
         if(req.getParameter("supplier") == null){
