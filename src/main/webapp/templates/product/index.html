@@ -31,8 +31,14 @@
 
 <body>
 
-<div class="jumbotron text-center">
+<div th:fragment="menu" class="jumbotron text-center">
     <h1>Codecool Shop</h1>
+    <p class="nav_links"><a href="/cart">Cart</a></p>
+    <span th:if="${cartSize} > 0">
+        <sup class="badge badge-danger" th:text="${cartSize}">300</sup>
+    </span>
+
+    </div>
 </div>
 
 <div class="container">
@@ -53,7 +59,7 @@
                         <p class="lead" th:text="${prod.getPrice()}">100 USD</p>
                     </div>
                     <div class="card-text">
-                        <a class="btn btn-success" href="#">Add to cart</a>
+                        <a class="btn btn-success" th:href="@{'/?productCategory=' + ${category.getName()}+'&addToCart=' + ${prod.getId()}}">Add to cart</a>
                     </div>
                 </div>
             </div>
