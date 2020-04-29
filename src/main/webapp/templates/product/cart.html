@@ -62,7 +62,7 @@
                     <td th:text="${instance.value} * ${instance.key.getDefaultPrice()} + ' ' + ${defaultCurrency}"></td>
                     <td>
                         <form action="/cart" method="post">
-                            <input type="number" th:value="${instance.value}" name="valueChanged">
+                            <input type="number" min="0"  th:value="${instance.value}" name="valueChanged">
                             <input type="hidden" onkeydown="return false" th:value="${instance.key.getId()}" name="objectId">
                             <input class="btn btn-primary" type="Submit" value="Change Quantity">
                         </form>
@@ -76,6 +76,10 @@
             <a href="#">
                 <button class="btn btn-success cart_button">Proceed to Checkout</button>
             </a>
+            <form action="/cart" method="post">
+                <input type="hidden" value="kill" name="clearCart">
+                <input type="submit" class="btn btn-danger cart_button" value="Clear Cart">
+            </form>
         </div>
         <div th:if="${cartSize} <= 0">
             <p>Your cart is empty</p>

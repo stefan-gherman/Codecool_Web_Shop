@@ -57,18 +57,31 @@ public class CartController extends HttpServlet {
             System.out.println(Arrays.toString(e.getStackTrace()));
         }
 
-        System.out.println(cartContents);
-        System.out.println(req.getParameter("valueChanged"));
-        System.out.println(req.getParameter("objectId"));
-        context.setVariable("cartSize",cartSize);
-        context.setVariable("cartContents", cartContents);
-        context.setVariable("cartTotal", cartTotal);
-        context.setVariable("defaultCurrency", defaultCurrency);
-        engine.process("product/cart.html", context, resp.getWriter());
+        if(req.getParameter("clearCart")!=null) {
+            cartDataStore.eraseMe();
+            cartSize = cartDataStore.getCartNumberOfProducts();
+            cartTotal = cartDataStore.getTotalSum();
+            cartContents = cartDataStore.getCartContents();
+            context.setVariable("cartSize",cartSize);
+            context.setVariable("cartContents", cartContents);
+            context.setVariable("cartTotal", cartTotal);
+            context.setVariable("defaultCurrency", defaultCurrency);
+            engine.process("product/cart.html", context, resp.getWriter());
+        } else {
+            System.out.println(cartContents);
+            System.out.println(req.getParameter("valueChanged"));
+            System.out.println(req.getParameter("objectId"));
+            context.setVariable("cartSize", cartSize);
+            context.setVariable("cartContents", cartContents);
+            context.setVariable("cartTotal", cartTotal);
+            context.setVariable("defaultCurrency", defaultCurrency);
+            engine.process("product/cart.html", context, resp.getWriter());
+        }
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         doGet(req, resp);
     }
+
 }
