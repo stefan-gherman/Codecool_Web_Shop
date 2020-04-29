@@ -38,22 +38,25 @@ public class OrderDaoMem implements OrderDao {
         id = orderCounter;
     }
 
-    public static OrderDaoMem getInstance(){
-        if(instance == null) {
+    public static OrderDaoMem getInstance() {
+        if (instance == null) {
             instance = new OrderDaoMem();
         }
         return instance;
     }
 
-    private List<Product> setItems() {
+    @Override
+    public List<Product> setItems() {
         List<Product> temp = new ArrayList<>();
         CartDao cartDataStore = CartDaoMem.getInstance();
         cartDataStore.getCartContents().forEach((key, value) -> {
-                    for(int i=0; i<value; i++) {
+                    for (int i = 0; i < value; i++) {
                         temp.add(key);
                     }
                 }
-                );
+        );
+
+        items = temp;
         return temp;
     }
 
@@ -125,6 +128,7 @@ public class OrderDaoMem implements OrderDao {
         methodPayPal = false;
         payPalUsername = "";
         payPalPassword = "";
+        items.clear();
     }
 
 

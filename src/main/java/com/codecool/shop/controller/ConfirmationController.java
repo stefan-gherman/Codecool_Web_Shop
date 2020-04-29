@@ -47,6 +47,11 @@ public class ConfirmationController extends HttpServlet {
         String custEmail = orderDataStore.getEmail();
         sendEmailConfirmation(custEmail, fullName, orderId, total);
 
+        double totalAmount = Double.parseDouble(orderDataStore.getTotal());
+
+
+        context.setVariable("total", totalAmount);
+
         context.setVariable("order", orderDataStore);
 
         engine.process("payment-confirmation.html", context, resp.getWriter());
@@ -107,7 +112,7 @@ public class ConfirmationController extends HttpServlet {
     }
 
     private void jsonify(OrderDao orderDataStore) throws IOException {
-        FileWriter file = new FileWriter("/home/dan/Downloads/shop_order.txt");
+        FileWriter file = new FileWriter("/mnt/7d45c543-fc06-4310-b70a-2a9aa2e43a54/Projects/codecool/java/Codecool_Web_Shop/src/main/webapp/static/logs/log.txt");
         JSONObject obj = new JSONObject();
         obj.put("ID", orderDataStore.getId());
         JSONArray items = new JSONArray();

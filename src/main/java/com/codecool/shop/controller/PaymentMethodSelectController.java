@@ -32,6 +32,9 @@ public class PaymentMethodSelectController extends HttpServlet {
         orderDataStore.setBillingAddress(req.getParameter("billing-address"));
         orderDataStore.setShippingAddress(req.getParameter("shipping-address"));
 
+        double total = Double.parseDouble(orderDataStore.getTotal());
+
+        context.setVariable("total", total);
         context.setVariable("order", orderDataStore);
         context.setVariable("currency", orderCurrency);
 

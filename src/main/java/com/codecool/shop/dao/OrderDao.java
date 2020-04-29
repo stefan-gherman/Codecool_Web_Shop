@@ -19,5 +19,6 @@ public interface OrderDao {
     void setShippingAddress(String shippingAddress);
     String getShippingAddress();
     void clear();
+    List<Product> setItems();
 
 }
