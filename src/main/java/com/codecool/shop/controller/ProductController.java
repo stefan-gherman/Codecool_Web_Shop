@@ -1,12 +1,13 @@
 package com.codecool.shop.controller;
 
+
 import com.codecool.shop.dao.CartDao;
+import com.codecool.shop.config.TemplateEngineUtil;
 import com.codecool.shop.dao.ProductCategoryDao;
 import com.codecool.shop.dao.ProductDao;
 import com.codecool.shop.dao.implementation.CartDaoMem;
 import com.codecool.shop.dao.implementation.ProductCategoryDaoMem;
 import com.codecool.shop.dao.implementation.ProductDaoMem;
-import com.codecool.shop.config.TemplateEngineUtil;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.IntStream;
+
 
 @WebServlet(urlPatterns = {"/"})
 public class ProductController extends HttpServlet {
@@ -84,3 +86,4 @@ public class ProductController extends HttpServlet {
     }
 
 }
+

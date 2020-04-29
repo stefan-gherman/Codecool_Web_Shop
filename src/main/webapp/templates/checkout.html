@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8" />
+    <meta name="author" content="Codecool" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <title>Codecool Shop</title>
+
+    <!-- Bootstrap components -->
+    <!-- Latest compiled and minified Jquery -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+
+    <!--Latest compiled and minified Popper -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+            integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+            integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+
+    <!-- Latest compiled and minified CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <!-- End of Bootstrap components -->
+
+    <link rel="stylesheet" type="text/css" href="/static/css/custom.css" />
+    <script src="/static/js/main.js"></script>
+    <title>Web Shop Checkout</title>
+</head>
+<body>
+
+<div class="jumbotron text-center">
+    <h1>Order details</h1>
+</div>
+
+<div class="container">
+    <ul class="list-group" th:each="item,iterStat : ${items}">
+        <li class="list-group-item disabled" th:text="${item.name} + ${' '} + ${item.getPrice()}">Item name</li>
+    </ul>
+</div>
+<div class="container">
+    <ul class="list-group">
+        <li class="list-group-item disabled" th:text="${'Total: '} + ${total} +${' '} +${currency}">Item total</li>
+    </ul>
+</div>
+
+<br>
+<div class="text-center">
+    <h2><strong>Please fill in the order details.</strong></h2>
+</div>
+<br>
+<div class="container">
+    <form >
+        <div class="form-group">
+            <label for="full-name">First and last name</label>
+            <input type="text" class="form-control" id="full-name" aria-describedby="full-name-help" placeholder="First and last name">
+            <small id="full-name-help" class="form-text text-muted">First and last name of the person receiving the order.</small>
+        </div>
+        <div class="form-group">
+            <label for="exampleInputEmail1">Email address</label>
+            <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+        </div>
+        <div class="form-group">
+            <label for="phone">Phone number</label>
+            <input type="text" class="form-control" id="phone" aria-describedby="phone-help" placeholder="Phone number">
+            <small id="phone-help" class="form-text text-muted">Phone number of the person receiving the order.</small>
+        </div>
+        <div class="form-group">
+            <label for="billing-address">Billing address</label>
+            <input type="text" class="form-control" id="billing-address" aria-describedby="billing-address-help" placeholder="Billing address">
+            <small id="billing-address-help" class="form-text text-muted">Billing address for accounting purposes. Country, city, zip code, address. </small>
+        </div>
+        <div class="form-group">
+            <label for="shipping-address">Shipping address</label>
+            <input type="text" class="form-control" id="shipping-address" aria-describedby="shipping-address-help" placeholder="Shipping address">
+            <small id="shipping-address-help" class="form-text text-muted">Shipping address for the product delivery. Country, city, zip code, address. </small>
+        </div>
+        <button type="submit" class="btn btn-primary">Continue</button>
+    </form>
+</div>
+
+</div>
+
+<br>
+
+<div th:replace="footer.html :: copy"></div>
+</body>
+</html>

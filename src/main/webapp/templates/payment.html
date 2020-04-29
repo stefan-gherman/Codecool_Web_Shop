@@ -1,11 +1,9 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8" />
     <meta name="author" content="Codecool" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-
-    <title>Codecool Shop</title>
 
     <!-- Bootstrap components -->
     <!-- Latest compiled and minified Jquery -->
@@ -18,7 +16,7 @@
 
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
-    integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+            integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
 
     <!-- Latest compiled and minified CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet"
@@ -27,48 +25,44 @@
 
     <link rel="stylesheet" type="text/css" href="/static/css/custom.css" />
     <script src="/static/js/main.js"></script>
+    <title>Web Shop Payment</title>
 </head>
-
 <body>
 
-<div th:fragment="menu" class="jumbotron text-center">
-    <h1>Codecool Shop</h1>
-    <p class="nav_links"><a href="/cart">Cart</a></p>
-    <span th:if="${cartSize} > 0">
-        <sup class="badge badge-danger" th:text="${cartSize}">300</sup>
-    </span>
-
-    </div>
+<div class="jumbotron text-center">
+    <h1>Choose Payment Method</h1>
 </div>
-
+<br>
+<div class="text-center">
+    <h2 th:text="${'Order number '} +${order.getId()} + ${' totalling '} + ${order.getTotal()} + ${' '} + ${currency}" >Order number</h2>
+</div>
+<br>
 <div class="container">
-    <div class="card">
-        <strong th:text="${category.name}">Category Title</strong>
-    </div>
-
-    <div id="products" class="row">
-        <div class="col col-sm-12 col-md-6 col-lg-4" th:each="prod,iterStat : ${products}">
-            <div class="card">
-                <img class="" src="http://placehold.it/400x250/000/fff" th:attr="src='/static/img/product_' + ${prod.id} + '.jpg'" alt="" />
-                <div class="card-header">
-                    <h4 class="card-title" th:text="${prod.name}">Product name</h4>
-                    <p class="card-text" th:text="${prod.description}">Product description... </p>
-                </div>
-                <div class="card-body">
-                    <div class="card-text">
-                        <p class="lead" th:text="${prod.getPrice()}">100 USD</p>
+    <form>
+        <fieldset class="form-group">
+            <div class="row">
+                <legend class="col-form-label col-sm-2 pt-0">Payment methods</legend>
+                <div class="col-sm-10">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="option1" checked>
+                        <label class="form-check-label" for="gridRadios1">
+                            Credit Card
+                        </label>
                     </div>
-                    <div class="card-text">
-                        <a class="btn btn-success" th:href="@{'/?productCategory=' + ${category.getName()}+'&addToCart=' + ${prod.getId()}}">Add to cart</a>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="option2">
+                        <label class="form-check-label" for="gridRadios2">
+                            PayPal
+                        </label>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-
+        </fieldset>
+        <button type="submit" class="btn btn-primary">Continue</button>
+    </form>
 </div>
 
+<br>
 <div th:replace="footer.html :: copy"></div>
-
 </body>
 </html>
