@@ -5,6 +5,7 @@ import com.codecool.shop.dao.ProductDao;
 import com.codecool.shop.dao.implementation.ProductCategoryDaoMem;
 import com.codecool.shop.dao.implementation.ProductDaoMem;
 import com.codecool.shop.config.TemplateEngineUtil;
+import com.codecool.shop.model.ProductCategory;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -14,7 +15,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @WebServlet(urlPatterns = {"/"})
@@ -28,33 +31,69 @@ public class ProductController extends HttpServlet {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
-        if(req.getParameter("productCategory") == null){
-            context.setVariable("category", productCategoryDataStore.find(1));
-            context.setVariable("products", productDataStore.getBy(productCategoryDataStore.find(1)));
-            engine.process("product/index.html", context, resp.getWriter());
+        try {
 
-        } else if(req.getParameter("productCategory").equalsIgnoreCase("laptop")) {
-            context.setVariable("category", productCategoryDataStore.find(2));
-            context.setVariable("products", productDataStore.getBy(productCategoryDataStore.find(2)));
-            engine.process("product/index.html", context, resp.getWriter());
-
-
-        } else if(req.getParameter("productCategory").equalsIgnoreCase("tablet")){
-            context.setVariable("category", productCategoryDataStore.find(1));
-            context.setVariable("products", productDataStore.getBy(productCategoryDataStore.find(1)));
-            engine.process("product/index.html", context, resp.getWriter());
-
-        } else {
+            int id = getIdFromCategory(req, productCategoryDataStore);
+            displayProducts(context, engine, resp, "category", productCategoryDataStore, productDataStore,
+                    id);
+        } catch (Exception notFound) {
             engine.process("product/notFound.html", context, resp.getWriter());
+
         }
-
-
-        // // Alternative setting of the template context
-        // Map<String, Object> params = new HashMap<>();
-        // params.put("category", productCategoryDataStore.find(1));
-        // params.put("products", productDataStore.getBy(productCategoryDataStore.find(1)));
-        // context.setVariables(params);
 
     }
 
+
+    /**
+     * Display products from category or supplier
+     *
+     * @param context                  context
+     * @param engine                   engine
+     * @param resp                     resp
+     * @param name                     category or supplier
+     * @param productCategoryDataStore productCategoryDataStore
+     * @param productDataStore         productDataStore
+     * @param id                       category id
+     * @throws IOException exception
+     */
+    private void displayProducts(WebContext context, TemplateEngine engine, HttpServletResponse resp,
+                                 String name, ProductCategoryDao productCategoryDataStore,
+                                 ProductDao productDataStore, int id) throws IOException {
+
+        context.setVariable(name, productCategoryDataStore.find(id));
+        context.setVariable("products", productDataStore.getBy(productCategoryDataStore.find(id)));
+        engine.process("product/index.html", context, resp.getWriter());
+    }
+
+    /**
+     * Get id from category or supplier
+     *
+     * @param req                      req from HttpServletRequest
+     * @param productCategoryDataStore productCategory Interface using DAO pattern
+     * @return id from product category
+     */
+    private int getIdFromCategory(HttpServletRequest req, ProductCategoryDao productCategoryDataStore) {
+        int defaultCategory = 1;
+        String[] categoryArray;
+        String currentProductCategory = req.getParameter("productCategory");
+        if (currentProductCategory == null) {
+            return defaultCategory;
+        } else {
+            categoryArray = currentProductCategory.split("-");
+        }
+        List<ProductCategory> productCategoryList = productCategoryDataStore.getAll();
+        for (ProductCategory productCategory : productCategoryList) {
+            for (String word : categoryArray) {
+                if (productCategory.getName().toLowerCase().contains(word)) {
+                    return productCategory.getId();
+                }
+            }
+        }
+        return 0;
+
+    }
 }
+
+
+
+
