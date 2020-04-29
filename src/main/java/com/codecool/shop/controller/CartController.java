@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -28,18 +29,59 @@ public class CartController extends HttpServlet {
         float cartTotal = cartDataStore.getTotalSum();
         Map<Product, Integer> cartContents = cartDataStore.getCartContents();
         String defaultCurrency="";
+        int valueChanged;
+        int objectId;
+
+
+
         for (Map.Entry<Product, Integer> product: cartContents.entrySet()
              ) {
             defaultCurrency = product.getKey().getDefaultCurrency().toString();
             break;
         }
 
-        System.out.println(cartContents);
+        try{
+            if( req.getParameter("valueChanged")!= null && req.getParameter("objectId")!=null) {
+                valueChanged = Integer.parseInt(req.getParameter("valueChanged"));
+                objectId = Integer.parseInt(req.getParameter("objectId"));
 
-        context.setVariable("cartSize",cartSize);
-        context.setVariable("cartContents", cartContents);
-        context.setVariable("cartTotal", cartTotal);
-        context.setVariable("defaultCurrency", defaultCurrency);
-        engine.process("product/cart.html", context, resp.getWriter());
+                cartDataStore.add(objectId, valueChanged);
+
+                cartSize = cartDataStore.getCartNumberOfProducts();
+                cartTotal = cartDataStore.getTotalSum();
+                cartContents = cartDataStore.getCartContents();
+            }
+
+
+        } catch ( Exception e) {
+            System.out.println(Arrays.toString(e.getStackTrace()));
+        }
+
+        if(req.getParameter("clearCart")!=null) {
+            cartDataStore.eraseMe();
+            cartSize = cartDataStore.getCartNumberOfProducts();
+            cartTotal = cartDataStore.getTotalSum();
+            cartContents = cartDataStore.getCartContents();
+            context.setVariable("cartSize",cartSize);
+            context.setVariable("cartContents", cartContents);
+            context.setVariable("cartTotal", cartTotal);
+            context.setVariable("defaultCurrency", defaultCurrency);
+            engine.process("product/cart.html", context, resp.getWriter());
+        } else {
+            System.out.println(cartContents);
+            System.out.println(req.getParameter("valueChanged"));
+            System.out.println(req.getParameter("objectId"));
+            context.setVariable("cartSize", cartSize);
+            context.setVariable("cartContents", cartContents);
+            context.setVariable("cartTotal", cartTotal);
+            context.setVariable("defaultCurrency", defaultCurrency);
+            engine.process("product/cart.html", context, resp.getWriter());
+        }
     }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        doGet(req, resp);
+    }
+
 }

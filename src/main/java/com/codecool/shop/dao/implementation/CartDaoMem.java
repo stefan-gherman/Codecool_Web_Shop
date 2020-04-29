@@ -1,6 +1,7 @@
 package com.codecool.shop.dao.implementation;
 
 import com.codecool.shop.dao.CartDao;
+import com.codecool.shop.dao.ProductDao;
 import com.codecool.shop.model.Product;
 import com.codecool.shop.utils.Utils;
 
@@ -25,7 +26,7 @@ public class CartDaoMem implements CartDao {
 
     @Override
     public void add(int id) {
-        ProductDaoMem productsList = ProductDaoMem.getInstance();
+        ProductDao productsList = ProductDaoMem.getInstance();
         Product product = productsList.find(id);
         if(cartContents.containsKey(product)){
             cartContents.put(product, cartContents.get(product) + 1);
@@ -35,8 +36,25 @@ public class CartDaoMem implements CartDao {
     }
 
     @Override
+    public void add(int id, int quantity) {
+        ProductDao productList = ProductDaoMem.getInstance();
+        Product product = productList.find(id);
+
+        if(cartContents.containsKey(product)) {
+            if (quantity == 0) {
+
+                cartContents.remove(product);
+            } else {
+                cartContents.put(product, quantity);
+            }
+        }
+    }
+
+
+
+    @Override
     public void remove(int id) {
-        ProductDaoMem productsList = ProductDaoMem.getInstance();
+        ProductDao productsList = ProductDaoMem.getInstance();
         Product product = productsList.find(id);
         if(cartContents.containsKey(product)) {
             if(cartContents.get(product) == 1) {
@@ -66,7 +84,7 @@ public class CartDaoMem implements CartDao {
 
     @Override
     public void eraseMe() {
-        this.cartContents = new HashMap<>();
+        this.cartContents.clear();
     }
 
     @Override
