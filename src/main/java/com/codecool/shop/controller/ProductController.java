@@ -2,10 +2,13 @@ package com.codecool.shop.controller;
 
 import com.codecool.shop.dao.ProductCategoryDao;
 import com.codecool.shop.dao.ProductDao;
+import com.codecool.shop.dao.SupplierDao;
 import com.codecool.shop.dao.implementation.ProductCategoryDaoMem;
 import com.codecool.shop.dao.implementation.ProductDaoMem;
 import com.codecool.shop.config.TemplateEngineUtil;
+import com.codecool.shop.dao.implementation.SupplierDaoMem;
 import com.codecool.shop.model.ProductCategory;
+import com.codecool.shop.model.Supplier;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -27,25 +30,35 @@ public class ProductController extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         ProductDao productDataStore = ProductDaoMem.getInstance();
         ProductCategoryDao productCategoryDataStore = ProductCategoryDaoMem.getInstance();
+        SupplierDao supplierDao = SupplierDaoMem.getInstance();
 
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
-        try {
 
-            int id = getIdFromCategory(req, productCategoryDataStore);
+        try {
+            int categoryId = getIdFromCategory(req, productCategoryDataStore);
+            int supplierId = getIdFromSupplier(req, supplierDao);
+//            productCategoryDataStore.find(categoryId);
+
             displayProducts(context, engine, resp, "category", productCategoryDataStore, productDataStore,
-                    id);
+                    categoryId, supplierId, supplierDao);
+
         } catch (Exception notFound) {
             engine.process("product/notFound.html", context, resp.getWriter());
 
         }
 
+
+
     }
 
 
+
+
+
     /**
-     * Display products from category or supplier
+     * Display products from category
      *
      * @param context                  context
      * @param engine                   engine
@@ -53,20 +66,28 @@ public class ProductController extends HttpServlet {
      * @param name                     category or supplier
      * @param productCategoryDataStore productCategoryDataStore
      * @param productDataStore         productDataStore
-     * @param id                       category id
+     * @param categoryId                       category id
+     * @param supplierId                       supplier id
      * @throws IOException exception
      */
     private void displayProducts(WebContext context, TemplateEngine engine, HttpServletResponse resp,
                                  String name, ProductCategoryDao productCategoryDataStore,
-                                 ProductDao productDataStore, int id) throws IOException {
+                                 ProductDao productDataStore, int categoryId, int supplierId, SupplierDao supplierDao)
+            throws IOException {
 
-        context.setVariable(name, productCategoryDataStore.find(id));
-        context.setVariable("products", productDataStore.getBy(productCategoryDataStore.find(id)));
+        context.setVariable(name, productCategoryDataStore.find(categoryId));
+        context.setVariable("supplier", supplierDao.find(supplierId));
+        context.setVariable("products", productDataStore.getBy(categoryId, supplierId));
         engine.process("product/index.html", context, resp.getWriter());
     }
 
+
+
+
+
+
     /**
-     * Get id from category or supplier
+     * Get id from category
      *
      * @param req                      req from HttpServletRequest
      * @param productCategoryDataStore productCategory Interface using DAO pattern
@@ -75,8 +96,9 @@ public class ProductController extends HttpServlet {
     private int getIdFromCategory(HttpServletRequest req, ProductCategoryDao productCategoryDataStore) {
         int defaultCategory = 1;
         String[] categoryArray;
+
         String currentProductCategory = req.getParameter("productCategory");
-        if (currentProductCategory == null) {
+        if (currentProductCategory == null ) {
             return defaultCategory;
         } else {
             categoryArray = currentProductCategory.split("-");
@@ -92,6 +114,33 @@ public class ProductController extends HttpServlet {
         return 0;
 
     }
+
+    private int getIdFromSupplier(HttpServletRequest req, SupplierDao supplierDao){
+
+        if(req.getParameter("supplier") == null){
+            return 0;
+        }
+
+        String currentSupplier = req.getParameter("supplier");
+        String[] supplierArray = currentSupplier.split("/s++");
+
+        List<Supplier> supplierList = supplierDao.getAll();
+        for (Supplier supplier : supplierList) {
+            for (String word : supplierArray) {
+                if (supplier.getName().toLowerCase().contains(word)) {
+                    return supplier.getId();
+                }
+            }
+        }
+
+        return 0;
+
+
+
+    }
+
+
+
 }
 
 
