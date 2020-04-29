@@ -7,5 +7,7 @@ import java.util.List;
 public interface OrderDao {
 
     List<Product> getItems();
+    int getId();
+    String getTotal();
 
 }
