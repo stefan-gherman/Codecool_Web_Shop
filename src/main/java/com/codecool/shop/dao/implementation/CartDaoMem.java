@@ -4,14 +4,11 @@ import com.codecool.shop.dao.CartDao;
 import com.codecool.shop.model.Product;
 import com.codecool.shop.utils.Utils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CartDaoMem implements CartDao {
 
-    private HashMap<Product, Integer> cartContents = new HashMap<>();
+    private HashMap<Product, Integer> cartContents = new LinkedHashMap<>();
     private static CartDaoMem instance = null;
 
 
@@ -52,6 +49,7 @@ public class CartDaoMem implements CartDao {
 
     @Override
     public Map<Product, Integer> getCartContents() {
+        System.out.println(Utils.sortMap(cartContents));
         return Utils.sortMap(this.cartContents);
     }
 
