@@ -30,8 +30,8 @@ public class Initializer implements ServletContextListener {
         Supplier lenovo = new Supplier("Lenovo", "Computers");
         supplierDataStore.add(lenovo);
 
-        Supplier hp = new Supplier("HP", "Monitors");
-        supplierDataStore.add(lenovo);
+        Supplier walmart = new Supplier("Walmart", "Products sold by Walmart");
+        supplierDataStore.add(walmart);
 
         // tablets category
         ProductCategory tablets = new ProductCategory("Tablets", "Hardware",
@@ -48,13 +48,13 @@ public class Initializer implements ServletContextListener {
                 "Amazon's latest Fire HD 8 tablet is a great value for media consumption.", tablets, amazon));
         productDataStore.add(new Product("Samsung Galaxy Tab S5e", "Samsung Galaxy Tab S5e.jpg", 549.99f, "USD",
                 "Weighing in at less than a pound, the incredibly slim Galaxy Tab S5e is perfect for your on-the-go life.", tablets, amazon));
-        productDataStore.add(new Product("VANKYO MatrixPad S8 Tablet 8 inch", "VANKYO MatrixPad S8 Tablet 8 inch.jog", 85.99f, "USD",
+        productDataStore.add(new Product("VANKYO MatrixPad S8 Tablet 8 inch", "VANKYO MatrixPad S8 Tablet 8 inch.jpg", 85.99f, "USD",
                 "Featuring a vibrant 8-inch display, the tablet brings your digital media to life in rich colors and vivid details. " +
                         "The VANKYO MatrixPad S8 lets you browse, read books, watch your favorite shows and movies, play light games on a tablet that’s light and comfortable in your hands. ",
-                tablets, amazon));
-        productDataStore.add(new Product("Fire 7 Tablet", "Fire 7 Tablet.jpf", 49.99f, "USD",
+                tablets, walmart));
+        productDataStore.add(new Product("Fire 7 Tablet", "Fire 7 Tablet.jpg", 49.99f, "USD",
                 "With award-winning Amazon FreeTime, parents can create child profiles to limit screen time, set educational goals, and manage content with easy-to-use parental controls. ",
-                tablets, amazon));
+                tablets, walmart));
 
         // cameras category
         ProductCategory cameras = new ProductCategory("Cameras",
@@ -71,14 +71,14 @@ public class Initializer implements ServletContextListener {
                 cameras, amazon));
         productDataStore.add(new Product("Arlo - Wireless Home Security Camera System", "Arlo - Wireless Home Security Camera System.jpg",
                 120, "USD", "The Arlo camera is a 100 Percent Wire-Free, completely wireless, HD smart home security camera – so you can get exactly the shot you need – inside or out. ",
-                cameras, amazon));
+                cameras, walmart));
         productDataStore.add(new Product("Zmodo Wireless Security Camera System", "Zmodo Wireless Security Camera System.jpg", 75f,
                 "USD", "Get a crystal clear full-HD picture of your home, from anywhere at any time, and see up to 65ft away in the dark." +
                 " Smarter and adjustable night vision allows you to see color image even in a dim environment by lowering the IR sensitivity ",
                 cameras, amazon));
         productDataStore.add(new Product("Panasonic HomeHawk Wireless", "Panasonic HomeHawk Wireless.jpg", 249.99f, "USD",
                 "HomeHawk wire-free outdoor cameras include built-in rechargeable batteries to make it easier than ever to place and install your cameras around the home's exterior, exactly where you want them.",
-                cameras, amazon));
+                cameras, walmart));
 
         // living room category
         ProductCategory livingRoomFurniture = new ProductCategory("Living Room Furniture", "Furniture",
@@ -90,11 +90,11 @@ public class Initializer implements ServletContextListener {
                 "Perfect for accentuating any living area or home environment", livingRoomFurniture, amazon));
         productDataStore.add(new Product("Zigzag Coffee table", "Zigzag Coffee table.jpg", 139.99f, "USD",
                 "With the wood and dark panel finish, this is a classy addition to the Zigzag range with the added benefit of a shelf underneath for storage."
-        , livingRoomFurniture, amazon));
+        , livingRoomFurniture, walmart));
         productDataStore.add(new Product("Jonas & James Ralla TV Unit", "Jonas & James Ralla TV Unit.jpg", 219.99f, "USD",
                 "he combination of Artisan Oak and dark accents will feel right at home in practically any interior, and Ralla' " +
                         "high-quality fixings such as soft close hinges and drawers will the furniture a joy to use every day.",
-                livingRoomFurniture, amazon));
+                livingRoomFurniture, walmart));
         productDataStore.add(new Product("Kinsale Two Door Two Drawer Sideboard", "Kinsale Two Door Two Drawer Sideboard.jpg", 249.99f, "USD",
                 "A sturdy solid oak construction and natural wax finish makes our Kinsale Two Door Two Drawer Sideboard a desirably rustic and traditional storage solution",livingRoomFurniture, amazon));
         productDataStore.add(new Product("Zigzag Wide One Door Bookcase", "Zigzag Wide One Door Bookcase.jpg", 289.99f, "USD",
@@ -107,7 +107,7 @@ public class Initializer implements ServletContextListener {
                 "Made with style and practicality in mind, this Puro Coffee Table is beautifully crafted with a high gloss lacquer finish.", livingRoomFurniture, amazon));
         productDataStore.add(new Product("Sevenoaks Coffee Table", "Sevenoaks Coffee Table.jpg", 129.99f, "USD",
                 "Simple and elegant collection with laminated board (resistant to damage and scratching, moisture and high temperatures) and modern handle-less system.",
-                livingRoomFurniture, amazon));
+                livingRoomFurniture, walmart));
         productDataStore.add(new Product("Curve Bookcase - Oak", "Curve Bookcase - Oak.jpg", 359.99f, "USD",
                 "Crafted from solid oak and oak veneers, the Curve combines clean lines with a gentle curved edging, adding a modern, retro feel to any dining area.", livingRoomFurniture, amazon));
 

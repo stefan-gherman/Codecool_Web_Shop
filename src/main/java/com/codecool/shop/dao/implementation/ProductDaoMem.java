@@ -2,12 +2,14 @@ package com.codecool.shop.dao.implementation;
 
 
 import com.codecool.shop.dao.ProductDao;
+import com.codecool.shop.dao.SupplierDao;
 import com.codecool.shop.model.Product;
 import com.codecool.shop.model.ProductCategory;
 import com.codecool.shop.model.Supplier;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.stream.Collectors;
 
 public class ProductDaoMem implements ProductDao {
@@ -57,4 +59,22 @@ public class ProductDaoMem implements ProductDao {
     public List<Product> getBy(ProductCategory productCategory) {
         return data.stream().filter(t -> t.getProductCategory().equals(productCategory)).collect(Collectors.toList());
     }
+
+    @Override
+    public List<Product> getBy(int categoryId, int supplierId) {
+        List<Product> finalProducts = new ArrayList<>();
+
+        for (Product datum : data) {
+            if (datum.getSupplier().getId() == supplierId && datum.getProductCategory().getId() == categoryId) {
+                finalProducts.add(datum);
+            } else if ((supplierId == 0 && datum.getProductCategory().getId() == categoryId) ||
+                    (categoryId == 0 && datum.getSupplier().getId() == supplierId ) ) {
+                finalProducts.add(datum);
+            }
+        }
+        return finalProducts;
+
+    }
+
+
 }

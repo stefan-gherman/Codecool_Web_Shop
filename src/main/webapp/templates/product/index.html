@@ -28,8 +28,6 @@
     <!-- End of Bootstrap components -->
 
     <link rel="stylesheet" type="text/css" href="/static/css/custom.css" />
-    <script src="/static/js/main.js"></script>
-
 </head>
 
 <body>
@@ -53,18 +51,19 @@
             <div class="form-row">
                 <div class="form-group">
                     <label for="categoryProducts">Category</label>
-                    <select id="categoryProducts" class="form-control">
-                        <option value="tablets">Tablets</option>
-                        <option value="cameras">Cameras</option>
-                        <option value="living-room-furniture">Living Room Furniture</option>
-                        <option value="monitors">Monitors</option>
+                    <select id="categoryProducts" class="form-control" >
+                        <option id="tablets" value="/?productCategory=tablets">Tablets</option>
+                        <option id="cameras" value="/?productCategory=cameras">Cameras</option>
+                        <option id="living-room-furniture" value="/?productCategory=living-room-furniture">Living Room Furniture</option>
+                        <option id="monitors" value="/?productCategory=monitors">Monitors</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="supplier">Supplier</label>
                     <select id="supplier" class="form-control">
-                        <option selected>Choose...</option>
-                        <option>...</option>
+                        <option value="supplier=all">All Suppliers</option>
+                        <option value="supplier=amazon">Amazon</option>
+                        <option value="supplier=walmart">Walmart</option>
                     </select>
                 </div>
             </div>
@@ -89,7 +88,8 @@
                         <p class="lead" th:text="${prod.getPrice()}">100 USD</p>
                     </div>
                     <div class="card-text">
-                        <a class="btn btn-success" th:href="@{'/?productCategory=' + ${category.getName()}+'&addToCart=' + ${prod.getId()}}">Add to cart</a>
+                        <a class="btn btn-success" th:href="@{'/?productCategory=' + ${category.getName()} +
+                         '&addToCart=' + ${prod.getId()}}">Add to cart</a>
                     </div>
                 </div>
             </div>
@@ -99,6 +99,7 @@
 </div>
 
 <div th:replace="footer.html :: copy"></div>
+<script src="../../static/js/main.js"></script>
 
 </body>
 </html>
