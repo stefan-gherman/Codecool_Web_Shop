@@ -34,20 +34,23 @@ public class ConfirmationController extends HttpServlet {
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
         OrderDao orderDataStore = OrderDaoMem.getInstance();
+        String fullName = orderDataStore.getFullName();
+        int orderId = orderDataStore.getId();
+        String total = orderDataStore.getTotal();
 
         // transform Order into JSON and export to file
         jsonify(orderDataStore);
 
         // send confirmation email to customer
-        String custEmail = "dandumitriu33@gmail.com";
-        sendEmailConfirmation(custEmail);
+        String custEmail = orderDataStore.getEmail();
+        sendEmailConfirmation(custEmail, fullName, orderId, total);
 
         context.setVariable("order", orderDataStore);
 
         engine.process("payment-confirmation.html", context, resp.getWriter());
     }
 
-    private void sendEmailConfirmation(String custEmail) {
+    private void sendEmailConfirmation(String custEmail, String fullName, int orderId, String total) {
         String to = custEmail;
         String host = "smtp.gmail.com";
         String subject = "EDUCATIONAL PROJECT - shop order confirmation";
@@ -73,8 +76,19 @@ public class ConfirmationController extends HttpServlet {
             MimeMessage message = new MimeMessage(session);
             message.setFrom(new InternetAddress(user));
             message.addRecipient(Message.RecipientType.TO,new InternetAddress(to));
-            message.setSubject("javatpoint");
-            message.setText("This is simple program of sending email using JavaMail API");
+            message.setSubject("EDUCATIONAL PROJECT - WEB SHOP ORDER CONFIRMATION");
+            message.setText("**** EDUCATION PROJECT**** NOT AN ACTUAL ORDER\n" +
+                    "Hello " + fullName +",\n" +
+                    "\n" +
+                    "Thanks for purchasing from our shop.\n" +
+                    "Your order, " + orderId + ", totalling " + total + " USD, was processed successfully" +
+                    " and we'll be shipping it shortly.\n" +
+                    "If you have any questions, you can always reach us at orders@webshop.com\n" +
+                    "\n" +
+                    "Thanks again for the business and have a wonderful day! \n" +
+                    "The Web Shop Team"
+
+            );
 
             //send the message
             Transport.send(message);

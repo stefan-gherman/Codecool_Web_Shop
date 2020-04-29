@@ -87,6 +87,10 @@ public class OrderDaoMem implements OrderDao {
         this.email = email;
     }
 
+    public String getEmail() {
+        return this.email;
+    }
+
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
@@ -95,8 +99,16 @@ public class OrderDaoMem implements OrderDao {
         this.billingAddress = billingAddress;
     }
 
+    public String getBillingAddress() {
+        return this.billingAddress;
+    }
+
     public void setShippingAddress(String shippingAddress) {
         this.billingAddress = shippingAddress;
+    }
+
+    public String getShippingAddress() {
+        return this.shippingAddress;
     }
 
     public void clear() {
