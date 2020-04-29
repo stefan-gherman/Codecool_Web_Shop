@@ -3,6 +3,9 @@ package com.codecool.shop.controller;
 import com.codecool.shop.config.TemplateEngineUtil;
 import com.codecool.shop.dao.OrderDao;
 import com.codecool.shop.dao.implementation.OrderDaoMem;
+import com.codecool.shop.model.Product;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -11,6 +14,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Currency;
 
@@ -23,9 +27,38 @@ public class ConfirmationController extends HttpServlet {
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
         OrderDao orderDataStore = OrderDaoMem.getInstance();
+
+        // transform Order into JSON and export to file
+        jsonify(orderDataStore);
+
         context.setVariable("order", orderDataStore);
 
         engine.process("payment-confirmation.html", context, resp.getWriter());
+    }
+
+    private JSONObject jsonify(OrderDao orderDataStore) throws IOException {
+        FileWriter file = new FileWriter("/home/dan/Downloads/shop_order.txt");
+        JSONObject obj = new JSONObject();
+        obj.put("ID", orderDataStore.getId());
+        JSONArray items = new JSONArray();
+        for (Product item : orderDataStore.getItems()){
+            items.add(item.getName());
+        }
+        obj.put("Items", items);
+
+        try {
+            file.write(obj.toJSONString());
+            System.out.println("Successfully copied JSON Object to file.");
+            System.out.println("\nJSON Object: " + obj);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            file.flush();
+            file.close();
+        }
+
+
+        return obj;
     }
 
     @Override
