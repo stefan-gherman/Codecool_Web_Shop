@@ -68,4 +68,14 @@ public class CartDaoMem implements CartDao {
     public void eraseMe() {
         this.cartContents = new HashMap<>();
     }
+
+    @Override
+    public float getTotalSum() {
+        float totalSum = 0;
+        for (Map.Entry<Product, Integer> product: cartContents.entrySet()
+        ) {
+            totalSum += product.getValue() * product.getKey().getDefaultPrice();
+        }
+        return totalSum;
+    }
 }
