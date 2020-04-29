@@ -1,4 +1,5 @@
 
+
 // set current category in localstorage
 if (localStorage.getItem("#categoryProducts")) {
     $("#categoryProducts").val(localStorage.getItem("#categoryProducts"));

@@ -112,6 +112,7 @@ public class Initializer implements ServletContextListener {
         productDataStore.add(new Product("Curve Bookcase - Oak", "Curve Bookcase - Oak.jpg", 359.99f, "USD",
                 "Crafted from solid oak and oak veneers, the Curve combines clean lines with a gentle curved edging, adding a modern, retro feel to any dining area.", livingRoomFurniture, amazon));
 
+
         // monitors category
         ProductCategory monitors = new ProductCategory("Monitors", "Computers", "Buy the best monitor for your needs.");
         productCategoryDataStore.add(monitors);
@@ -121,4 +122,5 @@ public class Initializer implements ServletContextListener {
                 "Get the best productivity from home or at the office with the virtually borderless HP VH240a 23.8-Inch display featuring an ergonomic stand, built-in speakers and an ultra-slim design at a competitively low price point",
                 monitors, amazon));
     }
+
 }
