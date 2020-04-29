@@ -22,7 +22,6 @@ public class PaymentMethodSelectController extends HttpServlet {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
-
         OrderDao orderDataStore = OrderDaoMem.getInstance();
         Currency orderCurrency = orderDataStore.getItems().get(0).getDefaultCurrency();
 
@@ -32,11 +31,6 @@ public class PaymentMethodSelectController extends HttpServlet {
         orderDataStore.setPhoneNumber(req.getParameter("input-phone"));
         orderDataStore.setBillingAddress(req.getParameter("billing-address"));
         orderDataStore.setShippingAddress(req.getParameter("shipping-address"));
-
-
-
-
-
 
         context.setVariable("order", orderDataStore);
         context.setVariable("currency", orderCurrency);
@@ -49,14 +43,7 @@ public class PaymentMethodSelectController extends HttpServlet {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
-        engine.process("paymentUnavailable.html", context, resp.getWriter()); // temporarily out until tests are done
-
-
-        // // Alternative setting of the template context
-        // Map<String, Object> params = new HashMap<>();
-        // params.put("category", productCategoryDataStore.find(1));
-        // params.put("products", productDataStore.getBy(productCategoryDataStore.find(1)));
-        // context.setVariables(params);
+        engine.process("paymentUnavailable.html", context, resp.getWriter());
 
     }
 

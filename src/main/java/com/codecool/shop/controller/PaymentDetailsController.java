@@ -1,8 +1,8 @@
 package com.codecool.shop.controller;
 
-import com.codecool.shop.config.Initializer;
 import com.codecool.shop.config.TemplateEngineUtil;
-import com.codecool.shop.model.Order;
+import com.codecool.shop.dao.OrderDao;
+import com.codecool.shop.dao.implementation.OrderDaoMem;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -22,11 +22,20 @@ public class PaymentDetailsController extends HttpServlet {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
+        OrderDao orderDataStore = OrderDaoMem.getInstance();
+        Currency orderCurrency = orderDataStore.getItems().get(0).getDefaultCurrency();
+        context.setVariable("order", orderDataStore);
+        context.setVariable("currency", orderCurrency);
 
-        Order currentOrder = Initializer.getOrder();
-        context.setVariable("order", currentOrder);
-
-        engine.process("payment-details.html", context, resp.getWriter());
+        if (req.getParameter("payment-method").equals("card")) {
+            engine.process("payment-details-card.html", context, resp.getWriter());
+        }
+        else if (req.getParameter("payment-method").equals("paypal")) {
+            engine.process("payment-details-paypal.html", context, resp.getWriter());
+        }
+        else {
+            engine.process("product/notFound.html", context, resp.getWriter());
+        }
     }
 
     @Override
@@ -34,13 +43,8 @@ public class PaymentDetailsController extends HttpServlet {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
-        Order currentOrder = Initializer.getOrder();
-        Currency orderCurrency = currentOrder.getItems().get(0).getDefaultCurrency();
-        context.setVariable("order", currentOrder);
-        context.setVariable("currency", orderCurrency);
 
-        engine.process("payment-details.html", context, resp.getWriter());
-//        engine.process("paymentUnavailable.html", context, resp.getWriter()); // temporarily out until tests are done
+        engine.process("paymentUnavailable.html", context, resp.getWriter());
 
 
         // // Alternative setting of the template context
