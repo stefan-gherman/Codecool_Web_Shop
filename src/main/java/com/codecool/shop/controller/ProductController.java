@@ -41,7 +41,7 @@ public class ProductController extends HttpServlet {
                 cartSize = cartDataStore.getCartNumberOfProducts();
                 System.out.println(cartSize);
             } catch (Exception e) {
-                System.out.println("Value non parsable, ia-o in sus!");
+                System.out.println(e.getStackTrace());
             }
         }
 

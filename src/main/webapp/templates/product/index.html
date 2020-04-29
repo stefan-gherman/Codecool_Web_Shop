@@ -30,7 +30,7 @@
 
 <body>
 
-<div th:fragment="menu" class="jumbotron text-center">
+<div th:fragment="menu" class="jumbotron text-center" >
     <h1>Codecool Shop</h1>
     <p class="nav_links"><a href="/cart">Cart</a></p>
     <span th:if="${cartSize} > 0">
@@ -41,7 +41,7 @@
 </div>
 
 <div class="container">
-    <div class="card">
+    <div class="card" style="margin-bottom: 8px;">
         <strong th:text="${category.name}">Category Title</strong>
     </div>
 

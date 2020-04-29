@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="utf-8" />
-    <meta name="author" content="Codecool" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta charset="utf-8"/>
+    <meta name="author" content="Codecool"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
 
     <title>My Cart</title>
 
@@ -14,29 +14,66 @@
 
     <!--Latest compiled and minified Popper -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
-            integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+            integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+            crossorigin="anonymous"></script>
 
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
-            integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+            integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+            crossorigin="anonymous"></script>
 
     <!-- Latest compiled and minified CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
     <!-- End of Bootstrap components -->
 
-    <link rel="stylesheet" type="text/css" href="/static/css/custom.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/custom.css"/>
 </head>
 <body>
 <div th:replace="product/index.html::menu">
 
 </div>
 
-<div th:each="test,iterStat : ${testList}">
-    <p th:text="${test}">
+<div class="container" align="center">
 
-    </p>
+    <div th:if="${cartSize} > 0">
+        <table class="table">
+            <thead class="table-info">
+            <th>
+                Product Name
+            </th>
+            <th>
+                Product ID
+            </th>
+            <th>
+                Item Count
+            </th>
+            <th>
+                Subtotal
+            </th>
+            </thead>
+            <tbody>
+                <tr th:each="instance : ${cartContents}">
+                    <td th:text="${instance.key.getName()}"></td>
+                    <td th:text="${instance.key.getId()}"></td>
+                    <td th:text="${instance.value}"></td>
+                    <td th:text="${instance.value} * ${instance.key.getDefaultPrice()} + ' ' + ${defaultCurrency}"></td>
+                </tr>
+            </tbody>
+        </table>
+        <h1 class="display-5" th:text="'You have a total of ' + ${cartSize} + ' items worth:' + ${cartTotal} + ' ' + ${defaultCurrency}"></h1>
+        <a href="#">
+            <button class="btn btn-success cart_button">Proceed to Checkout</button>
+        </a>
+    </div>
+    <div th:if="${cartSize} <= 0">
+        <p>Your cart is empty</p>
+    </div>
+    <a href="/">
+        <button class="btn btn-warning cart_button">Keep Shopping</button>
+    </a>
 </div>
+
 <div th:replace="footer.html::copy">
 
 </div>

@@ -12,6 +12,7 @@ public interface CartDao {
     Map<Product, Integer> getCartContents();
     int getCartNumberOfProducts();
     void eraseMe();
+    float getTotalSum();
 
 
 }
