@@ -62,9 +62,11 @@
                     <td th:text="${instance.value} * ${instance.key.getDefaultPrice()} + ' ' + ${defaultCurrency}"></td>
                     <td>
                         <form action="/cart" method="post">
-                            <input type="number" min="0"  th:value="${instance.value}" name="valueChanged">
+                            <div class="inner_form">
+                            <input type="number" min="0"  th:value="${instance.value}" th:id="'inputSubmit' + ${instance.key.getId()}" name="valueChanged">
                             <input type="hidden" onkeydown="return false" th:value="${instance.key.getId()}" name="objectId">
-                            <input class="btn btn-primary" type="Submit" value="Change Quantity">
+                            <input class="btn btn-primary" th:id="'buttonSubmit' + ${instance.key.getId()}" type="Submit" value="Change Quantity">
+                            </div>
                         </form>
                     </td>
                     <td></td>
@@ -94,6 +96,6 @@
 <div th:replace="footer.html::copy">
 
 </div>
-
+<script type="text/javascript"  src="static/js/cartPageHandler.js"></script>
 </body>
 </html>
