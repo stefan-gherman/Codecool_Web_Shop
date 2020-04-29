@@ -10,12 +10,17 @@ function stopRefreshOption() {
     $(document).ready(function () {
         $("#categoryProducts").change(function () {
             localStorage.setItem("categoryProducts", $("#categoryProducts").val());
-            if (this.value === "electronic-learning-toys") {
-                window.history.pushState("a", "a", "/?productCategory=electronic-learning-toys")
+            if (this.value === "tablets") {
+                window.history.pushState(null, null, "/?productCategory=tablets")
                 location.reload();
-            }
-            if (this.value === "tablet") {
-                window.history.pushState("a", "a", "/?productCategory=tablet")
+            } else if (this.value === "living-room-furniture") {
+                window.history.pushState(null, null, "/?productCategory=living-room-furniture")
+                location.reload();
+            } else if(this.value === "cameras"){
+                window.history.pushState(null, null, "/?productCategory=cameras")
+                location.reload();
+            } else if(this.value === "monitors") {
+                window.history.pushState(null, null, "/?productCategory=monitors")
                 location.reload();
             }
         });

@@ -47,10 +47,10 @@
                 <div class="form-group">
                     <label for="categoryProducts">Category</label>
                     <select id="categoryProducts" class="form-control">
-                        <option value="tablet">Tablets</option>
-                        <option value="electronic-learning-toys">Electronic Learning Toys</option>
-                        <option value="computers">Computers</option>
-                        <option value="comp">Monitors</option>
+                        <option value="tablets">Tablets</option>
+                        <option value="cameras">Cameras</option>
+                        <option value="living-room-furniture">Living Room Furniture</option>
+                        <option value="monitors">Monitors</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -72,7 +72,7 @@
         <div class="col col-sm-12 col-md-6 col-lg-4" th:each="prod,iterStat : ${products}">
             <div class="card">
                 <img class="" src="http://placehold.it/400x250/000/fff"
-                     th:attr="src='/static/img/product_' + ${prod.id} + '.jpg'" alt=""/>
+                     th:attr="src='/static/img/' + ${prod.image}" alt=""/>
                 <div class="card-header">
                     <h4 class="card-title" th:text="${prod.name}">Product name</h4>
                     <p class="card-text" th:text="${prod.description}">Product description... </p>
