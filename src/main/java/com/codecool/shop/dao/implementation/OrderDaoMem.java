@@ -21,6 +21,14 @@ public class OrderDaoMem implements OrderDao {
     private String phoneNumber;
     private String billingAddress;
     private String shippingAddress;
+    private boolean methodCard = false;
+    private String cardHolder;
+    private String cardNumber;
+    private String cardExpiration;
+    private String cardSecurityCode;
+    private boolean methodPayPal = false;
+    private String payPalUsername;
+    private String payPalPassword;
 
     {
         orderCounter += 1;
@@ -89,5 +97,21 @@ public class OrderDaoMem implements OrderDao {
 
     public void setShippingAddress(String shippingAddress) {
         this.billingAddress = shippingAddress;
+    }
+
+    public void clear() {
+        fullName = "";
+        email = "";
+        phoneNumber = "";
+        billingAddress = "";
+        shippingAddress = "";
+        methodCard = false;
+        cardHolder = "";
+        cardNumber = "";
+        cardExpiration = "";
+        cardSecurityCode = "";
+        methodPayPal = false;
+        payPalUsername = "";
+        payPalPassword = "";
     }
 }

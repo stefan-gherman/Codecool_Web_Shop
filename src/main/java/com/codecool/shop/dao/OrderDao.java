@@ -15,5 +15,6 @@ public interface OrderDao {
     void setPhoneNumber(String phoneNumber);
     void setBillingAddress(String billingAddress);
     void setShippingAddress(String shippingAddress);
+    void clear();
 
 }

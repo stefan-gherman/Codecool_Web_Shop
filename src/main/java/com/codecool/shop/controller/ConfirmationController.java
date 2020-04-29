@@ -1,8 +1,8 @@
 package com.codecool.shop.controller;
 
-import com.codecool.shop.config.Initializer;
 import com.codecool.shop.config.TemplateEngineUtil;
-import com.codecool.shop.model.Order;
+import com.codecool.shop.dao.OrderDao;
+import com.codecool.shop.dao.implementation.OrderDaoMem;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -22,9 +22,8 @@ public class ConfirmationController extends HttpServlet {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
-
-        Order currentOrder = Initializer.getOrder();
-        context.setVariable("order", currentOrder);
+        OrderDao orderDataStore = OrderDaoMem.getInstance();
+        context.setVariable("order", orderDataStore);
 
         engine.process("payment-confirmation.html", context, resp.getWriter());
     }
@@ -34,9 +33,9 @@ public class ConfirmationController extends HttpServlet {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
-        Order currentOrder = Initializer.getOrder();
-        Currency orderCurrency = currentOrder.getItems().get(0).getDefaultCurrency();
-        context.setVariable("order", currentOrder);
+        OrderDao orderDataStore = OrderDaoMem.getInstance();
+        Currency orderCurrency = orderDataStore.getItems().get(0).getDefaultCurrency();
+        context.setVariable("order", orderDataStore);
         context.setVariable("currency", orderCurrency);
 
         engine.process("payment-confirmation.html", context, resp.getWriter());
