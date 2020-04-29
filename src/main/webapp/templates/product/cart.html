@@ -38,9 +38,9 @@
     <div class="row">
         <div class="col text-center">
         <div th:if="${cartSize} > 0">
-            <p class="alert alert-warning">Please change only one product quantity at a time</p>
+
             <table class="table table-borderless">
-                <thead class="table-info">
+                <thead class="table">
                 <th>
                     Product Name
                 </th>
@@ -74,23 +74,44 @@
 
                 </tbody>
             </table>
-            <h1 class="display-5"
-                th:text="'You have a total of ' + ${cartSize} + ' items worth:' + ${cartTotal} + ' ' + ${defaultCurrency}"></h1>
-            <a href="/checkout">
-                <button class="btn btn-success cart_button">Proceed to Checkout</button>
-            </a>
-            <form action="/cart" method="post">
-                <input type="hidden" value="kill" name="clearCart">
-                <input type="submit" class="btn btn-danger cart_button" value="Clear Cart">
-            </form>
+            <h2 class="display-5"
+                th:text="'You have a total of ' + ${cartSize} + ' items totalling: ' + ${cartTotal} + ' ' + ${defaultCurrency}"></h2>
+
+
+        <div class="container">
+            <table>
+                <tr>
+                    <td>
+                        <a href="/checkout">
+                            <button class="btn btn-primary cart_button">Checkout</button>
+                        </a>
+                    </td>
+                    <td>
+                        <form action="/cart" method="post">
+                            <input type="hidden" value="kill" name="clearCart">
+                            <input type="submit" class="btn btn-primary cart_button" value="Clear Cart">
+                        </form>
+                    </td>
+                    <td>
+                        <a href="/">
+                            <button class="btn btn-primary cart_button">Keep Shopping</button>
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        </div>
         </div>
         <div th:if="${cartSize} <= 0">
-            <p>Your cart is empty</p>
-        </div>
-        <a href="/">
-            <button class="btn btn-warning cart_button">Keep Shopping</button>
 
-        </a>
+            <div class="container">
+                <p>Your cart is empty</p>
+                <a href="/">
+                    <button class="btn btn-primary cart_button">Keep Shopping</button>
+                </a>
+            </div>
+        </div>
+
+
         </div>
     </div>
 </div>

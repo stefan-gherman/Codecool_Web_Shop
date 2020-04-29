@@ -1,7 +1,9 @@
 package com.codecool.shop.controller;
 
 import com.codecool.shop.config.TemplateEngineUtil;
+import com.codecool.shop.dao.CartDao;
 import com.codecool.shop.dao.OrderDao;
+import com.codecool.shop.dao.implementation.CartDaoMem;
 import com.codecool.shop.dao.implementation.OrderDaoMem;
 import com.codecool.shop.model.Product;
 import org.json.simple.JSONArray;
@@ -48,6 +50,10 @@ public class ConfirmationController extends HttpServlet {
         context.setVariable("order", orderDataStore);
 
         engine.process("payment-confirmation.html", context, resp.getWriter());
+
+        orderDataStore.clear();
+        CartDao cartDataStore = CartDaoMem.getInstance();
+        cartDataStore.eraseMe();
     }
 
     private void sendEmailConfirmation(String custEmail, String fullName, int orderId, String total) {
@@ -77,11 +83,11 @@ public class ConfirmationController extends HttpServlet {
             message.setFrom(new InternetAddress(user));
             message.addRecipient(Message.RecipientType.TO,new InternetAddress(to));
             message.setSubject("EDUCATIONAL PROJECT - WEB SHOP ORDER CONFIRMATION");
-            message.setText("**** EDUCATION PROJECT**** NOT AN ACTUAL ORDER\n" +
+            message.setText("**** EDUCATIONAL PROJECT**** NOT AN ACTUAL ORDER\n" +
                     "Hello " + fullName +",\n" +
                     "\n" +
                     "Thanks for purchasing from our shop.\n" +
-                    "Your order, " + orderId + ", totalling " + total + " USD, was processed successfully" +
+                    "Your order, ID: " + orderId + ", totalling " + total + " USD, was processed successfully" +
                     " and we'll be shipping it shortly.\n" +
                     "If you have any questions, you can always reach us at orders@webshop.com\n" +
                     "\n" +
