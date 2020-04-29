@@ -11,6 +11,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
 import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 @WebServlet(urlPatterns = {"/"})
 public class ProductController extends HttpServlet {
@@ -28,8 +30,20 @@ public class ProductController extends HttpServlet {
         ProductCategoryDao productCategoryDataStore = ProductCategoryDaoMem.getInstance();
         CartDao cartDataStore = CartDaoMem.getInstance();
         int cartSize = cartDataStore.getCartNumberOfProducts();
-        cartSize = 3;
 
+        System.out.println(req.getParameterMap());
+        if(req.getParameter("addToCart")!=null) {
+            try{
+                int prodIdParses = Integer.parseInt(req.getParameter("addToCart"));
+                System.out.println(prodIdParses);
+                cartDataStore.add(prodIdParses);
+                System.out.println(cartDataStore.getCartContents());
+                cartSize = cartDataStore.getCartNumberOfProducts();
+                System.out.println(cartSize);
+            } catch (Exception e) {
+                System.out.println("Value non parsable, ia-o in sus!");
+            }
+        }
 
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
@@ -58,11 +72,7 @@ public class ProductController extends HttpServlet {
         }
 
 
-        System.out.println("Category " +req.getParameter("productCategory"));
-//        System.out.println(req.getParameterMap());
-        if(req.getParameter("addToCart")!=null) {
-            System.out.println(req.getParameter("addToCart"));
-        }
+
 
 
         // // Alternative setting of the template context

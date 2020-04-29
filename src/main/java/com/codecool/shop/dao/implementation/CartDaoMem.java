@@ -27,7 +27,9 @@ public class CartDaoMem implements CartDao {
     }
 
     @Override
-    public void add(Product product) {
+    public void add(int id) {
+        ProductDaoMem productsList = ProductDaoMem.getInstance();
+        Product product = productsList.find(id);
         if(cartContents.containsKey(product)){
             cartContents.put(product, cartContents.get(product) + 1);
         } else {
@@ -36,7 +38,9 @@ public class CartDaoMem implements CartDao {
     }
 
     @Override
-    public void remove(Product product) {
+    public void remove(int id) {
+        ProductDaoMem productsList = ProductDaoMem.getInstance();
+        Product product = productsList.find(id);
         if(cartContents.containsKey(product)) {
             if(cartContents.get(product) == 1) {
                 cartContents.remove(product);
@@ -48,13 +52,21 @@ public class CartDaoMem implements CartDao {
 
     @Override
     public Map<Product, Integer> getCartContents() {
-        return Utils.sortMap(cartContents);
+        return Utils.sortMap(this.cartContents);
     }
 
+    @Override
     public int getCartNumberOfProducts() {
-        return this.cartContents.size();
+        int totalProducts = 0;
+
+        for (Map.Entry<Product, Integer> product: cartContents.entrySet()
+             ) {
+            totalProducts += product.getValue();
+        }
+        return totalProducts;
     }
 
+    @Override
     public void eraseMe() {
         this.cartContents = new HashMap<>();
     }
