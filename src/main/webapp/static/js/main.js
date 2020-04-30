@@ -20,8 +20,9 @@ $(document).ready(function(){
 
     $('#categoryProducts').change(function () {
         sessionStorage.setItem("category", $("#categoryProducts").first().val());
-        // urlCategory = ;
-        window.category = this.value;
+        if(selectedSupplier === null){
+            selectedSupplier = "supplier=all";
+        }
         window.history.pushState("", "", this.value + "&" + selectedSupplier)
         location.reload();
     });
@@ -30,7 +31,9 @@ $(document).ready(function(){
 
     $('#supplier').change(function () {
         sessionStorage.setItem("supplier", $("#supplier").first().val());
-        // urlCategory = ;
+        if(selectedCategory === null){
+            selectedCategory = "/?productCategory=tablets"
+        }
         window.history.pushState(null, null, selectedCategory + "&" + this.value)
         location.reload();
     });

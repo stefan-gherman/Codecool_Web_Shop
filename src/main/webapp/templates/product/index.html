@@ -27,34 +27,35 @@
           integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
     <!-- End of Bootstrap components -->
 
-    <link rel="stylesheet" type="text/css" href="/static/css/custom.css" />
+    <link rel="stylesheet" type="text/css" href="/static/css/custom.css"/>
 </head>
 
 <body>
 
-<div th:fragment="menu" class="jumbotron text-center" >
+<div th:fragment="menu" class="jumbotron text-center">
     <h1>Codecool Shop</h1>
     <p class="nav_links"><a href="/cart">Cart</a></p>
     <span th:if="${cartSize} > 0">
         <sup class="badge badge-danger" th:text="${cartSize}">300</sup>
     </span>
 
-    </div>
+</div>
 </div>
 
 
 <div class="container">
-
     <!-- category and supplier -->
     <div class="col col-sm-12 col-md-6 col-lg-4">
         <form>
             <div class="form-row">
                 <div class="form-group">
                     <label for="categoryProducts">Category</label>
-                    <select id="categoryProducts" class="form-control" >
+                    <select id="categoryProducts" class="form-control">
                         <option id="tablets" value="/?productCategory=tablets">Tablets</option>
                         <option id="cameras" value="/?productCategory=cameras">Cameras</option>
-                        <option id="living-room-furniture" value="/?productCategory=living-room-furniture">Living Room Furniture</option>
+                        <option id="living-room-furniture" value="/?productCategory=living-room-furniture">Living Room
+                            Furniture
+                        </option>
                         <option id="monitors" value="/?productCategory=monitors">Monitors</option>
                     </select>
                 </div>
@@ -88,8 +89,20 @@
                         <p class="lead" th:text="${prod.getPrice()}">100 USD</p>
                     </div>
                     <div class="card-text">
-                        <a class="btn btn-success" th:href="@{'/?productCategory=' + ${category.getName().toLowerCase()} +
-                         '&addToCart=' + ${prod.getId()}}">Add to cart</a>
+                        <div th:if="${supplier} == 'all'">
+                        <form method="post"
+                              th:action="@{/(productCategory=${category.getName().toLowerCase()})}">
+                            <input type="hidden" name="addToCart" th:value="${prod.getId()}">
+                            <input type="submit" class="btn btn-success" value="Add to Cart">
+                        </form>
+                        </div>
+                        <div th:if="${supplier} != 'all'">
+                            <form method="post"
+                                  th:action="@{/(productCategory=${category.getName().toLowerCase()}, supplier=${supplier.getName().toLowerCase()})}">
+                                <input type="hidden" name="addToCart" th:value="${prod.getId()}">
+                                <input type="submit" class="btn btn-success" value="Add to Cart">
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
