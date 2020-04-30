@@ -92,11 +92,11 @@ public class ProductController extends HttpServlet {
         context.setVariable("category", productCategoryDataStore.find(categoryId));
         //Suggestion
         if(supplierDao.find(supplierId) == null) {
-            System.out.println("Supplier null");
+            //System.out.println("Supplier null");
             context.setVariable("supplier", "all" );
         }
         else {
-            System.out.println("Supplier not null");
+            //System.out.println("Supplier not null");
             context.setVariable("supplier", supplierDao.find(supplierId));
         }
         context.setVariable("products", productDataStore.getBy(categoryId, supplierId));
