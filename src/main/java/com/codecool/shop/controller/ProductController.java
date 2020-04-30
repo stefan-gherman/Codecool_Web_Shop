@@ -41,7 +41,7 @@ public class ProductController extends HttpServlet {
         CartDao cartDataStore = CartDaoMem.getInstance();
         SupplierDao supplierDao = SupplierDaoMem.getInstance();
         int cartSize = cartDataStore.getCartNumberOfProducts();
-        System.out.println(req.getParameter("addToCart"));
+        //System.out.println(req.getParameter("addToCart"));
         if(req.getParameter("addToCart")!=null) {
             try{
                 int prodIdParses = Integer.parseInt(req.getParameter("addToCart"));
@@ -90,7 +90,15 @@ public class ProductController extends HttpServlet {
             throws IOException {
 
         context.setVariable("category", productCategoryDataStore.find(categoryId));
-        context.setVariable("supplier", supplierDao.find(supplierId));
+        //Suggestion
+        if(supplierDao.find(supplierId) == null) {
+            System.out.println("Supplier null");
+            context.setVariable("supplier", "all" );
+        }
+        else {
+            System.out.println("Supplier not null");
+            context.setVariable("supplier", supplierDao.find(supplierId));
+        }
         context.setVariable("products", productDataStore.getBy(categoryId, supplierId));
         context.setVariable("cartSize", cartSize);
         engine.process("product/index.html", context, resp.getWriter());

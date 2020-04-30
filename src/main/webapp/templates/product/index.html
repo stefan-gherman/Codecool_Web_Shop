@@ -44,7 +44,8 @@
 
 
 <div class="container">
-<p th:text="${supplier}"></p>
+<p th:if="${supplier} != null">PP</p>
+<p th:if="${supplier} == null">Null</p>
     <!-- category and supplier -->
     <div class="col col-sm-12 col-md-6 col-lg-4">
         <form>
@@ -90,11 +91,20 @@
                         <p class="lead" th:text="${prod.getPrice()}">100 USD</p>
                     </div>
                     <div class="card-text">
+                        <div th:if="${supplier} == 'all'">
                         <form method="post"
-                              th:action="@{/(productCategory=${category.getName().toLowerCase(), })}">
+                              th:action="@{/(productCategory=${category.getName().toLowerCase()})}">
                             <input type="hidden" name="addToCart" th:value="${prod.getId()}">
                             <input type="submit" class="btn btn-success" value="Add to Cart">
                         </form>
+                        </div>
+                        <div th:if="${supplier} != 'all'">
+                            <form method="post"
+                                  th:action="@{/(productCategory=${category.getName().toLowerCase()}, supplier=${supplier.getName().toLowerCase()})}">
+                                <input type="hidden" name="addToCart" th:value="${prod.getId()}">
+                                <input type="submit" class="btn btn-success" value="Add to Cart">
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
