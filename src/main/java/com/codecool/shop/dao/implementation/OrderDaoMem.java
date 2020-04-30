@@ -107,7 +107,7 @@ public class OrderDaoMem implements OrderDao {
     }
 
     public void setShippingAddress(String shippingAddress) {
-        this.billingAddress = shippingAddress;
+        this.shippingAddress = shippingAddress;
     }
 
     public String getShippingAddress() {

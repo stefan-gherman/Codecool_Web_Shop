@@ -25,6 +25,7 @@
     <!-- Latest compiled and minified CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <script src="https://kit.fontawesome.com/bd93a227ef.js" crossorigin="anonymous"></script>
     <!-- End of Bootstrap components -->
 
     <link rel="stylesheet" type="text/css" href="/static/css/custom.css"/>
@@ -34,18 +35,13 @@
 
 <div th:fragment="menu" class="jumbotron text-center">
     <h1>Codecool Shop</h1>
-    <p class="nav_links"><a href="/cart">Cart</a></p>
-    <span th:if="${cartSize} > 0">
-        <sup class="badge badge-danger" th:text="${cartSize}">300</sup>
-    </span>
-
 </div>
 </div>
 
 
 <div class="container">
     <!-- category and supplier -->
-    <div class="col col-sm-12 col-md-6 col-lg-4">
+    <div class="col ">
         <form>
             <div class="form-row">
                 <div class="form-group">
@@ -67,8 +63,20 @@
                         <option value="supplier=walmart">Walmart</option>
                     </select>
                 </div>
+                <div class="float-right" style="margin-left: auto; margin-right: 0px;">
+                <div class="form-group">
+
+                    <p class="nav_links" ><a href="/cart"><i class="fas fa-shopping-cart fa-2x"></i></a></p>
+                    <span th:if="${cartSize} > 0">
+        <sup class="badge badge-danger" th:text="${cartSize}">300</sup>
+    </span>
+                    </div>
+                </div>
             </div>
+
+
         </form>
+
     </div>
 
     <div class="card">
@@ -90,11 +98,11 @@
                     </div>
                     <div class="card-text">
                         <div th:if="${supplier} == 'all'">
-                        <form method="post"
-                              th:action="@{/(productCategory=${category.getName().toLowerCase()})}">
-                            <input type="hidden" name="addToCart" th:value="${prod.getId()}">
-                            <input type="submit" class="btn btn-success" value="Add to Cart">
-                        </form>
+                            <form method="post"
+                                  th:action="@{/(productCategory=${category.getName().toLowerCase()})}">
+                                <input type="hidden" name="addToCart" th:value="${prod.getId()}">
+                                <input type="submit" class="btn btn-success" value="Add to Cart">
+                            </form>
                         </div>
                         <div th:if="${supplier} != 'all'">
                             <form method="post"
