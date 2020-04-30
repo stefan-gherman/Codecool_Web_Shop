@@ -3,6 +3,7 @@ $(document).ready(() => {
    console.log("JQuery Loaded");
 
   const $childrenOfSubmitDivs = $('.inner_form').children();
+  const $holderDiv = $('.inner_form');
 
   // console.log($childreOfSubmitDivs[0].id.search("inputSubmit"));
   let i=0;
@@ -32,9 +33,8 @@ $(document).ready(() => {
                       console.log($("#buttonSubmit" + buttonId));
                       console.log(`Button from array ${buttonsArray[j].id} - Button from page${$("#buttonSubmit" + buttonId).attr("id")}`);
                       buttonsArray[j].setAttribute("style", "display: none");
-                  } else {
-
                   }
+                  $(document).on("click")
               }
 
           });
