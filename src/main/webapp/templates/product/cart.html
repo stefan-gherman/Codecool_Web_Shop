@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="author" content="Codecool"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title>My Cart</title>
+
+    <!-- Bootstrap components -->
+    <!-- Latest compiled and minified Jquery -->
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+            integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+
+    <!--Latest compiled and minified Popper -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+            integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+            crossorigin="anonymous"></script>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"
+            integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k"
+            crossorigin="anonymous"></script>
+
+    <!-- Latest compiled and minified CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <!-- End of Bootstrap components -->
+
+    <link rel="stylesheet" type="text/css" href="/static/css/custom.css"/>
+</head>
+<body>
+<div th:replace="product/index.html::menu">
+
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col text-center">
+            <div th:if="${cartSize} > 0">
+
+                <table class="table table-borderless">
+                    <thead class="table">
+                    <th>
+                        Product Name
+                    </th>
+                    <th>
+                        Product ID
+                    </th>
+                    <th>
+                        Item Count
+                    </th>
+                    <th>
+                        Subtotal
+                    </th>
+                    </thead>
+                    <tbody>
+                    <tr th:each="instance : ${cartContents}">
+                        <td th:text="${instance.key.getName()}"></td>
+                        <td th:text="${instance.key.getId()}"></td>
+                        <td th:text="${instance.value}"></td>
+                        <td th:text="${ #numbers.formatDecimal(instance.value * instance.key.getDefaultPrice(), 0, 'COMMA',2,'POINT')}  + ' ' + ${defaultCurrency}"></td>
+                        <td>
+                            <form action="/cart" method="post" th:id="'form' + ${instance.key.getId()}">
+                                <div class="inner_form">
+                                    <input type="number" min="0" th:value="${instance.value}"
+                                           th:id="'inputSubmit' + ${instance.key.getId()}" name="valueChanged">
+                                    <input type="hidden" onkeydown="return false" th:value="${instance.key.getId()}"
+                                           name="objectId">
+                                    <input class="btn btn-primary"  style="display: none" th:id="'buttonSubmit' + ${instance.key.getId()}"
+                                           type="Submit" value="Change Quantity">
+                                </div>
+                            </form>
+                        </td>
+                        <td></td>
+                    </tr>
+
+                    </tbody>
+                </table>
+                <h2 class="display-5"
+                    th:text="'Your cart contains ' + ${cartSize} + ' items totalling: ' + ${#numbers.formatDecimal(cartTotal,0,'COMMA', 2,'POINT')} + ' ' + ${defaultCurrency}"></h2>
+
+
+                <div class="container">
+                    <table>
+                        <tr>
+                            <td>
+                                <a href="/checkout">
+                                    <button class="btn btn-primary cart_button">Checkout</button>
+                                </a>
+                            </td>
+                            <td>
+                                <form action="/cart" method="post">
+                                    <input type="hidden" value="kill" name="clearCart">
+                                    <input type="submit" class="btn btn-primary cart_button" value="Clear Cart">
+                                </form>
+                            </td>
+                            <td>
+                                <a href="/">
+                                    <button class="btn btn-primary cart_button">Keep Shopping</button>
+                                </a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div th:if="${cartSize} <= 0">
+
+                <div class="container">
+                    <p>Your cart is empty</p>
+                    <a href="/">
+                        <button class="btn btn-primary cart_button">Keep Shopping</button>
+                    </a>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<div th:replace="footer.html::copy">
+
+</div>
+<script type="text/javascript" src="static/js/cartPageHandler.js"></script>
+</body>
+</html>
