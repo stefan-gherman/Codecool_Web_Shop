@@ -4,9 +4,15 @@ import com.codecool.shop.dao.CartDao;
 import com.codecool.shop.dao.OrderDao;
 import com.codecool.shop.model.Product;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 
@@ -29,6 +35,7 @@ public class OrderDaoMem implements OrderDao {
     private boolean methodPayPal = false;
     private String payPalUsername;
     private String payPalPassword;
+    private String logFileName;
 
     {
         orderCounter += 1;
@@ -129,6 +136,34 @@ public class OrderDaoMem implements OrderDao {
         payPalUsername = "";
         payPalPassword = "";
         items.clear();
+        logFileName = "";
+    }
+
+    public void addLogEntry(OrderDao orderDataStore, String step) throws IOException {
+        String orderID = String.valueOf(orderDataStore.getId());
+
+        String pattern = "MM_dd_yyyy";
+        DateFormat df = new SimpleDateFormat(pattern);
+        Date today = Calendar.getInstance().getTime();
+        String todayAsString = df.format(today);
+
+        String logFileName = "log_order_" + orderID + "_" + todayAsString;
+        this.logFileName = logFileName;
+        FileWriter file = new FileWriter("/home/dan/Downloads/" + logFileName + ".txt", true);
+
+        String stepData = "log order ID: " + orderID + ". Order entered "+ step +" page.\n";
+
+        try {
+            file.write(stepData);
+            System.out.println("Log entry complete - " + step);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            file.flush();
+            file.close();
+        }
+
     }
 
 

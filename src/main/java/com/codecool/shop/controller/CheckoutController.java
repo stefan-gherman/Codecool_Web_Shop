@@ -29,7 +29,9 @@ public class CheckoutController extends HttpServlet {
         // getting the order DAO
         OrderDao orderDataStore = OrderDaoMem.getInstance();
 
-//
+        // adding checkout step log entry
+        orderDataStore.addLogEntry(orderDataStore, "Checkout");
+
         orderDataStore.clear();
         orderDataStore.setItems();
         List<Product> temp = orderDataStore.getItems();
@@ -56,6 +58,8 @@ public class CheckoutController extends HttpServlet {
 
 
     }
+
+
 
 }
 

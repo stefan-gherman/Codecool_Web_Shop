@@ -33,9 +33,13 @@ public class PaymentDetailsController extends HttpServlet {
 
         if (req.getParameter("payment-method").equals("card")) {
             engine.process("payment-details-card.html", context, resp.getWriter());
+            // adding checkout step log entry
+            orderDataStore.addLogEntry(orderDataStore, "Payment Details Card");
         }
         else if (req.getParameter("payment-method").equals("paypal")) {
             engine.process("payment-details-paypal.html", context, resp.getWriter());
+            // adding checkout step log entry
+            orderDataStore.addLogEntry(orderDataStore, "Payment Details PayPal");
         }
         else {
             engine.process("product/notFound.html", context, resp.getWriter());
