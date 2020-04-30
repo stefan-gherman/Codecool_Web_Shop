@@ -1,1 +1,0 @@
-{"Items":["Lenovo IdeaPad Miix 700","Amazon Fire HD 8"],"ID":1}
