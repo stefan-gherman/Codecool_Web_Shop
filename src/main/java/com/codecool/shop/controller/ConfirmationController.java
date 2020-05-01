@@ -1,5 +1,6 @@
 package com.codecool.shop.controller;
 
+import com.codecool.shop.config.Logger;
 import com.codecool.shop.config.TemplateEngineUtil;
 import com.codecool.shop.dao.CartDao;
 import com.codecool.shop.dao.OrderDao;
@@ -28,7 +29,7 @@ import java.util.Currency;
 import java.util.Properties;
 
 @WebServlet(urlPatterns = {"/payment-confirmation"})
-public class ConfirmationController extends HttpServlet {
+public class ConfirmationController extends HttpServlet implements Logger {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException  {
@@ -59,6 +60,8 @@ public class ConfirmationController extends HttpServlet {
         orderDataStore.clear();
         CartDao cartDataStore = CartDaoMem.getInstance();
         cartDataStore.eraseMe();
+        adminLog(req, orderDataStore, "confirmation");
+
     }
 
     private void sendEmailConfirmation(String custEmail, String fullName, int orderId, String total) {
@@ -112,7 +115,7 @@ public class ConfirmationController extends HttpServlet {
     }
 
     private void jsonify(OrderDao orderDataStore) throws IOException {
-        FileWriter file = new FileWriter("/mnt/7d45c543-fc06-4310-b70a-2a9aa2e43a54/Projects/codecool/java/Codecool_Web_Shop/src/main/webapp/static/logs/log.txt");
+        FileWriter file = new FileWriter("src/main/webapp/static/logs/log.txt");
         JSONObject obj = new JSONObject();
         obj.put("ID", orderDataStore.getId());
         JSONArray items = new JSONArray();

@@ -1,5 +1,6 @@
 package com.codecool.shop.controller;
 
+import com.codecool.shop.config.Logger;
 import com.codecool.shop.config.TemplateEngineUtil;
 import com.codecool.shop.dao.OrderDao;
 import com.codecool.shop.dao.implementation.OrderDaoMem;
@@ -15,7 +16,7 @@ import java.io.IOException;
 import java.util.Currency;
 
 @WebServlet(urlPatterns = {"/payment-details"})
-public class PaymentDetailsController extends HttpServlet {
+public class PaymentDetailsController extends HttpServlet implements Logger {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException  {
@@ -40,24 +41,20 @@ public class PaymentDetailsController extends HttpServlet {
         else {
             engine.process("product/notFound.html", context, resp.getWriter());
         }
+        adminLog(req, orderDataStore, "payment-details");
+
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
-
-
+        OrderDao orderDataStore = OrderDaoMem.getInstance();
         engine.process("paymentUnavailable.html", context, resp.getWriter());
 
 
-        // // Alternative setting of the template context
-        // Map<String, Object> params = new HashMap<>();
-        // params.put("category", productCategoryDataStore.find(1));
-        // params.put("products", productDataStore.getBy(productCategoryDataStore.find(1)));
-        // context.setVariables(params);
-
     }
+
 
 }
 

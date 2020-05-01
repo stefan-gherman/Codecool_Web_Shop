@@ -1,5 +1,6 @@
 package com.codecool.shop.controller;
 
+import com.codecool.shop.config.Logger;
 import com.codecool.shop.config.TemplateEngineUtil;
 import com.codecool.shop.dao.OrderDao;
 import com.codecool.shop.dao.implementation.OrderDaoMem;
@@ -17,7 +18,7 @@ import java.util.Currency;
 import java.util.List;
 
 @WebServlet(urlPatterns = {"/checkout"})
-public class CheckoutController extends HttpServlet {
+public class CheckoutController extends HttpServlet implements Logger {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -28,7 +29,6 @@ public class CheckoutController extends HttpServlet {
 
         // getting the order DAO
         OrderDao orderDataStore = OrderDaoMem.getInstance();
-
 //
         orderDataStore.clear();
         orderDataStore.setItems();
@@ -37,25 +37,22 @@ public class CheckoutController extends HttpServlet {
 
         context.setVariable("items", temp);
 
-        double total=0;
+        double total = 0;
         Currency orderCurrency;
-        for (Product item:temp) {
+        for (Product item : temp) {
             total += item.getDefaultPrice();
         }
         orderCurrency = temp.get(0).getDefaultCurrency();
         context.setVariable("total", total);
         context.setVariable("currency", orderCurrency);
 
-
-
         engine.process("checkout.html", context, resp.getWriter());
 
-
-
-
-
-
+        adminLog(req, orderDataStore, "checkout");
     }
 
 }
+
+
+
 
