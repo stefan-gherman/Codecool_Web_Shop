@@ -1,11 +1,13 @@
 package com.codecool.shop.controller;
 
 import com.codecool.shop.config.TemplateEngineUtil;
+import com.codecool.shop.config.Validation;
 import com.codecool.shop.dao.CartDao;
 import com.codecool.shop.dao.OrderDao;
 import com.codecool.shop.dao.implementation.CartDaoMem;
 import com.codecool.shop.dao.implementation.OrderDaoMem;
 import com.codecool.shop.model.Product;
+import com.codecool.shop.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.thymeleaf.TemplateEngine;
@@ -36,6 +38,15 @@ public class ConfirmationController extends HttpServlet {
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
         OrderDao orderDataStore = OrderDaoMem.getInstance();
+        if (Validation.validateCardNumberInput(req.getParameter("card-number"))==false) {
+            orderDataStore.setInvalidCardNumberMessage("A 16 digit card number is required.");
+            resp.sendRedirect("payment-details");
+        } else {
+            orderDataStore.setInvalidCardNumberMessage("");
+        }
+
+
+        orderDataStore.addLogEntry(orderDataStore, "Confirmation");
         String fullName = orderDataStore.getFullName();
         int orderId = orderDataStore.getId();
         String total = orderDataStore.getTotal();
@@ -55,6 +66,7 @@ public class ConfirmationController extends HttpServlet {
         context.setVariable("order", orderDataStore);
 
         engine.process("payment-confirmation.html", context, resp.getWriter());
+        orderDataStore.addLogEntry(orderDataStore, "Confirmation Successful");
 
         orderDataStore.clear();
         CartDao cartDataStore = CartDaoMem.getInstance();
@@ -112,7 +124,11 @@ public class ConfirmationController extends HttpServlet {
     }
 
     private void jsonify(OrderDao orderDataStore) throws IOException {
-        FileWriter file = new FileWriter("/mnt/7d45c543-fc06-4310-b70a-2a9aa2e43a54/Projects/codecool/java/Codecool_Web_Shop/src/main/webapp/static/logs/log.txt");
+
+        // get the path from Utils for the log file to be saved in (different paths based on computer)
+        String path = Utils.getPathForLogs();
+
+        FileWriter file = new FileWriter(path + "log.txt", true);
         JSONObject obj = new JSONObject();
         obj.put("ID", orderDataStore.getId());
         JSONArray items = new JSONArray();
@@ -123,6 +139,7 @@ public class ConfirmationController extends HttpServlet {
 
         try {
             file.write(obj.toJSONString());
+            file.write("\n");
             System.out.println("Successfully copied JSON Object to file.");
             System.out.println("\nJSON Object: " + obj);
         } catch (IOException e) {

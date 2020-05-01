@@ -2,6 +2,7 @@ package com.codecool.shop.dao;
 
 import com.codecool.shop.model.Product;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface OrderDao {
@@ -20,5 +21,14 @@ public interface OrderDao {
     String getShippingAddress();
     void clear();
     List<Product> setItems();
+    void addLogEntry(OrderDao orderDataStore, String checkout) throws IOException;
+    void setInvalidFullNameEntryMessage(String content);
+    String getInvalidFullNameEntryMessage();
+    void setInvalidCardNumberMessage(String content);
+    String getInvalidCardNumberMessage();
+    void setPaymentMethodCard(boolean status);
+    boolean getPaymentMethodCard();
+    void setPaymentMethodPayPal(boolean status);
+    boolean getPaymentMethodPayPal();
 
 }

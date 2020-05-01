@@ -1,9 +1,12 @@
 <!doctype html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <th:block th:replace="headerTemplate.html:: headContentMeta"></th:block>
-    <title>Codecool Shop</title>
-    <th:block th:replace="headerTemplate.html :: headContentBootStrap"></th:block>
+
+    <div th:replace="header.html :: copy"></div>
+
+  <title>Codecool Shop</title>
+</head>
+
 <body>
 
 <div th:fragment="menu" class="jumbotron text-center">
