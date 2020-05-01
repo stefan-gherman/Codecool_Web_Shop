@@ -22,4 +22,6 @@ public interface OrderDao {
     void clear();
     List<Product> setItems();
     void addLogEntry(OrderDao orderDataStore, String checkout) throws IOException;
+    void setInvalidFullNameEntryMessage(String content);
+    String getInvalidFullNameEntryMessage();
 }

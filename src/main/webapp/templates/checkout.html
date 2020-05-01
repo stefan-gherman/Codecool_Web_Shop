@@ -56,7 +56,7 @@
         <div class="form-group">
             <label for="full-name">First and last name</label>
             <input type="text" class="form-control" id="full-name" name="full-name" aria-describedby="full-name-help" placeholder="First and last name">
-            <small id="full-name-help" class="form-text text-muted">First and last name of the person receiving the order.</small>
+            <small id="full-name-help" class="form-text text-muted">First and last name of the person receiving the order.</small><small class="text-danger" th:text="${order.invalidFullNameEntryMessage}"></small>
         </div>
         <div class="form-group">
             <label for="input-email">Email address</label>

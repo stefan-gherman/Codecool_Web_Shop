@@ -1,6 +1,7 @@
 package com.codecool.shop.controller;
 
 import com.codecool.shop.config.TemplateEngineUtil;
+import com.codecool.shop.config.Utils;
 import com.codecool.shop.dao.OrderDao;
 import com.codecool.shop.dao.implementation.OrderDaoMem;
 import org.thymeleaf.TemplateEngine;
@@ -27,6 +28,12 @@ public class PaymentMethodSelectController extends HttpServlet {
         orderDataStore.addLogEntry(orderDataStore, "Payment Method Select");
 
         // filling order information from checkout form
+        if (Utils.validateNameInput(req.getParameter("full-name"))==false) {
+            orderDataStore.setInvalidFullNameEntryMessage("A 2 to 50 character full name is required.");
+            resp.sendRedirect("checkout");
+        } else {
+            orderDataStore.setInvalidFullNameEntryMessage("");
+        }
         orderDataStore.setFullName(req.getParameter("full-name"));
         orderDataStore.setEmail(req.getParameter("input-email"));
         orderDataStore.setPhoneNumber(req.getParameter("input-phone"));

@@ -36,6 +36,7 @@ public class OrderDaoMem implements OrderDao {
     private String payPalUsername;
     private String payPalPassword;
     private String logFileName;
+    private String invalidFullNameEntryMessage = "";
 
     {
         orderCounter += 1;
@@ -166,4 +167,11 @@ public class OrderDaoMem implements OrderDao {
 
     }
 
+    public void setInvalidFullNameEntryMessage(String content) {
+        invalidFullNameEntryMessage = content;
+    }
+
+    public String getInvalidFullNameEntryMessage() {
+        return invalidFullNameEntryMessage;
+    }
 }
