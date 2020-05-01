@@ -1,4 +1,10 @@
+
 $(document).ready(function(){
+    console.log(location.href)
+    if(location.href === "http://localhost:8888/"){
+        sessionStorage.clear();
+    }
+
     let selectedCategory = sessionStorage.getItem("category");
     let selectedSupplier = sessionStorage.getItem("supplier");
 
@@ -16,8 +22,6 @@ $(document).ready(function(){
         });
     }
 
-    let category;
-
     $('#categoryProducts').change(function () {
         sessionStorage.setItem("category", $("#categoryProducts").first().val());
         if(selectedSupplier === null){
@@ -28,13 +32,12 @@ $(document).ready(function(){
     });
 
 
-
     $('#supplier').change(function () {
         sessionStorage.setItem("supplier", $("#supplier").first().val());
         if(selectedCategory === null){
             selectedCategory = "/?productCategory=tablets"
         }
-        window.history.pushState(null, null, selectedCategory + "&" + this.value)
+        window.history.pushState("1", "title", selectedCategory + "&" + this.value)
         location.reload();
     });
 })
