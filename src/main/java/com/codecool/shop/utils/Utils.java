@@ -33,6 +33,9 @@ public class Utils {
         // comment out the paths from other computers and add yours
 
         // dan
-        return "/home/dan/Downloads/";
+        //return "/home/dan/Downloads/";
+
+        //stefan
+        return "/mnt/7d45c543-fc06-4310-b70a-2a9aa2e43a54/Projects/codecool/java/Codecool_Web_Shop/src/main/webapp/static/logs/";
     }
 }
