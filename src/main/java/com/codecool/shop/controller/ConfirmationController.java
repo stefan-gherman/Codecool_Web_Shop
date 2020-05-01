@@ -161,14 +161,6 @@ public class ConfirmationController extends HttpServlet {
         context.setVariable("currency", orderCurrency);
 
         engine.process("payment-confirmation.html", context, resp.getWriter());
-//        engine.process("paymentUnavailable.html", context, resp.getWriter()); // temporarily out until tests are done
-
-
-        // // Alternative setting of the template context
-        // Map<String, Object> params = new HashMap<>();
-        // params.put("category", productCategoryDataStore.find(1));
-        // params.put("products", productDataStore.getBy(productCategoryDataStore.find(1)));
-        // context.setVariables(params);
 
     }
 

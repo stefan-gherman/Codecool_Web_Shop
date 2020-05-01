@@ -73,15 +73,6 @@ public class PaymentDetailsController extends HttpServlet {
             engine.process("paymentUnavailable.html", context, resp.getWriter());
         }
 
-
-
-
-        // // Alternative setting of the template context
-        // Map<String, Object> params = new HashMap<>();
-        // params.put("category", productCategoryDataStore.find(1));
-        // params.put("products", productDataStore.getBy(productCategoryDataStore.find(1)));
-        // context.setVariables(params);
-
     }
 
 }
