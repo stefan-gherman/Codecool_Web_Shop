@@ -7,7 +7,7 @@ import java.util.*;
 public class Utils {
 
     public static Map<Product, Integer> sortMap( Map< Product, Integer> productsInCart) {
-        List<Map.Entry<Product, Integer>> productsInCartList = new LinkedList<Map.Entry<Product, Integer>>(productsInCart.entrySet());
+        List<Map.Entry<Product, Integer>> productsInCartList = new LinkedList<>(productsInCart.entrySet());
         productsInCartList.sort((prod1, prod2) -> {
             if ((prod1.getKey().getDefaultPrice() * prod1.getValue()) < (prod2.getKey().getDefaultPrice() * prod2.getValue())) {
 
@@ -36,6 +36,9 @@ public class Utils {
         //return "/home/dan/Downloads/";
 
         //stefan
-        return "/mnt/7d45c543-fc06-4310-b70a-2a9aa2e43a54/Projects/codecool/java/Codecool_Web_Shop/src/main/webapp/static/logs/";
+//        return "/mnt/7d45c543-fc06-4310-b70a-2a9aa2e43a54/Projects/codecool/java/Codecool_Web_Shop/src/main/webapp/static/logs/";
+
+        //general
+        return "src/main/webapp/static/logs/";
     }
 }
