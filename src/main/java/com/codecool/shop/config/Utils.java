@@ -1,5 +1,8 @@
 package com.codecool.shop.config;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class Utils {
 
     /**
@@ -19,6 +22,23 @@ public class Utils {
         text.replace("<", "&lt;");
         text.replace(">", "&gt;");
         return text;
+    }
+
+    /**
+     * Validation for the card number at input.
+     * @param cardNumber
+     * @return true or false
+     */
+    public static boolean validateCardNumberInput(String cardNumber) {
+        // the number has to be 16 digits long
+        String temp = cardNumber.replace(" ", "");
+        String temp2 = temp.replace("-", "");
+        String temp3 = temp2.replace(".", "");
+        String regex = "^\\d{16}$";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(temp3);
+        if (matcher.matches()) return true;
+        return false;
     }
 
 }

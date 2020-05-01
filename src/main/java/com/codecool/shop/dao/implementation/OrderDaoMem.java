@@ -27,16 +27,17 @@ public class OrderDaoMem implements OrderDao {
     private String phoneNumber;
     private String billingAddress;
     private String shippingAddress;
-    private boolean methodCard = false;
+    private boolean paymentMethodCard = false;
     private String cardHolder;
     private String cardNumber;
     private String cardExpiration;
     private String cardSecurityCode;
-    private boolean methodPayPal = false;
+    private boolean paymentMethodPayPal = false;
     private String payPalUsername;
     private String payPalPassword;
     private String logFileName;
     private String invalidFullNameEntryMessage = "";
+    private String invalidCardNumberMessage = "";
 
     {
         orderCounter += 1;
@@ -128,16 +129,18 @@ public class OrderDaoMem implements OrderDao {
         phoneNumber = "";
         billingAddress = "";
         shippingAddress = "";
-        methodCard = false;
+        paymentMethodCard = false;
         cardHolder = "";
         cardNumber = "";
         cardExpiration = "";
         cardSecurityCode = "";
-        methodPayPal = false;
+        paymentMethodPayPal = false;
         payPalUsername = "";
         payPalPassword = "";
         items.clear();
         logFileName = "";
+        invalidFullNameEntryMessage = "";
+        invalidCardNumberMessage = "";
     }
 
     public void addLogEntry(OrderDao orderDataStore, String step) throws IOException {
@@ -173,5 +176,29 @@ public class OrderDaoMem implements OrderDao {
 
     public String getInvalidFullNameEntryMessage() {
         return invalidFullNameEntryMessage;
+    }
+
+    public void setInvalidCardNumberMessage(String content) {
+        invalidCardNumberMessage = content;
+    }
+
+    public String getInvalidCardNumberMessage() {
+        return invalidCardNumberMessage;
+    }
+
+    public void setPaymentMethodCard(boolean status) {
+        paymentMethodCard = status;
+    }
+
+    public boolean getPaymentMethodCard() {
+        return paymentMethodCard;
+    }
+
+    public boolean getPaymentMethodPayPal() {
+        return paymentMethodPayPal;
+    }
+
+    public void setPaymentMethodPayPal(boolean status) {
+        paymentMethodPayPal = status;
     }
 }

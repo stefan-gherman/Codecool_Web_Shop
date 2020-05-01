@@ -1,6 +1,7 @@
 package com.codecool.shop.controller;
 
 import com.codecool.shop.config.TemplateEngineUtil;
+import com.codecool.shop.config.Utils;
 import com.codecool.shop.dao.CartDao;
 import com.codecool.shop.dao.OrderDao;
 import com.codecool.shop.dao.implementation.CartDaoMem;
@@ -36,6 +37,14 @@ public class ConfirmationController extends HttpServlet {
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
         OrderDao orderDataStore = OrderDaoMem.getInstance();
+        if (Utils.validateCardNumberInput(req.getParameter("card-number"))==false) {
+            orderDataStore.setInvalidCardNumberMessage("A 16 digit card number is required.");
+            resp.sendRedirect("payment-details");
+        } else {
+            orderDataStore.setInvalidCardNumberMessage("");
+        }
+
+
         orderDataStore.addLogEntry(orderDataStore, "Confirmation");
         String fullName = orderDataStore.getFullName();
         int orderId = orderDataStore.getId();

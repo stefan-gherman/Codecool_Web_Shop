@@ -24,4 +24,11 @@ public interface OrderDao {
     void addLogEntry(OrderDao orderDataStore, String checkout) throws IOException;
     void setInvalidFullNameEntryMessage(String content);
     String getInvalidFullNameEntryMessage();
+    void setInvalidCardNumberMessage(String content);
+    String getInvalidCardNumberMessage();
+    void setPaymentMethodCard(boolean status);
+    boolean getPaymentMethodCard();
+    void setPaymentMethodPayPal(boolean status);
+    boolean getPaymentMethodPayPal();
+
 }
