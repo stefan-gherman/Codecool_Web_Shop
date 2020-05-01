@@ -28,4 +28,11 @@ public class Utils {
         }
         return sortedCart;
     }
+
+    public static String getPathForLogs() {
+        // comment out the paths from other computers and add yours
+
+        // dan
+        return "/home/dan/Downloads/";
+    }
 }
