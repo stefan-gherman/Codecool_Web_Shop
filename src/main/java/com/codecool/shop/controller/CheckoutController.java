@@ -22,14 +22,13 @@ public class CheckoutController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
         // getting the order DAO
         OrderDao orderDataStore = OrderDaoMem.getInstance();
+        orderDataStore.addLogEntry(orderDataStore, "Checkout");
 
-//
         orderDataStore.clear();
         orderDataStore.setItems();
         List<Product> temp = orderDataStore.getItems();
@@ -43,17 +42,11 @@ public class CheckoutController extends HttpServlet {
             total += item.getDefaultPrice();
         }
         orderCurrency = temp.get(0).getDefaultCurrency();
+        context.setVariable("order", orderDataStore);
         context.setVariable("total", total);
         context.setVariable("currency", orderCurrency);
 
-
-
         engine.process("checkout.html", context, resp.getWriter());
-
-
-
-
-
 
     }
 

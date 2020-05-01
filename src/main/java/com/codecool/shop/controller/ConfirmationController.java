@@ -1,6 +1,7 @@
 package com.codecool.shop.controller;
 
 import com.codecool.shop.config.TemplateEngineUtil;
+import com.codecool.shop.config.Utils;
 import com.codecool.shop.dao.CartDao;
 import com.codecool.shop.dao.OrderDao;
 import com.codecool.shop.dao.implementation.CartDaoMem;
@@ -36,6 +37,15 @@ public class ConfirmationController extends HttpServlet {
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
         OrderDao orderDataStore = OrderDaoMem.getInstance();
+        if (Utils.validateCardNumberInput(req.getParameter("card-number"))==false) {
+            orderDataStore.setInvalidCardNumberMessage("A 16 digit card number is required.");
+            resp.sendRedirect("payment-details");
+        } else {
+            orderDataStore.setInvalidCardNumberMessage("");
+        }
+
+
+        orderDataStore.addLogEntry(orderDataStore, "Confirmation");
         String fullName = orderDataStore.getFullName();
         int orderId = orderDataStore.getId();
         String total = orderDataStore.getTotal();
@@ -55,6 +65,7 @@ public class ConfirmationController extends HttpServlet {
         context.setVariable("order", orderDataStore);
 
         engine.process("payment-confirmation.html", context, resp.getWriter());
+        orderDataStore.addLogEntry(orderDataStore, "Confirmation Successful");
 
         orderDataStore.clear();
         CartDao cartDataStore = CartDaoMem.getInstance();
@@ -112,7 +123,7 @@ public class ConfirmationController extends HttpServlet {
     }
 
     private void jsonify(OrderDao orderDataStore) throws IOException {
-        FileWriter file = new FileWriter("/mnt/7d45c543-fc06-4310-b70a-2a9aa2e43a54/Projects/codecool/java/Codecool_Web_Shop/src/main/webapp/static/logs/log.txt");
+        FileWriter file = new FileWriter("/home/dan/Downloads/log.txt");
         JSONObject obj = new JSONObject();
         obj.put("ID", orderDataStore.getId());
         JSONArray items = new JSONArray();
