@@ -3,7 +3,7 @@ package com.codecool.shop.config;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Utils {
+public class Validation {
 
     /**
      * Validates a name at input based on given conditions.

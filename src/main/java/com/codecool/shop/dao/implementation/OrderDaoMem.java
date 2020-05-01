@@ -3,6 +3,7 @@ package com.codecool.shop.dao.implementation;
 import com.codecool.shop.dao.CartDao;
 import com.codecool.shop.dao.OrderDao;
 import com.codecool.shop.model.Product;
+import com.codecool.shop.utils.Utils;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -153,7 +154,11 @@ public class OrderDaoMem implements OrderDao {
 
         String logFileName = "log_order_" + orderID + "_" + todayAsString;
         this.logFileName = logFileName;
-        FileWriter file = new FileWriter("/home/dan/Downloads/" + logFileName + ".txt", true);
+
+        // get the path from Utils for the log file to be saved in (different paths based on computer)
+        String path = Utils.getPathForLogs();
+
+        FileWriter file = new FileWriter(path + logFileName + ".txt", true);
 
         String stepData = "log order ID: " + orderID + ". Order entered "+ step +" page.\n";
 
