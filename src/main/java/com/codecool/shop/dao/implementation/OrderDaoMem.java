@@ -3,10 +3,17 @@ package com.codecool.shop.dao.implementation;
 import com.codecool.shop.dao.CartDao;
 import com.codecool.shop.dao.OrderDao;
 import com.codecool.shop.model.Product;
+import com.codecool.shop.utils.Utils;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 
@@ -21,14 +28,17 @@ public class OrderDaoMem implements OrderDao {
     private String phoneNumber;
     private String billingAddress;
     private String shippingAddress;
-    private boolean methodCard = false;
+    private boolean paymentMethodCard = false;
     private String cardHolder;
     private String cardNumber;
     private String cardExpiration;
     private String cardSecurityCode;
-    private boolean methodPayPal = false;
+    private boolean paymentMethodPayPal = false;
     private String payPalUsername;
     private String payPalPassword;
+    private String logFileName;
+    private String invalidFullNameEntryMessage = "";
+    private String invalidCardNumberMessage = "";
 
     {
         orderCounter += 1;
@@ -120,16 +130,80 @@ public class OrderDaoMem implements OrderDao {
         phoneNumber = "";
         billingAddress = "";
         shippingAddress = "";
-        methodCard = false;
+        paymentMethodCard = false;
         cardHolder = "";
         cardNumber = "";
         cardExpiration = "";
         cardSecurityCode = "";
-        methodPayPal = false;
+        paymentMethodPayPal = false;
         payPalUsername = "";
         payPalPassword = "";
         items.clear();
+        logFileName = "";
+        invalidFullNameEntryMessage = "";
+        invalidCardNumberMessage = "";
     }
 
+    public void addLogEntry(OrderDao orderDataStore, String step) throws IOException {
+        String orderID = String.valueOf(orderDataStore.getId());
 
+        String pattern = "MM_dd_yyyy";
+        DateFormat df = new SimpleDateFormat(pattern);
+        Date today = Calendar.getInstance().getTime();
+        String todayAsString = df.format(today);
+
+        String logFileName = "log_order_" + orderID + "_" + todayAsString;
+        this.logFileName = logFileName;
+
+        // get the path from Utils for the log file to be saved in (different paths based on computer)
+        String path = Utils.getPathForLogs();
+
+        FileWriter file = new FileWriter(path + logFileName + ".txt", true);
+
+        String stepData = "log order ID: " + orderID + ". Order entered "+ step +" page.\n";
+
+        try {
+            file.write(stepData);
+            System.out.println("Log entry complete - " + step);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            file.flush();
+            file.close();
+        }
+
+    }
+
+    public void setInvalidFullNameEntryMessage(String content) {
+        invalidFullNameEntryMessage = content;
+    }
+
+    public String getInvalidFullNameEntryMessage() {
+        return invalidFullNameEntryMessage;
+    }
+
+    public void setInvalidCardNumberMessage(String content) {
+        invalidCardNumberMessage = content;
+    }
+
+    public String getInvalidCardNumberMessage() {
+        return invalidCardNumberMessage;
+    }
+
+    public void setPaymentMethodCard(boolean status) {
+        paymentMethodCard = status;
+    }
+
+    public boolean getPaymentMethodCard() {
+        return paymentMethodCard;
+    }
+
+    public boolean getPaymentMethodPayPal() {
+        return paymentMethodPayPal;
+    }
+
+    public void setPaymentMethodPayPal(boolean status) {
+        paymentMethodPayPal = status;
+    }
 }

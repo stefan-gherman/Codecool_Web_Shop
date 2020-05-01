@@ -24,18 +24,20 @@ public class PaymentDetailsController extends HttpServlet {
 
         OrderDao orderDataStore = OrderDaoMem.getInstance();
         Currency orderCurrency = orderDataStore.getItems().get(0).getDefaultCurrency();
-
         double total = Double.parseDouble(orderDataStore.getTotal());
-
         context.setVariable("total", total);
         context.setVariable("order", orderDataStore);
         context.setVariable("currency", orderCurrency);
 
         if (req.getParameter("payment-method").equals("card")) {
+            orderDataStore.setPaymentMethodCard(true);
             engine.process("payment-details-card.html", context, resp.getWriter());
+            orderDataStore.addLogEntry(orderDataStore, "Card Details");
         }
         else if (req.getParameter("payment-method").equals("paypal")) {
+            orderDataStore.setPaymentMethodPayPal(true);
             engine.process("payment-details-paypal.html", context, resp.getWriter());
+            orderDataStore.addLogEntry(orderDataStore, "PayPal Details");
         }
         else {
             engine.process("product/notFound.html", context, resp.getWriter());
@@ -47,15 +49,29 @@ public class PaymentDetailsController extends HttpServlet {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
+        OrderDao orderDataStore = OrderDaoMem.getInstance();
 
-        engine.process("paymentUnavailable.html", context, resp.getWriter());
-
-
-        // // Alternative setting of the template context
-        // Map<String, Object> params = new HashMap<>();
-        // params.put("category", productCategoryDataStore.find(1));
-        // params.put("products", productDataStore.getBy(productCategoryDataStore.find(1)));
-        // context.setVariables(params);
+        if (orderDataStore.getPaymentMethodCard()==true) {
+            Currency orderCurrency = orderDataStore.getItems().get(0).getDefaultCurrency();
+            double total = Double.parseDouble(orderDataStore.getTotal());
+            context.setVariable("total", total);
+            context.setVariable("order", orderDataStore);
+            context.setVariable("currency", orderCurrency);
+            engine.process("payment-details-card.html", context, resp.getWriter());
+            orderDataStore.addLogEntry(orderDataStore, "Card Details");
+        }
+        else if (orderDataStore.getPaymentMethodPayPal()==true) {
+            Currency orderCurrency = orderDataStore.getItems().get(0).getDefaultCurrency();
+            double total = Double.parseDouble(orderDataStore.getTotal());
+            context.setVariable("total", total);
+            context.setVariable("order", orderDataStore);
+            context.setVariable("currency", orderCurrency);
+            engine.process("payment-details-paypal.html", context, resp.getWriter());
+            orderDataStore.addLogEntry(orderDataStore, "PayPal Details");
+        }
+        else {
+            engine.process("paymentUnavailable.html", context, resp.getWriter());
+        }
 
     }
 

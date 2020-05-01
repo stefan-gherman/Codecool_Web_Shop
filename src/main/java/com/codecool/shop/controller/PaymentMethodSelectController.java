@@ -1,6 +1,8 @@
 package com.codecool.shop.controller;
 
+import com.codecool.shop.config.Logger;
 import com.codecool.shop.config.TemplateEngineUtil;
+import com.codecool.shop.config.Validation;
 import com.codecool.shop.dao.OrderDao;
 import com.codecool.shop.dao.implementation.OrderDaoMem;
 import org.thymeleaf.TemplateEngine;
@@ -15,7 +17,7 @@ import java.io.IOException;
 import java.util.Currency;
 
 @WebServlet(urlPatterns = {"/payment-method-select"})
-public class PaymentMethodSelectController extends HttpServlet {
+public class PaymentMethodSelectController extends HttpServlet implements Logger {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException  {
@@ -24,8 +26,15 @@ public class PaymentMethodSelectController extends HttpServlet {
 
         OrderDao orderDataStore = OrderDaoMem.getInstance();
         Currency orderCurrency = orderDataStore.getItems().get(0).getDefaultCurrency();
+        orderDataStore.addLogEntry(orderDataStore, "Payment Method Select");
 
         // filling order information from checkout form
+        if (Validation.validateNameInput(req.getParameter("full-name"))==false) {
+            orderDataStore.setInvalidFullNameEntryMessage("A 2 to 50 character full name is required.");
+            resp.sendRedirect("checkout");
+        } else {
+            orderDataStore.setInvalidFullNameEntryMessage("");
+        }
         orderDataStore.setFullName(req.getParameter("full-name"));
         orderDataStore.setEmail(req.getParameter("input-email"));
         orderDataStore.setPhoneNumber(req.getParameter("input-phone"));
@@ -37,18 +46,20 @@ public class PaymentMethodSelectController extends HttpServlet {
         context.setVariable("total", total);
         context.setVariable("order", orderDataStore);
         context.setVariable("currency", orderCurrency);
-
         engine.process("payment-method-select.html", context, resp.getWriter());
+        adminLog(req, orderDataStore, "payment-method");
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
+        OrderDao orderDataStore = OrderDaoMem.getInstance();
 
         engine.process("paymentUnavailable.html", context, resp.getWriter());
 
     }
+
 
 }
 
