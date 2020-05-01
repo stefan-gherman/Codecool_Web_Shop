@@ -28,8 +28,8 @@ public class CheckoutController extends HttpServlet {
 
         // getting the order DAO
         OrderDao orderDataStore = OrderDaoMem.getInstance();
+        orderDataStore.addLogEntry(orderDataStore, "Checkout");
 
-//
         orderDataStore.clear();
         orderDataStore.setItems();
         List<Product> temp = orderDataStore.getItems();
@@ -46,14 +46,7 @@ public class CheckoutController extends HttpServlet {
         context.setVariable("total", total);
         context.setVariable("currency", orderCurrency);
 
-
-
         engine.process("checkout.html", context, resp.getWriter());
-
-
-
-
-
 
     }
 
