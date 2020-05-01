@@ -29,7 +29,7 @@ public class CartController extends HttpServlet {
         float cartTotal = cartDataStore.getTotalSum();
         Map<Product, Integer> cartContents = cartDataStore.getCartContents();
         String defaultCurrency="";
-        int valueChanged;
+        int quantity;
         int objectId;
 
 
@@ -41,11 +41,11 @@ public class CartController extends HttpServlet {
         }
 
         try{
-            if( req.getParameter("valueChanged")!= null && req.getParameter("objectId")!=null) {
-                valueChanged = Integer.parseInt(req.getParameter("valueChanged"));
+            if( req.getParameter("quantity")!= null && req.getParameter("objectId")!=null) {
+                quantity = Integer.parseInt(req.getParameter("quantity"));
                 objectId = Integer.parseInt(req.getParameter("objectId"));
 
-                cartDataStore.add(objectId, valueChanged);
+                cartDataStore.add(objectId, quantity);
 
                 cartSize = cartDataStore.getCartNumberOfProducts();
                 cartTotal = cartDataStore.getTotalSum();
@@ -69,7 +69,7 @@ public class CartController extends HttpServlet {
             engine.process("product/cart.html", context, resp.getWriter());
         } else {
             System.out.println(cartContents);
-            System.out.println(req.getParameter("valueChanged"));
+            System.out.println(req.getParameter("quantity"));
             System.out.println(req.getParameter("objectId"));
             context.setVariable("cartSize", cartSize);
             context.setVariable("cartContents", cartContents);

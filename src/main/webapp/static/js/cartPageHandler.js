@@ -2,9 +2,11 @@
 $(document).ready(() => {
    console.log("JQuery Loaded");
 
+    console.log($("form > .inner_form > input[name='valueChanged']"));
   const $childrenOfSubmitDivs = $('.inner_form').children();
   const $holderDiv = $('.inner_form');
 
+  console.log("ceva");
   // console.log($childreOfSubmitDivs[0].id.search("inputSubmit"));
   let i=0;
   let j = 0;

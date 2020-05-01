@@ -71,7 +71,7 @@
                             <form action="/cart" method="post" th:id="'form' + ${instance.key.getId()}">
                                 <div class="inner_form">
                                     <input type="number" min="0" th:value="${instance.value}"
-                                           th:id="'inputSubmit' + ${instance.key.getId()}" name="valueChanged">
+                                           th:id="'inputSubmit' + ${instance.key.getId()}" name="quantity">
                                     <input type="hidden" onkeydown="return false" th:value="${instance.key.getId()}"
                                            name="objectId">
                                     <input class="btn btn-primary"  style="display: none" th:id="'buttonSubmit' + ${instance.key.getId()}"
