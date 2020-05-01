@@ -2,10 +2,11 @@
 $(document).ready(() => {
    console.log("JQuery Loaded");
 
+    console.log($("form > .inner_form > input[name='quantity']"));
   const $childrenOfSubmitDivs = $('.inner_form').children();
   const $holderDiv = $('.inner_form');
 
-  // console.log($childreOfSubmitDivs[0].id.search("inputSubmit"));
+
   let i=0;
   let j = 0;
   let buttonsArray = [];
@@ -40,11 +41,6 @@ $(document).ready(() => {
           });
 
 
-
-          // $("#inputSubmit" + buttonId ).on("focusout", () => {
-          //     console.log("S-a intamplat ceva");
-          //     $("#buttonSubmit" + buttonId).hide();
-          // });
 
       }
 

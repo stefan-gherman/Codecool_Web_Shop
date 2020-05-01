@@ -1,7 +1,10 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
+
     <div th:replace="header.html :: copy"></div>
+    <title>My Cart</title>
+
 </head>
 <body>
 <div th:replace="product/index.html::menu">
@@ -41,13 +44,13 @@
                         <td th:text="${instance.value}"></td>
                         <td th:text="${ #numbers.formatDecimal(instance.value * instance.key.getDefaultPrice(), 0, 'COMMA',2,'POINT')}  + ' ' + ${defaultCurrency}"></td>
                         <td>
-                            <form action="/cart" method="post" th:id="'form' + ${instance.key.getId()}">
+                            <form action="/cart" method="post" >
                                 <div class="inner_form">
                                     <input type="number" min="0" th:value="${instance.value}"
-                                           th:id="'inputSubmit' + ${instance.key.getId()}" name="valueChanged">
+                                           th:id="'inputSubmit' + ${instance.key.getId()}" name="quantity">
                                     <input type="hidden" onkeydown="return false" th:value="${instance.key.getId()}"
                                            name="objectId">
-                                    <input class="btn btn-primary"  style="display: none" th:id="'buttonSubmit' + ${instance.key.getId()}"
+                                    <input class="btn btn-primary"  style="display: none"
                                            type="Submit" value="Change Quantity">
                                 </div>
                             </form>
@@ -71,7 +74,7 @@
                             </td>
                             <td>
                                 <form action="/cart" method="post">
-                                    <input type="hidden" value="kill" name="clearCart">
+                                    <input type="hidden" value="clear" name="clearCart">
                                     <input type="submit" class="btn btn-primary cart_button" value="Clear Cart">
                                 </form>
                             </td>
