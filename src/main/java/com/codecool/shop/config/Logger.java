@@ -4,7 +4,6 @@ import com.codecool.shop.dao.OrderDao;
 import org.json.simple.JSONObject;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -18,9 +17,9 @@ public interface Logger {
         Date date = new Date();
 
         System.out.println(date.toString());
-        FileWriter log = new FileWriter("src/main/webapp/static/logs/" + orderDataStore.getId() + "-"  +
-                dateFormat.format(date) + ".json");
-        log.write(" ");
+//        FileWriter log = new FileWriter("src/main/webapp/static/logs/" + orderDataStore.getId() + "-"  +
+//                dateFormat.format(date) + ".json");
+//        log.write(" ");
         JSONObject obj = new JSONObject();
 
          System.out.println(req.getRequestURL().toString());
@@ -52,15 +51,15 @@ public interface Logger {
         }
 
 
-        try {
-            log.write(obj.toJSONString());
-            System.out.println("Successfully copied JSON Object to file.");
-            System.out.println("\nJSON Object: " + obj);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            log.flush();
-            log.close();
-        }
+//        try {
+//            log.write(obj.toJSONString());
+//            System.out.println("Successfully copied JSON Object to file.");
+//            System.out.println("\nJSON Object: " + obj);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } finally {
+//            log.flush();
+//            log.close();
+//        }
     }
 }
