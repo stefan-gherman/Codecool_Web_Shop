@@ -61,8 +61,9 @@ public class PaymentMethodSelectController extends HttpServlet implements Logger
         String shippingAddress = req.getParameter("shipping-address");
 
         OrderDao orderDataStore = OrderDaoMem.getInstance();
+        int cartId = 24;
+        orderDataStore.add(fullName, cartId, phoneNumber, email,  billingAddress, shippingAddress);
 
-        orderDataStore.add(fullName, phoneNumber, email,  billingAddress, shippingAddress);
 
         Order order = new Order();
         context.setVariable("total", total);

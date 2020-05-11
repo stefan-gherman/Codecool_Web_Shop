@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface OrderDao {
 
-    public void add(String fullName, String phoneNumber, String email, String billingAddress, String shippingAddress);
+    public void add(String fullName, int cartId, String phoneNumber, String email, String billingAddress, String shippingAddress);
     public void update();
     public Order get(int id);
     public List<Product> getItems();

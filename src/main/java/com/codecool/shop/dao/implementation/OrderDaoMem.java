@@ -12,7 +12,7 @@ import java.util.List;
 
 
 public class OrderDaoMem implements OrderDao {
-//    private DataSource dataSource;
+
     private static OrderDaoMem instance = null;
     static final String DATABASE = "jdbc:postgresql://localhost:5432/codecoolshop";
     static final String USER = "postgres";
@@ -30,25 +30,21 @@ public class OrderDaoMem implements OrderDao {
         return instance;
     }
 
-//    public DataSource getDataSource() {
-//        return dataSource;
-//    }
-
     @Override
-    public void add(String fullName, String phoneNumber, String email, String billingAddress, String shippingAddress) {
+    public void add(String fullName, int cartId, String phoneNumber, String email, String billingAddress, String shippingAddress) {
         System.out.println("Attempting to add new order." + fullName + phoneNumber + email);
         Connection conn = null;
         PreparedStatement pstmt = null;
 
         try {
-//            Class.forName("org.postgresql.Driver");
             conn = getConnection();
-            pstmt = conn.prepareStatement("INSERT INTO orders (owner_name, owner_phone, owner_email, billing_address, shipping_address) VALUES (?, ?, ?, ?, ?)");
+            pstmt = conn.prepareStatement("INSERT INTO orders (owner_name, cart_id, owner_phone, owner_email, billing_address, shipping_address) VALUES (?, ?, ?, ?, ?, ?)");
             pstmt.setString(1, fullName);
-            pstmt.setString(2, phoneNumber);
-            pstmt.setString(3, email);
-            pstmt.setString(4, billingAddress);
-            pstmt.setString(5, shippingAddress);
+            pstmt.setInt(2, cartId);
+            pstmt.setString(3, phoneNumber);
+            pstmt.setString(4, email);
+            pstmt.setString(5, billingAddress);
+            pstmt.setString(6, shippingAddress);
             pstmt.executeUpdate();
         }
         catch (SQLException se) {
