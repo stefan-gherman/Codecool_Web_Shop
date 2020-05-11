@@ -42,12 +42,12 @@
                         <td th:text="${ #numbers.formatDecimal(instance.value * instance.key.getDefaultPrice(), 0, 'COMMA',2,'POINT')}  + ' ' + ${defaultCurrency}"></td>
                         <td>
                             <form action="/cart" method="post">
-                                <div class="inner_form">
+                                <div class="inner_form" style="">
                                     <input type="number" min="0" th:value="${instance.value}"
-                                           th:id="'inputSubmit' + ${instance.key.getId()}" name="quantity">
+                                           th:id="'inputSubmit' + ${instance.key.getId()}" name="quantity" class="inputInner">
                                     <input type="hidden" onkeydown="return false" th:value="${instance.key.getId()}"
                                            name="objectId">
-                                    <input class="btn btn-primary" style="display: none"
+                                    <input class="btn btn-primary btn_small" style="display: none"
                                            type="Submit" value="Change Quantity">
                                 </div>
                             </form>

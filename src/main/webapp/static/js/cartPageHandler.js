@@ -11,7 +11,7 @@ $(document).ready(() => {
         submitButton.show();
     });
     $(document).on("click", (event) => {
-        if ($(event.target).closest(".inner_form").length === 0) {
+        if ($(event.target).closest('.inner_form').length === 0) {
             $("form > .inner_form > input[type='submit']").hide();
         }
     });
