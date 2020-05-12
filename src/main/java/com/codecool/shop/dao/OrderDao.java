@@ -11,5 +11,6 @@ public interface OrderDao {
     public void update(Order order);
     public Order getOrderById(int id);
     public List<ListItem> getItems(int userId);
+    public List<Order> getOrderHistoryByUserId(int userId);
 
 }

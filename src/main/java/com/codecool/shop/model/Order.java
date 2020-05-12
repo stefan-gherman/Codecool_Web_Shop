@@ -6,8 +6,6 @@ import com.codecool.shop.utils.Utils;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -89,14 +87,12 @@ public class Order {
         this.userId = userId;
     }
 
-    public String getTotal() {
-        double temp = 0;
+    public float getTotal() {
+        float temp = 0;
         for (ListItem item : this.items) {
             temp += item.getProductPrice();
         }
-        NumberFormat formatter = new DecimalFormat("#.00");
-        String total = formatter.format(temp);
-        return total;
+        return temp;
     }
 
     public void clear() {

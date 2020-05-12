@@ -234,6 +234,57 @@ public class OrderDaoMem implements OrderDao {
         return returnedItems;
     }
 
+    @Override
+    public List<Order> getOrderHistoryByUserId(int userId) {
+        System.out.println("Attempting to get order history.");
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        List<Order> temp = new ArrayList<>();
+        try {
+            conn = dbConnect.getConnection();
+            pstmt = conn.prepareStatement("" +
+                    "SELECT * FROM orders WHERE id = ?;");
+            pstmt.setInt(1, userId);
+
+            Order tempOrder = new Order();
+            ResultSet resultSet = pstmt.executeQuery();
+            while(resultSet.next()) {
+                tempOrder.setId(resultSet.getInt("id"));
+                tempOrder.setDateCreated(resultSet.getDate("date_created"));
+                tempOrder.setCartId(resultSet.getInt("cart_id"));
+                tempOrder.setUserId(resultSet.getInt("user_id"));
+                tempOrder.setOwnerName(resultSet.getString("owner_name"));
+                tempOrder.setPhoneNumber(resultSet.getString("owner_phone"));
+                tempOrder.setEmail(resultSet.getString("owner_email"));
+                tempOrder.setBillingAddress(resultSet.getString("billing_address"));
+                tempOrder.setShippingAddress(resultSet.getString("shipping_address"));
+                temp.add(tempOrder);
+            }
+        }
+        catch (SQLException se) {
+            se.printStackTrace();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        finally {
+            try{
+                if(pstmt!=null)
+                    pstmt.close();
+            }catch(SQLException se2){
+            }
+            try{
+                if(conn!=null)
+                    conn.close();
+            }catch(SQLException se){
+                se.printStackTrace();
+            }
+        }
+        System.out.println("History retrieval complete.");
+
+        return temp;
+    }
+
     private static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(DATABASE, USER, PASS);
     }
