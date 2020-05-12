@@ -35,7 +35,9 @@ public class OrderDaoMem implements OrderDao {
         System.out.println("Attempting to add new order." + fullName + phoneNumber + email);
         Connection conn = null;
         PreparedStatement pstmt = null;
-
+        //TODO INSERT INTO orders RETURNING ID -- param object, id null > create obj in DB, get serial, return DB ID > in memory update object ID
+        // take object as parameter - update the order field in the DB
+        // future modifications only in method body, not signature
         try {
             conn = getConnection();
             pstmt = conn.prepareStatement("INSERT INTO orders (owner_name, cart_id, owner_phone, owner_email, billing_address, shipping_address) VALUES (?, ?, ?, ?, ?, ?)");
