@@ -30,7 +30,18 @@ public class PaymentMethodSelectController extends HttpServlet implements Logger
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
-        CartDao cartDataStore = CartDaoMem.getInstance();
+        // temporary constant until session is implemented
+        final int USERID = 1;
+
+        String fullName = req.getParameter("full-name");
+        String email = req.getParameter("input-email");
+        String phoneNumber = req.getParameter("input-phone");
+        String billingAddress = req.getParameter("billing-address");
+        String shippingAddress = req.getParameter("shipping-address");
+
+//        Order order = new Order();
+
+            CartDao cartDataStore = CartDaoMem.getInstance();
 
         Map<Product, Integer> tempHashMap = cartDataStore.getCartContents();
         List<Product> temp = new ArrayList<>();
@@ -54,15 +65,10 @@ public class PaymentMethodSelectController extends HttpServlet implements Logger
 //        } else {
 //            orderDataStore.setInvalidFullNameEntryMessage("");
 //        }
-        String fullName = req.getParameter("full-name");
-        String email = req.getParameter("input-email");
-        String phoneNumber = req.getParameter("input-phone");
-        String billingAddress = req.getParameter("billing-address");
-        String shippingAddress = req.getParameter("shipping-address");
 
         OrderDao orderDataStore = OrderDaoMem.getInstance();
         int cartId = 24;
-        orderDataStore.add(fullName, cartId, phoneNumber, email,  billingAddress, shippingAddress);
+        //orderDataStore.add(fullName, cartId, phoneNumber, email,  billingAddress, shippingAddress);
 
 
         Order order = new Order();
@@ -75,39 +81,6 @@ public class PaymentMethodSelectController extends HttpServlet implements Logger
     }
 
 
-
-
-
-//    @Override
-//    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException  {
-//        TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
-//        WebContext context = new WebContext(req, resp, req.getServletContext());
-//
-//        OrderDao orderDataStore = OrderDaoMem.getInstance();
-//        Currency orderCurrency = orderDataStore.getItems().get(0).getDefaultCurrency();
-//        orderDataStore.addLogEntry(orderDataStore, "Payment Method Select");
-//
-//        // filling order information from checkout form
-//        if (Validation.validateNameInput(req.getParameter("full-name"))==false) {
-//            orderDataStore.setInvalidFullNameEntryMessage("A 2 to 50 character full name is required.");
-//            resp.sendRedirect("checkout");
-//        } else {
-//            orderDataStore.setInvalidFullNameEntryMessage("");
-//        }
-//        orderDataStore.setFullName(req.getParameter("full-name"));
-//        orderDataStore.setEmail(req.getParameter("input-email"));
-//        orderDataStore.setPhoneNumber(req.getParameter("input-phone"));
-//        orderDataStore.setBillingAddress(req.getParameter("billing-address"));
-//        orderDataStore.setShippingAddress(req.getParameter("shipping-address"));
-//
-//        double total = Double.parseDouble(orderDataStore.getTotal());
-//
-//        context.setVariable("total", total);
-//        context.setVariable("order", orderDataStore);
-//        context.setVariable("currency", orderCurrency);
-//        engine.process("payment-method-select.html", context, resp.getWriter());
-//        adminLog(req, orderDataStore, "payment-method");
-//    }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

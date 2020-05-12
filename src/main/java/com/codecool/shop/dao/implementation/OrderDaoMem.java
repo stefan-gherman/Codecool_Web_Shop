@@ -31,23 +31,38 @@ public class OrderDaoMem implements OrderDao {
     }
 
     @Override
-    public void add(String fullName, int cartId, String phoneNumber, String email, String billingAddress, String shippingAddress) {
+    public int add(Order order) {
+        String fullName = order.getFullName();
+        int cartId = order.getCartId();
+        String phoneNumber = order.getPhoneNumber();
+        String email = order.getEmail();
+        String billingAddress = order.getBillingAddress();
+        String shippingAddress = order.getShippingAddress();
+
+
         System.out.println("Attempting to add new order." + fullName + phoneNumber + email);
         Connection conn = null;
         PreparedStatement pstmt = null;
+        int orderIdFromDb = 0;
         //TODO INSERT INTO orders RETURNING ID -- param object, id null > create obj in DB, get serial, return DB ID > in memory update object ID
         // take object as parameter - update the order field in the DB
         // future modifications only in method body, not signature
         try {
-            conn = getConnection();
-            pstmt = conn.prepareStatement("INSERT INTO orders (owner_name, cart_id, owner_phone, owner_email, billing_address, shipping_address) VALUES (?, ?, ?, ?, ?, ?)");
+            conn = dbConnect.getConnection();
+            pstmt = conn.prepareStatement("INSERT INTO orders (owner_name, cart_id, owner_phone, owner_email, billing_address, shipping_address) " +
+                    "VALUES (?, ?, ?, ?, ?, ?) RETURNING id");
             pstmt.setString(1, fullName);
             pstmt.setInt(2, cartId);
             pstmt.setString(3, phoneNumber);
             pstmt.setString(4, email);
             pstmt.setString(5, billingAddress);
             pstmt.setString(6, shippingAddress);
-            pstmt.executeUpdate();
+            //pstmt.executeUpdate();
+            ResultSet resultSet = pstmt.executeQuery();
+            while (resultSet.next()) {
+                orderIdFromDb = resultSet.getInt("id");
+            }
+
         }
         catch (SQLException se) {
             se.printStackTrace();
@@ -70,6 +85,7 @@ public class OrderDaoMem implements OrderDao {
         }
 
         System.out.println("New order add process complete.");
+        return orderIdFromDb;
     }
 
     @Override
@@ -106,7 +122,6 @@ public class OrderDaoMem implements OrderDao {
                         resultSet.getString("image"),
                         resultSet.getFloat("price"),
                         resultSet.getString("currency")));
-
             }
         }
         catch (SQLException se) {

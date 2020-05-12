@@ -4,6 +4,7 @@ import com.codecool.shop.config.TemplateEngineUtil;
 import com.codecool.shop.dao.OrderDao;
 import com.codecool.shop.dao.implementation.OrderDaoMem;
 import com.codecool.shop.model.ListItem;
+import com.codecool.shop.model.Order;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -21,7 +22,6 @@ public class CheckoutController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
         System.out.println("********************** Checkout button pressed.");
@@ -33,60 +33,28 @@ public class CheckoutController extends HttpServlet {
         List<ListItem> temp = new ArrayList<>();
         OrderDao orderDao = OrderDaoMem.getInstance();
         temp = orderDao.getItems(CARTID);
-        System.out.println(temp);
-
         context.setVariable("items", temp);
-
         double total=0;
         String orderCurrency;
         for (ListItem item:temp) {
             total += item.getProductPrice();
         }
         orderCurrency = temp.get(0).getProductCurrency();
-//        context.setVariable("order", orderDataStore);
+
+        // create new order object in memory and also in the DB with the limited data
+        Order tempOrder = new Order();
+        tempOrder.setCartId(CARTID);
+        tempOrder.setUserId(USERID);
+        tempOrder.setItems(temp);
+        int orderIdFromDb = orderDao.add(tempOrder);
+        // TODO add items to order_items
+
+
+
         context.setVariable("total", total);
         context.setVariable("currency", orderCurrency);
-
         engine.process("checkout.html", context, resp.getWriter());
-
     }
-
-
-
-
-
-
-
-//    @Override
-//    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-//
-//        TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
-//        WebContext context = new WebContext(req, resp, req.getServletContext());
-//
-//        // getting the order DAO
-//        OrderDao orderDataStore = OrderDaoMem.getInstance();
-//        orderDataStore.addLogEntry(orderDataStore, "Checkout");
-//
-//        orderDataStore.clear();
-//        orderDataStore.setItems();
-//        List<Product> temp = orderDataStore.getItems();
-//        System.out.println(temp);
-//
-//        context.setVariable("items", temp);
-//
-//        double total=0;
-//        Currency orderCurrency;
-//        for (Product item:temp) {
-//            total += item.getDefaultPrice();
-//        }
-//        orderCurrency = temp.get(0).getDefaultCurrency();
-//        context.setVariable("order", orderDataStore);
-//        context.setVariable("total", total);
-//        context.setVariable("currency", orderCurrency);
-//
-//        engine.process("checkout.html", context, resp.getWriter());
-//
-//    }
 
 }
 

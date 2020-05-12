@@ -1,8 +1,6 @@
 package com.codecool.shop.model;
 
-import com.codecool.shop.dao.CartDao;
 import com.codecool.shop.dao.OrderDao;
-import com.codecool.shop.dao.implementation.CartDaoMem;
 import com.codecool.shop.utils.Utils;
 
 import java.io.FileWriter;
@@ -11,7 +9,6 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -19,7 +16,9 @@ import java.util.List;
 public class Order {
 
     private int id;
-    private List<Product> items = setItems();
+    private int cartId;
+    private int userId;
+    private List<ListItem> items;
     private String fullName;
     private String email;
     private String phoneNumber;
@@ -41,18 +40,11 @@ public class Order {
 
     }
 
-    public List<Product> setItems() {
-        List<Product> temp = new ArrayList<>();
-        CartDao cartDataStore = CartDaoMem.getInstance();
-        cartDataStore.getCartContents().forEach((key, value) -> {
-            for (int i = 0; i< value; i++) {
-                temp.add(key);
-            }
-        });
-        return temp;
+    public void setItems(List<ListItem> items) {
+        this.items = items;
     }
 
-    public List<Product> getItems() {
+    public List<ListItem> getItems() {
         return items;
     }
 
@@ -60,10 +52,26 @@ public class Order {
         return id;
     }
 
+    public int getCartId() {
+        return cartId;
+    }
+
+    public void setCartId(int cartId) {
+        this.cartId = cartId;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
     public String getTotal() {
         double temp = 0;
-        for (Product item : this.items) {
-            temp += item.getDefaultPrice();
+        for (ListItem item : this.items) {
+            temp += item.getProductPrice();
         }
         NumberFormat formatter = new DecimalFormat("#.00");
         String total = formatter.format(temp);
