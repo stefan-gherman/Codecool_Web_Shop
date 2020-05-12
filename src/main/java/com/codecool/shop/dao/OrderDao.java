@@ -1,34 +1,15 @@
 package com.codecool.shop.dao;
 
+import com.codecool.shop.model.Order;
 import com.codecool.shop.model.Product;
 
-import java.io.IOException;
 import java.util.List;
 
 public interface OrderDao {
 
-    List<Product> getItems();
-    int getId();
-    String getTotal();
-    void setFullName(String fullName);
-    String getFullName();
-    void setEmail(String email);
-    String getEmail();
-    void setPhoneNumber(String phoneNumber);
-    void setBillingAddress(String billingAddress);
-    String getBillingAddress();
-    void setShippingAddress(String shippingAddress);
-    String getShippingAddress();
-    void clear();
-    List<Product> setItems();
-    void addLogEntry(OrderDao orderDataStore, String checkout) throws IOException;
-    void setInvalidFullNameEntryMessage(String content);
-    String getInvalidFullNameEntryMessage();
-    void setInvalidCardNumberMessage(String content);
-    String getInvalidCardNumberMessage();
-    void setPaymentMethodCard(boolean status);
-    boolean getPaymentMethodCard();
-    void setPaymentMethodPayPal(boolean status);
-    boolean getPaymentMethodPayPal();
+    public void add(String fullName, int cartId, String phoneNumber, String email, String billingAddress, String shippingAddress);
+    public void update();
+    public Order get(int id);
+    public List<Product> getItems();
 
 }
