@@ -2,6 +2,9 @@ package com.codecool.shop.controller;
 
 import com.codecool.shop.config.TemplateEngineUtil;
 import com.codecool.shop.dao.OrderDao;
+import com.codecool.shop.dao.implementation.OrderDaoMem;
+import com.codecool.shop.model.ListItem;
+import com.codecool.shop.model.Order;
 import com.codecool.shop.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -21,15 +24,42 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 @WebServlet(urlPatterns = {"/payment-confirmation"})
 public class ConfirmationController extends HttpServlet {
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException  {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
+
+        final int ORDERID = 1;
+        final int USERID = 1;
+        final int CARTID = 1;
+
+        OrderDao orderDao = OrderDaoMem.getInstance();
+        Order order = orderDao.getOrderById(ORDERID);
+
+        List<ListItem> temp = new ArrayList<>();
+        temp = orderDao.getItems(CARTID);
+        double total = 0;
+        String orderCurrency;
+        for (ListItem item : temp) {
+            total += item.getProductPrice();
+        }
+        orderCurrency = temp.get(0).getProductCurrency();
+        context.setVariable("total", total);
+        context.setVariable("order", order);
+        context.setVariable("currency", orderCurrency);
+
+        engine.process("payment-confirmation.html", context, resp.getWriter());
+
+    }
+
+
 
 //        OrderDao orderDataStore = OrderDaoMem.getInstance();
 //        if (Validation.validateCardNumberInput(req.getParameter("card-number"))==false) {
@@ -65,7 +95,7 @@ public class ConfirmationController extends HttpServlet {
 //        orderDataStore.clear();
 //        CartDao cartDataStore = CartDaoMem.getInstance();
 //        cartDataStore.eraseMe();
-    }
+//    }
 
     private void sendEmailConfirmation(String custEmail, String fullName, int orderId, String total) {
         String to = custEmail;

@@ -2,12 +2,10 @@ package com.codecool.shop.controller;
 
 import com.codecool.shop.config.Logger;
 import com.codecool.shop.config.TemplateEngineUtil;
-import com.codecool.shop.dao.CartDao;
 import com.codecool.shop.dao.OrderDao;
-import com.codecool.shop.dao.implementation.CartDaoMem;
 import com.codecool.shop.dao.implementation.OrderDaoMem;
+import com.codecool.shop.model.ListItem;
 import com.codecool.shop.model.Order;
-import com.codecool.shop.model.Product;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -18,9 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.List;
-import java.util.Map;
 
 @WebServlet(urlPatterns = {"/payment-method-select"})
 public class PaymentMethodSelectController extends HttpServlet implements Logger {
@@ -33,6 +29,7 @@ public class PaymentMethodSelectController extends HttpServlet implements Logger
         // temporary constant until session is implemented
         final int USERID = 1;
         final int ORDERID = 1;
+        final int CARTID = 1;
 
         OrderDao orderDao = OrderDaoMem.getInstance();
 
@@ -53,22 +50,15 @@ public class PaymentMethodSelectController extends HttpServlet implements Logger
 
         orderDao.update(order);
 
-            CartDao cartDataStore = CartDaoMem.getInstance();
-
-        Map<Product, Integer> tempHashMap = cartDataStore.getCartContents();
-        List<Product> temp = new ArrayList<>();
-
-        for (Product item: tempHashMap.keySet()) {
-            temp.add(item);
-        }
-        System.out.println(temp);
+        List<ListItem> temp = new ArrayList<>();
+        temp=orderDao.getItems(CARTID);
         context.setVariable("items", temp);
-        double total=0;
-        Currency orderCurrency;
-        for (Product item:temp) {
-            total += item.getDefaultPrice();
+        double total = 0;
+        String orderCurrency;
+        for (ListItem item:temp) {
+            total += item.getProductPrice();
         }
-        orderCurrency = temp.get(0).getDefaultCurrency();
+        orderCurrency = temp.get(0).getProductCurrency();
 
         // filling order information from checkout form
 //        if (Validation.validateNameInput(req.getParameter("full-name"))==false) {
@@ -78,14 +68,7 @@ public class PaymentMethodSelectController extends HttpServlet implements Logger
 //            orderDataStore.setInvalidFullNameEntryMessage("");
 //        }
 
-        OrderDao orderDataStore = OrderDaoMem.getInstance();
-        int cartId = 24;
-        //orderDataStore.add(fullName, cartId, phoneNumber, email,  billingAddress, shippingAddress);
-
-
-
         context.setVariable("total", total);
-//        context.setVariable("order", orderDataStore);
         context.setVariable("order", order);
         context.setVariable("currency", orderCurrency);
         engine.process("payment-method-select.html", context, resp.getWriter());
@@ -93,12 +76,10 @@ public class PaymentMethodSelectController extends HttpServlet implements Logger
     }
 
 
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
-//        OrderDao orderDataStore = OrderDaoMem.getInstance();
 
         engine.process("paymentUnavailable.html", context, resp.getWriter());
 
