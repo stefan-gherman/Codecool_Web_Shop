@@ -1,45 +1,18 @@
 $(document).ready(() => {
     console.log("JQuery Loaded");
 
-    console.log($("form > .inner_form > input[name='quantity']"));
-    const $childrenOfSubmitDivs = $('.inner_form').children();
-    const $holderDiv = $('.inner_form');
-
-
-    let i = 0;
-    let j = 0;
-    let buttonsArray = [];
-    for (i = 0; i < $childrenOfSubmitDivs.length; i++) {
-        if ($childrenOfSubmitDivs[i].id.search("buttonSubmit") === 0) {
-            buttonsArray[j] = $childrenOfSubmitDivs[i];
-            j++;
+    //console.log($("form > .inner_form > input[name='quantity']"));
+    $("form > .inner_form > input[name='quantity']").on("focus", (event) => {
+        $("form > .inner_form > input[type='submit']").hide();
+        let submitButton = $(event.target).parent().find(".btn-primary");
+        submitButton.on("click", (event) => {
+            event.stopPropagation();
+        })
+        submitButton.show();
+    });
+    $(document).on("click", (event) => {
+        if ($(event.target).closest('.inner_form').length === 0) {
+            $("form > .inner_form > input[type='submit']").hide();
         }
-    }
-    console.log(buttonsArray);
-    for (i = 0; i < $childrenOfSubmitDivs.length; i++) {
-
-        if ($childrenOfSubmitDivs[i].id.search("inputSubmit") === 0) {
-
-            const buttonId = $childrenOfSubmitDivs[i].id.replace("inputSubmit", "");
-
-
-            $("#inputSubmit" + buttonId).on("focus", () => {
-                $("#buttonSubmit" + buttonId).show();
-                console.log($("#buttonSubmit" + buttonId).attr("id"));
-                for (let j = 0; j < buttonsArray.length; j++) {
-                    if (buttonsArray[j].id !== $("#buttonSubmit" + buttonId).attr("id")) {
-                        console.log($("#buttonSubmit" + buttonId));
-                        console.log(`Button from array ${buttonsArray[j].id} - Button from page${$("#buttonSubmit" + buttonId).attr("id")}`);
-                        buttonsArray[j].setAttribute("style", "display: none");
-                    }
-                    $(document).on("click")
-                }
-
-            });
-
-
-        }
-
-    }
-
+    });
 });

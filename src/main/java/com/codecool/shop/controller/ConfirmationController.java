@@ -1,11 +1,7 @@
 package com.codecool.shop.controller;
 
 import com.codecool.shop.config.TemplateEngineUtil;
-import com.codecool.shop.config.Validation;
-import com.codecool.shop.dao.CartDao;
 import com.codecool.shop.dao.OrderDao;
-import com.codecool.shop.dao.implementation.CartDaoMem;
-import com.codecool.shop.dao.implementation.OrderDaoMem;
 import com.codecool.shop.model.Product;
 import com.codecool.shop.utils.Utils;
 import org.json.simple.JSONArray;
@@ -26,7 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Currency;
 import java.util.Properties;
 
 @WebServlet(urlPatterns = {"/payment-confirmation"})
@@ -37,40 +32,40 @@ public class ConfirmationController extends HttpServlet {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
-        OrderDao orderDataStore = OrderDaoMem.getInstance();
-        if (Validation.validateCardNumberInput(req.getParameter("card-number"))==false) {
-            orderDataStore.setInvalidCardNumberMessage("A 16 digit card number is required.");
-            resp.sendRedirect("payment-details");
-        } else {
-            orderDataStore.setInvalidCardNumberMessage("");
-        }
+//        OrderDao orderDataStore = OrderDaoMem.getInstance();
+//        if (Validation.validateCardNumberInput(req.getParameter("card-number"))==false) {
+//            orderDataStore.setInvalidCardNumberMessage("A 16 digit card number is required.");
+//            resp.sendRedirect("payment-details");
+//        } else {
+//            orderDataStore.setInvalidCardNumberMessage("");
+//        }
+//
+//
+//        orderDataStore.addLogEntry(orderDataStore, "Confirmation");
+//        String fullName = orderDataStore.getFullName();
+//        int orderId = orderDataStore.getId();
+//        String total = orderDataStore.getTotal();
 
-
-        orderDataStore.addLogEntry(orderDataStore, "Confirmation");
-        String fullName = orderDataStore.getFullName();
-        int orderId = orderDataStore.getId();
-        String total = orderDataStore.getTotal();
-
-        // transform Order into JSON and export to file
-        jsonify(orderDataStore);
-
-        // send confirmation email to customer
-        String custEmail = orderDataStore.getEmail();
-        sendEmailConfirmation(custEmail, fullName, orderId, total);
-
-        double totalAmount = Double.parseDouble(orderDataStore.getTotal());
-
-
-        context.setVariable("total", totalAmount);
-
-        context.setVariable("order", orderDataStore);
-
-        engine.process("payment-confirmation.html", context, resp.getWriter());
-        orderDataStore.addLogEntry(orderDataStore, "Confirmation Successful");
-
-        orderDataStore.clear();
-        CartDao cartDataStore = CartDaoMem.getInstance();
-        cartDataStore.eraseMe();
+//        // transform Order into JSON and export to file
+//        jsonify(orderDataStore);
+//
+//        // send confirmation email to customer
+//        String custEmail = orderDataStore.getEmail();
+//        sendEmailConfirmation(custEmail, fullName, orderId, total);
+//
+//        double totalAmount = Double.parseDouble(orderDataStore.getTotal());
+//
+//
+//        context.setVariable("total", totalAmount);
+//
+//        context.setVariable("order", orderDataStore);
+//
+//        engine.process("payment-confirmation.html", context, resp.getWriter());
+//        orderDataStore.addLogEntry(orderDataStore, "Confirmation Successful");
+//
+//        orderDataStore.clear();
+//        CartDao cartDataStore = CartDaoMem.getInstance();
+//        cartDataStore.eraseMe();
     }
 
     private void sendEmailConfirmation(String custEmail, String fullName, int orderId, String total) {
@@ -130,7 +125,8 @@ public class ConfirmationController extends HttpServlet {
 
         FileWriter file = new FileWriter(path + "log.txt", true);
         JSONObject obj = new JSONObject();
-        obj.put("ID", orderDataStore.getId());
+//        obj.put("ID", orderDataStore.getId());
+        obj.put("ID", "545454");
         JSONArray items = new JSONArray();
         for (Product item : orderDataStore.getItems()){
             items.add(item.getName());
@@ -155,10 +151,10 @@ public class ConfirmationController extends HttpServlet {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
-        OrderDao orderDataStore = OrderDaoMem.getInstance();
-        Currency orderCurrency = orderDataStore.getItems().get(0).getDefaultCurrency();
-        context.setVariable("order", orderDataStore);
-        context.setVariable("currency", orderCurrency);
+//        OrderDao orderDataStore = OrderDaoMem.getInstance();
+//        Currency orderCurrency = orderDataStore.getItems().get(0).getDefaultCurrency();
+//        context.setVariable("order", orderDataStore);
+//        context.setVariable("currency", orderCurrency);
 
         engine.process("payment-confirmation.html", context, resp.getWriter());
 

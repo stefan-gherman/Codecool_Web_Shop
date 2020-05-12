@@ -1,11 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
-<head>
-
-    <th:block th:replace="headerTemplate.html:: headContentMeta"></th:block>
-    <title>My Cart</title>
-    <th:block th:replace="headerTemplate.html :: headContentBootStrap"></th:block>
-
+<head th:include="headerTemplate.html :: headFragment">
+    <title id="pageTitle">Cart</title>
 </head>
 <body>
 <div th:replace="product/index.html::menu">
@@ -31,12 +27,12 @@
                     <th>
                         Subtotal
                     </th>
-<!--                    <th>-->
-<!--                        <p class="nav_links" ><a href="/cart"><i class="fas fa-shopping-cart fa-2x"></i></a></p>-->
-<!--                        <span th:if="${cartSize} > 0">-->
-<!--        <sup class="badge badge-danger" th:text="${cartSize}">300</sup>-->
-<!--    </span>-->
-<!--                    </th>-->
+                    <!--                    <th>-->
+                    <!--                        <p class="nav_links" ><a href="/cart"><i class="fas fa-shopping-cart fa-2x"></i></a></p>-->
+                    <!--                        <span th:if="${cartSize} > 0">-->
+                    <!--        <sup class="badge badge-danger" th:text="${cartSize}">300</sup>-->
+                    <!--    </span>-->
+                    <!--                    </th>-->
                     </thead>
                     <tbody>
                     <tr th:each="instance : ${cartContents}">
@@ -45,13 +41,13 @@
                         <td th:text="${instance.value}"></td>
                         <td th:text="${ #numbers.formatDecimal(instance.value * instance.key.getDefaultPrice(), 0, 'COMMA',2,'POINT')}  + ' ' + ${defaultCurrency}"></td>
                         <td>
-                            <form action="/cart" method="post" >
-                                <div class="inner_form">
+                            <form action="/cart" method="post">
+                                <div class="inner_form" style="">
                                     <input type="number" min="0" th:value="${instance.value}"
-                                           th:id="'inputSubmit' + ${instance.key.getId()}" name="quantity">
+                                           th:id="'inputSubmit' + ${instance.key.getId()}" name="quantity" class="inputInner">
                                     <input type="hidden" onkeydown="return false" th:value="${instance.key.getId()}"
                                            name="objectId">
-                                    <input class="btn btn-primary"  style="display: none"
+                                    <input class="btn btn-primary btn_small" style="display: none"
                                            type="Submit" value="Change Quantity">
                                 </div>
                             </form>
@@ -66,26 +62,28 @@
 
 
                 <div class="container">
-                    <table>
-                        <tr>
-                            <td>
-                                <a href="/checkout">
-                                    <button class="btn btn-primary cart_button">Checkout</button>
-                                </a>
-                            </td>
-                            <td>
-                                <form action="/cart" method="post">
-                                    <input type="hidden" value="clear" name="clearCart">
-                                    <input type="submit" class="btn btn-primary cart_button" value="Clear Cart">
-                                </form>
-                            </td>
-                            <td>
-                                <a href="/">
-                                    <button class="btn btn-primary cart_button">Keep Shopping</button>
-                                </a>
-                            </td>
-                        </tr>
-                    </table>
+                    <div class="row">
+                        <table align="center">
+                            <tr>
+                                <td>
+                                    <a href="/checkout">
+                                        <button class="btn btn-primary cart_button">Checkout</button>
+                                    </a>
+                                </td>
+                                <td>
+                                    <form action="/cart" method="post">
+                                        <input type="hidden" value="clear" name="clearCart">
+                                        <input type="submit" class="btn btn-primary cart_button" value="Clear Cart">
+                                    </form>
+                                </td>
+                                <td>
+                                    <a href="/">
+                                        <button class="btn btn-primary cart_button">Keep Shopping</button>
+                                    </a>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
             </div>
             <div th:if="${cartSize} <= 0">
