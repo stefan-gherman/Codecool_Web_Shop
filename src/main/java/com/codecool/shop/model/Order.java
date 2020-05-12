@@ -18,8 +18,9 @@ public class Order {
     private int id;
     private int cartId;
     private int userId;
+    private java.sql.Date dateCreated;
     private List<ListItem> items;
-    private String fullName;
+    private String ownerName;
     private String email;
     private String phoneNumber;
     private String billingAddress;
@@ -52,6 +53,26 @@ public class Order {
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public java.sql.Date getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(java.sql.Date dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public boolean isPaymentMethodCard() {
+        return paymentMethodCard;
+    }
+
+    public boolean isPaymentMethodPayPal() {
+        return paymentMethodPayPal;
+    }
+
     public int getCartId() {
         return cartId;
     }
@@ -79,7 +100,7 @@ public class Order {
     }
 
     public void clear() {
-        fullName = "";
+        ownerName = "";
         email = "";
         phoneNumber = "";
         billingAddress = "";
@@ -161,12 +182,12 @@ public class Order {
         paymentMethodPayPal = status;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setOwnerName(String fullName) {
+        this.ownerName = fullName;
     }
 
-    public String getFullName() {
-        return fullName;
+    public String getOwnerName() {
+        return ownerName;
     }
 
     public void setEmail(String email) {

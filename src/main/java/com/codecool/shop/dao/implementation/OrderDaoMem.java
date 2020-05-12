@@ -32,7 +32,7 @@ public class OrderDaoMem implements OrderDao {
 
     @Override
     public int add(Order order) {
-        String fullName = order.getFullName();
+        String fullName = order.getOwnerName();
         int cartId = order.getCartId();
         String phoneNumber = order.getPhoneNumber();
         String email = order.getEmail();
@@ -89,13 +89,100 @@ public class OrderDaoMem implements OrderDao {
     }
 
     @Override
-    public void update() {
+    public void update(Order order) {
+        System.out.println("Attempting to update order.");
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        try {
+            conn = dbConnect.getConnection();
+            pstmt = conn.prepareStatement("UPDATE orders " +
+                    "SET date_created = ?, " +
+                        "cart_id = ?," +
+                        "user_id = ?," +
+                        "owner_name = ?," +
+                        "owner_phone = ?," +
+                        "owner_email = ?," +
+                        "billing_address = ?," +
+                        "shipping_address = ?" +
+                    "WHERE id = ?;");
+            pstmt.setDate(1, order.getDateCreated());
+            pstmt.setInt(2, order.getCartId());
+            pstmt.setInt(3, order.getUserId());
+            pstmt.setString(4, order.getOwnerName());
+            pstmt.setString(5, order.getPhoneNumber());
+            pstmt.setString(6, order.getEmail());
+            pstmt.setString(7, order.getBillingAddress());
+            pstmt.setString(8, order.getShippingAddress());
+            pstmt.setInt(9, order.getId());
+            pstmt.executeUpdate();
+        }
+        catch (SQLException se) {
+            se.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (pstmt != null)
+                    pstmt.close();
+            } catch (SQLException se2) {
+            }
+            try {
+                if (conn != null)
+                    conn.close();
+            } catch (SQLException se) {
+                se.printStackTrace();
+            }
+        }
+            System.out.println("Order update process complete.");
 
     }
 
     @Override
-    public Order get(int id) {
-        return null;
+    public Order getOrderById(int id) {
+        System.out.println("Attempting to get order by ID.");
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        Order temp = new Order();
+        try {
+            conn = dbConnect.getConnection();
+            pstmt = conn.prepareStatement("" +
+                    "SELECT * FROM orders WHERE id=?");
+            pstmt.setInt(1, id);
+
+            ResultSet resultSet = pstmt.executeQuery();
+            while(resultSet.next()) {
+                temp.setId(resultSet.getInt("id"));
+                temp.setDateCreated(resultSet.getDate("date_created"));
+                temp.setCartId(resultSet.getInt("cart_id"));
+                temp.setUserId(resultSet.getInt("user_id"));
+                temp.setOwnerName(resultSet.getString("owner_name"));
+                temp.setPhoneNumber(resultSet.getString("owner_phone"));
+                temp.setEmail(resultSet.getString("owner_email"));
+                temp.setBillingAddress(resultSet.getString("billing_address"));
+                temp.setShippingAddress(resultSet.getString("shipping_address"));
+            }
+        }
+        catch (SQLException se) {
+            se.printStackTrace();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        finally {
+            try{
+                if(pstmt!=null)
+                    pstmt.close();
+            }catch(SQLException se2){
+            }
+            try{
+                if(conn!=null)
+                    conn.close();
+            }catch(SQLException se){
+                se.printStackTrace();
+            }
+        }
+        System.out.println("Order by ID retrieval complete.");
+        return temp;
     }
 
     @Override

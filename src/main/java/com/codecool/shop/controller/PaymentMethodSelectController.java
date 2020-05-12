@@ -32,14 +32,26 @@ public class PaymentMethodSelectController extends HttpServlet implements Logger
 
         // temporary constant until session is implemented
         final int USERID = 1;
+        final int ORDERID = 1;
 
-        String fullName = req.getParameter("full-name");
+        OrderDao orderDao = OrderDaoMem.getInstance();
+
+        Order order = orderDao.getOrderById(ORDERID);
+
+        String ownerName = req.getParameter("full-name");
         String email = req.getParameter("input-email");
         String phoneNumber = req.getParameter("input-phone");
         String billingAddress = req.getParameter("billing-address");
         String shippingAddress = req.getParameter("shipping-address");
 
-//        Order order = new Order();
+        order.setUserId(USERID);
+        order.setOwnerName(ownerName);
+        order.setEmail(email);
+        order.setPhoneNumber(phoneNumber);
+        order.setBillingAddress(billingAddress);
+        order.setShippingAddress(shippingAddress);
+
+        orderDao.update(order);
 
             CartDao cartDataStore = CartDaoMem.getInstance();
 
@@ -71,7 +83,7 @@ public class PaymentMethodSelectController extends HttpServlet implements Logger
         //orderDataStore.add(fullName, cartId, phoneNumber, email,  billingAddress, shippingAddress);
 
 
-        Order order = new Order();
+
         context.setVariable("total", total);
 //        context.setVariable("order", orderDataStore);
         context.setVariable("order", order);

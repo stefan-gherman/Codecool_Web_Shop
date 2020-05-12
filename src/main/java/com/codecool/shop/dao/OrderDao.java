@@ -8,8 +8,8 @@ import java.util.List;
 public interface OrderDao {
 
     public int add(Order order);
-    public void update();
-    public Order get(int id);
+    public void update(Order order);
+    public Order getOrderById(int id);
     public List<ListItem> getItems(int userId);
 
 }
