@@ -77,5 +77,7 @@
 .hide {
     display: none;
 }
-
-
+.inner_form {
+    width: fit-content;
+    height: fit-content;
+}
