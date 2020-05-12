@@ -3,6 +3,7 @@ package com.codecool.shop.utils;
 import com.codecool.shop.model.Product;
 
 import java.util.*;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class Utils {
 
@@ -40,5 +41,23 @@ public class Utils {
 
         //general
         return "src/main/webapp/static/logs/";
+    }
+
+    public static String hasher(String password) {
+        int toughness = 12;
+        String salt = BCrypt.gensalt(toughness);
+        String hashed_password = BCrypt.hashpw(password, salt);
+        return(hashed_password);
+    }
+
+    public static boolean checkPassword(String password_plaintext, String stored_hash) {
+        boolean password_verified = false;
+
+        if(null == stored_hash || !stored_hash.startsWith("$2a$"))
+            throw new java.lang.IllegalArgumentException("Invalid hash provided for comparison");
+
+        password_verified = BCrypt.checkpw(password_plaintext, stored_hash);
+
+        return(password_verified);
     }
 }
