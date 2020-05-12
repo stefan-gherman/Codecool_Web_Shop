@@ -1,8 +1,9 @@
 package com.codecool.shop.controller;
 
 import com.codecool.shop.config.TemplateEngineUtil;
-import com.codecool.shop.dao.implementation.CartDaoMem;
-import com.codecool.shop.model.Product;
+import com.codecool.shop.dao.OrderDao;
+import com.codecool.shop.dao.implementation.OrderDaoMem;
+import com.codecool.shop.model.ListItem;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -13,9 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.List;
-import java.util.Map;
 
 @WebServlet(urlPatterns = {"/checkout"})
 public class CheckoutController extends HttpServlet {
@@ -25,31 +24,25 @@ public class CheckoutController extends HttpServlet {
 
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
+        System.out.println("********************** Checkout button pressed.");
+        // temporary constants until shopping cart id is passed to /checkout
+        final int CARTID = 1;
+        final int USERID = 1;
 
-        // getting the order DAO
-//        OrderDao orderDataStore = OrderDaoMem.getInstance();
-        CartDaoMem cartDataStore = CartDaoMem.getInstance();
-
-//        orderDataStore.addLogEntry(orderDataStore, "Checkout");
-
-//        orderDataStore.clear();
-//        orderDataStore.setItems();
-        Map<Product, Integer> tempHashMap = cartDataStore.getCartContents();
-//        List<Product> temp = orderDataStore.getItems();
-        List<Product> temp = new ArrayList<>();
-        for (Product item: tempHashMap.keySet()) {
-            temp.add(item);
-        }
+        // getting info from DB to create order as Checkout button was pressed
+        List<ListItem> temp = new ArrayList<>();
+        OrderDao orderDao = OrderDaoMem.getInstance();
+        temp = orderDao.getItems(CARTID);
         System.out.println(temp);
 
         context.setVariable("items", temp);
 
         double total=0;
-        Currency orderCurrency;
-        for (Product item:temp) {
-            total += item.getDefaultPrice();
+        String orderCurrency;
+        for (ListItem item:temp) {
+            total += item.getProductPrice();
         }
-        orderCurrency = temp.get(0).getDefaultCurrency();
+        orderCurrency = temp.get(0).getProductCurrency();
 //        context.setVariable("order", orderDataStore);
         context.setVariable("total", total);
         context.setVariable("currency", orderCurrency);

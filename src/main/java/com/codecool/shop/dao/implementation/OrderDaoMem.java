@@ -1,18 +1,18 @@
 package com.codecool.shop.dao.implementation;
 
+import com.codecool.shop.connection.DBConnect;
 import com.codecool.shop.dao.OrderDao;
+import com.codecool.shop.model.ListItem;
 import com.codecool.shop.model.Order;
-import com.codecool.shop.model.Product;
 
 import java.sql.*;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class OrderDaoMem implements OrderDao {
 
+    DBConnect dbConnect = DBConnect.getInstance();
     private static OrderDaoMem instance = null;
     static final String DATABASE = "jdbc:postgresql://localhost:5432/codecoolshop";
     static final String USER = "postgres";
@@ -83,8 +83,53 @@ public class OrderDaoMem implements OrderDao {
     }
 
     @Override
-    public List<Product> getItems() {
-        return null;
+    public List<ListItem> getItems(int cartId) {
+        System.out.println("Attempting to get items.");
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        List<ListItem> returnedItems = new ArrayList<>();
+        try {
+            conn = dbConnect.getConnection();
+            pstmt = conn.prepareStatement("" +
+                    "SELECT products.id, products.name, " +
+                    "products.image, products.price, products.currency " +
+                    "FROM cart_items " +
+                    "JOIN products ON cart_items.product_id = products.id " +
+                    "WHERE cart_items.cart_id = ?;");
+            pstmt.setInt(1, cartId);
+
+            ResultSet resultSet = pstmt.executeQuery();
+            while(resultSet.next()) {
+                returnedItems.add(new ListItem(
+                        resultSet.getInt("id"),
+                        resultSet.getString("name"),
+                        resultSet.getString("image"),
+                        resultSet.getFloat("price"),
+                        resultSet.getString("currency")));
+
+            }
+        }
+        catch (SQLException se) {
+            se.printStackTrace();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        finally {
+            try{
+                if(pstmt!=null)
+                    pstmt.close();
+            }catch(SQLException se2){
+            }
+            try{
+                if(conn!=null)
+                    conn.close();
+            }catch(SQLException se){
+                se.printStackTrace();
+            }
+        }
+        System.out.println("New order add process complete.");
+        return returnedItems;
     }
 
     private static Connection getConnection() throws SQLException {

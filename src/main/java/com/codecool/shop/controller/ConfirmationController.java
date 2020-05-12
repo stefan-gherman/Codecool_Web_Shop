@@ -2,7 +2,6 @@ package com.codecool.shop.controller;
 
 import com.codecool.shop.config.TemplateEngineUtil;
 import com.codecool.shop.dao.OrderDao;
-import com.codecool.shop.model.Product;
 import com.codecool.shop.utils.Utils;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -128,10 +127,10 @@ public class ConfirmationController extends HttpServlet {
 //        obj.put("ID", orderDataStore.getId());
         obj.put("ID", "545454");
         JSONArray items = new JSONArray();
-        for (Product item : orderDataStore.getItems()){
-            items.add(item.getName());
-        }
-        obj.put("Items", items);
+//        for (Product item : orderDataStore.getItems()){
+//            items.add(item.getName());
+//        }
+//        obj.put("Items", items);
 
         try {
             file.write(obj.toJSONString());
