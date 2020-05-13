@@ -4,6 +4,7 @@ import com.codecool.shop.config.TemplateEngineUtil;
 import com.codecool.shop.dao.UserDao;
 import com.codecool.shop.dao.implementation.UserDaoJDBC;
 import com.codecool.shop.model.User;
+import com.codecool.shop.utils.Utils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -39,7 +40,7 @@ public class RegisterController extends HttpServlet {
         String shippingAddress = req.getParameter("shipping-address");
 
 
-        User user = new User(fullName, email, password, phoneNumber, billingAddress, shippingAddress);
+        User user = new User(fullName, email, Utils.hasher(password), phoneNumber, billingAddress, shippingAddress);
         int dbUserId = userDao.add(user);
         System.out.println("User id from db:" + dbUserId);
         resp.sendRedirect("/");
