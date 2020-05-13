@@ -3,7 +3,6 @@ package com.codecool.shop.controller;
 import com.codecool.shop.config.TemplateEngineUtil;
 import com.codecool.shop.dao.OrderDao;
 import com.codecool.shop.dao.implementation.OrderDaoMem;
-import com.codecool.shop.model.HistoryItem;
 import com.codecool.shop.model.Order;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -36,17 +35,6 @@ public class OrderHistoryController extends HttpServlet {
         orderHistory = orderDao.getOrderHistoryByUserId(USERID);
         context.setVariable("orderHistory", orderHistory);
 
-        List<HistoryItem> parsedHistory = new ArrayList<>();
-        HistoryItem temp = new HistoryItem();
-        for (int i=0; i<orderHistory.size(); i++) {
-            temp.setOrderId(orderHistory.get(i).getId());
-            temp.setOrderDate(orderHistory.get(i).getDateCreated());
-            temp.setOrderStatus(PLACEHOLDER);
-            temp.setOrderTotal(3.3f); // TODO TEMPORARRRRYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY
-            temp.setItems(orderHistory.get(i).getItems());
-            parsedHistory.add(temp);
-        }
-        context.setVariable("parsedHistory", parsedHistory);
 
 
         // getting info from DB to create order as Checkout button was pressed

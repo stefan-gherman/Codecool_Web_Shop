@@ -240,6 +240,7 @@ public class OrderDaoMem implements OrderDao {
         Connection conn = null;
         PreparedStatement pstmt = null;
         List<Order> temp = new ArrayList<>();
+        List<ListItem> tempItems = new ArrayList<>();
         try {
             conn = dbConnect.getConnection();
             pstmt = conn.prepareStatement("" +
@@ -250,6 +251,10 @@ public class OrderDaoMem implements OrderDao {
             ResultSet resultSet = pstmt.executeQuery();
             while(resultSet.next()) {
                 tempOrder.setId(resultSet.getInt("id"));
+
+                tempItems = getItems(resultSet.getInt("id"));
+                tempOrder.setItems(tempItems); //TODO make getItemsbyoriderid
+
                 tempOrder.setDateCreated(resultSet.getDate("date_created"));
                 tempOrder.setCartId(resultSet.getInt("cart_id"));
                 tempOrder.setUserId(resultSet.getInt("user_id"));
