@@ -42,9 +42,9 @@ public class ProductController extends HttpServlet {
                 int prodIdParses = Integer.parseInt(req.getParameter("addToCart"));
                 System.out.println(prodIdParses);
                 cartDataStore.add(prodIdParses);
-                System.out.println(cartDataStore.getCartContents());
+                System.out.println("Current in cart" +cartDataStore.getCartContents());
                 cartSize = cartDataStore.getCartNumberOfProducts();
-                System.out.println(cartSize);
+                System.out.println("Current size " +cartSize);
             } catch (Exception e) {
                 System.out.println(e.getStackTrace());
             }

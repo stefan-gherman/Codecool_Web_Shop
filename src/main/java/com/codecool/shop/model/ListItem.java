@@ -54,4 +54,15 @@ public class ListItem {
     public void setProductCurrency(String productCurrency) {
         this.productCurrency = productCurrency;
     }
+
+    @Override
+    public String toString() {
+        return "ListItem{" +
+                "productId=" + productId +
+                ", productName='" + productName + '\'' +
+//                ", productImage='" + productImage + '\'' +
+//                ", productPrice=" + productPrice +
+//                ", productCurrency='" + productCurrency + '\'' +
+                '}';
+    }
 }
