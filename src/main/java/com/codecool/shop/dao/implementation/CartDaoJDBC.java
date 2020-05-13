@@ -37,8 +37,8 @@ public class CartDaoJDBC implements CartDao {
     }
 
     @Override
-    public void add(int id) {
-        ProductDao productsList = ProductDaoMem.getInstance();
+    public void add(int id) throws SQLException {
+        ProductDao productsList = ProductDaoJDBC.getInstance();
         Product product = productsList.find(id);
         Map<ListItem, Integer> tempMap = cart.getCartContents();
         int count = 0;
@@ -72,8 +72,8 @@ public class CartDaoJDBC implements CartDao {
     }
 
     @Override
-    public void add(int id, int quantity) {
-        ProductDao productsList = ProductDaoMem.getInstance();
+    public void add(int id, int quantity) throws SQLException {
+        ProductDao productsList = ProductDaoJDBC.getInstance();
         Product product = productsList.find(id);
         //
         for (Map.Entry<ListItem, Integer> entry : cart.getCartContents().entrySet()
@@ -117,17 +117,19 @@ public class CartDaoJDBC implements CartDao {
     public void saveCartAndListItems ( Integer cartId) {
         String query = "INSERT INTO cart_items (cart_id, product_id) VALUES (?,?);";
         try {
-            
 
             for (Map.Entry<ListItem, Integer> entry: cart.getCartContents().entrySet()
                  ) {
-                Connection connection = dbConnect.getConnection();
-                PreparedStatement statement = connection.prepareStatement(query);
-                statement.setInt(1, cartId);
-                statement.setInt(2, entry.getKey().getProductId());
-                statement.executeUpdate();
-                statement.close();
-                connection.close();
+                for (int i =0 ; i < entry.getValue(); i++) {
+                    System.out.println("Element count");
+                    Connection connection = dbConnect.getConnection();
+                    PreparedStatement statement = connection.prepareStatement(query);
+                    statement.setInt(1, cartId);
+                    statement.setInt(2, entry.getKey().getProductId());
+                    statement.executeUpdate();
+                    statement.close();
+                    connection.close();
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
