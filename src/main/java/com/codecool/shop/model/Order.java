@@ -1,17 +1,12 @@
 package com.codecool.shop.model;
 
-import com.codecool.shop.dao.CartDao;
 import com.codecool.shop.dao.OrderDao;
-import com.codecool.shop.dao.implementation.CartDaoJDBC;
 import com.codecool.shop.utils.Utils;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -19,8 +14,11 @@ import java.util.List;
 public class Order {
 
     private int id;
-    private List<Product> items = setItems();
-    private String fullName;
+    private int cartId;
+    private int userId;
+    private java.sql.Date dateCreated;
+    private List<ListItem> items;
+    private String ownerName;
     private String email;
     private String phoneNumber;
     private String billingAddress;
@@ -41,18 +39,11 @@ public class Order {
 
     }
 
-    public List<Product> setItems() {
-        List<Product> temp = new ArrayList<>();
-        CartDao cartDataStore = CartDaoJDBC.getInstance();
-        cartDataStore.getCartContents().forEach((key, value) -> {
-            for (int i = 0; i< value; i++) {
-                temp.add(key);
-            }
-        });
-        return temp;
+    public void setItems(List<ListItem> items) {
+        this.items = items;
     }
 
-    public List<Product> getItems() {
+    public List<ListItem> getItems() {
         return items;
     }
 
@@ -60,18 +51,52 @@ public class Order {
         return id;
     }
 
-    public String getTotal() {
-        double temp = 0;
-        for (Product item : this.items) {
-            temp += item.getDefaultPrice();
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public java.sql.Date getDateCreated() {
+        return dateCreated;
+    }
+
+    public void setDateCreated(java.sql.Date dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
+    public boolean isPaymentMethodCard() {
+        return paymentMethodCard;
+    }
+
+    public boolean isPaymentMethodPayPal() {
+        return paymentMethodPayPal;
+    }
+
+    public int getCartId() {
+        return cartId;
+    }
+
+    public void setCartId(int cartId) {
+        this.cartId = cartId;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public float getTotal() {
+        float temp = 0;
+        for (ListItem item : this.items) {
+            temp += item.getProductPrice();
         }
-        NumberFormat formatter = new DecimalFormat("#.00");
-        String total = formatter.format(temp);
-        return total;
+        return temp;
     }
 
     public void clear() {
-        fullName = "";
+        ownerName = "";
         email = "";
         phoneNumber = "";
         billingAddress = "";
@@ -153,12 +178,12 @@ public class Order {
         paymentMethodPayPal = status;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setOwnerName(String fullName) {
+        this.ownerName = fullName;
     }
 
-    public String getFullName() {
-        return fullName;
+    public String getOwnerName() {
+        return ownerName;
     }
 
     public void setEmail(String email) {

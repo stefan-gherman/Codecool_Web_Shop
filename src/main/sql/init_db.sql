@@ -126,3 +126,6 @@ INSERT INTO users (name, email, password, phone_number, billing_address, shippin
 
 INSERT INTO carts (user_id)
 VALUES (1);
+
+INSERT INTO cart_items (cart_id, product_id) VALUES (1, 1);
+INSERT INTO cart_items (cart_id, product_id) VALUES (1, 1);
