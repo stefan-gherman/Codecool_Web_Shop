@@ -4,7 +4,7 @@ import com.codecool.shop.config.Logger;
 import com.codecool.shop.config.TemplateEngineUtil;
 import com.codecool.shop.dao.CartDao;
 import com.codecool.shop.dao.OrderDao;
-import com.codecool.shop.dao.implementation.CartDaoMem;
+import com.codecool.shop.dao.implementation.CartDaoMemJDBC;
 import com.codecool.shop.dao.implementation.OrderDaoMem;
 import com.codecool.shop.model.Order;
 import com.codecool.shop.model.Product;
@@ -30,7 +30,7 @@ public class PaymentMethodSelectController extends HttpServlet implements Logger
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
-        CartDao cartDataStore = CartDaoMem.getInstance();
+        CartDao cartDataStore = CartDaoMemJDBC.getInstance();
 
         Map<Product, Integer> tempHashMap = cartDataStore.getCartContents();
         List<Product> temp = new ArrayList<>();

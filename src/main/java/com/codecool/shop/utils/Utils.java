@@ -43,6 +43,9 @@ public class Utils {
         return "src/main/webapp/static/logs/";
     }
 
+    //For password hashing and checking
+    /* link https://gist.github.com/craSH/5217757
+     */
     public static String hasher(String password) {
         int toughness = 12;
         String salt = BCrypt.gensalt(toughness);

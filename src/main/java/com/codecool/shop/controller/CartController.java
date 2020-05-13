@@ -2,10 +2,8 @@ package com.codecool.shop.controller;
 
 import com.codecool.shop.config.TemplateEngineUtil;
 import com.codecool.shop.dao.CartDao;
-import com.codecool.shop.dao.OrderDao;
-import com.codecool.shop.dao.implementation.CartDaoMem;
+import com.codecool.shop.dao.implementation.CartDaoMemJDBC;
 import com.codecool.shop.model.Product;
-import org.json.simple.JSONObject;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -14,12 +12,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 @WebServlet(urlPatterns = {"/cart"})
@@ -28,7 +22,7 @@ public class CartController extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
-        CartDao cartDataStore = CartDaoMem.getInstance();
+        CartDao cartDataStore = CartDaoMemJDBC.getInstance();
         int cartSize = cartDataStore.getCartNumberOfProducts();
         float cartTotal = cartDataStore.getTotalSum();
         Map<Product, Integer> cartContents = cartDataStore.getCartContents();
@@ -57,7 +51,7 @@ public class CartController extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
 
-        CartDao cartDataStore = CartDaoMem.getInstance();
+        CartDao cartDataStore = CartDaoMemJDBC.getInstance();
         int quantity;
         int objectId;
 

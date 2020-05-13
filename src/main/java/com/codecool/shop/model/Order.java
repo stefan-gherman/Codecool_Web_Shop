@@ -2,7 +2,7 @@ package com.codecool.shop.model;
 
 import com.codecool.shop.dao.CartDao;
 import com.codecool.shop.dao.OrderDao;
-import com.codecool.shop.dao.implementation.CartDaoMem;
+import com.codecool.shop.dao.implementation.CartDaoMemJDBC;
 import com.codecool.shop.utils.Utils;
 
 import java.io.FileWriter;
@@ -43,7 +43,7 @@ public class Order {
 
     public List<Product> setItems() {
         List<Product> temp = new ArrayList<>();
-        CartDao cartDataStore = CartDaoMem.getInstance();
+        CartDao cartDataStore = CartDaoMemJDBC.getInstance();
         cartDataStore.getCartContents().forEach((key, value) -> {
             for (int i = 0; i< value; i++) {
                 temp.add(key);

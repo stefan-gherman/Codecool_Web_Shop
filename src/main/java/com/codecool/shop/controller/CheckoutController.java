@@ -1,7 +1,7 @@
 package com.codecool.shop.controller;
 
 import com.codecool.shop.config.TemplateEngineUtil;
-import com.codecool.shop.dao.implementation.CartDaoMem;
+import com.codecool.shop.dao.implementation.CartDaoMemJDBC;
 import com.codecool.shop.model.Product;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -28,7 +28,7 @@ public class CheckoutController extends HttpServlet {
 
         // getting the order DAO
 //        OrderDao orderDataStore = OrderDaoMem.getInstance();
-        CartDaoMem cartDataStore = CartDaoMem.getInstance();
+        CartDaoMemJDBC cartDataStore = CartDaoMemJDBC.getInstance();
 
 //        orderDataStore.addLogEntry(orderDataStore, "Checkout");
 
