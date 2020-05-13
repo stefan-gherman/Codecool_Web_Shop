@@ -2,7 +2,6 @@ package com.codecool.shop.dao;
 
 import com.codecool.shop.model.Product;
 
-import java.util.List;
 import java.util.Map;
 
 public interface CartDao {
@@ -16,7 +15,7 @@ public interface CartDao {
     void eraseMe();
     float getTotalSum();
     void add(int id, int quantity);
-
+    int insertInDB(Integer userId);
 
 
 

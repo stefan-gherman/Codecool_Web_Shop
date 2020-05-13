@@ -2,7 +2,7 @@ package com.codecool.shop.controller;
 
 import com.codecool.shop.config.TemplateEngineUtil;
 import com.codecool.shop.dao.CartDao;
-import com.codecool.shop.dao.implementation.CartDaoMemJDBC;
+import com.codecool.shop.dao.implementation.CartDaoJDBC;
 import com.codecool.shop.model.Product;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
@@ -22,7 +22,7 @@ public class CartController extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
-        CartDao cartDataStore = CartDaoMemJDBC.getInstance();
+        CartDao cartDataStore = CartDaoJDBC.getInstance();
         int cartSize = cartDataStore.getCartNumberOfProducts();
         float cartTotal = cartDataStore.getTotalSum();
         Map<Product, Integer> cartContents = cartDataStore.getCartContents();
@@ -51,7 +51,7 @@ public class CartController extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
 
-        CartDao cartDataStore = CartDaoMemJDBC.getInstance();
+        CartDao cartDataStore = CartDaoJDBC.getInstance();
         int quantity;
         int objectId;
 

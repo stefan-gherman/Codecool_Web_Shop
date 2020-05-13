@@ -6,7 +6,7 @@ import com.codecool.shop.dao.CartDao;
 import com.codecool.shop.dao.ProductCategoryDao;
 import com.codecool.shop.dao.ProductDao;
 import com.codecool.shop.dao.SupplierDao;
-import com.codecool.shop.dao.implementation.CartDaoMemJDBC;
+import com.codecool.shop.dao.implementation.CartDaoJDBC;
 import com.codecool.shop.dao.implementation.ProductCategoryDaoMem;
 import com.codecool.shop.dao.implementation.ProductDaoMem;
 
@@ -33,7 +33,7 @@ public class ProductController extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         ProductDao productDataStore = ProductDaoMem.getInstance();
         ProductCategoryDao productCategoryDataStore = ProductCategoryDaoMem.getInstance();
-        CartDao cartDataStore = CartDaoMemJDBC.getInstance();
+        CartDao cartDataStore = CartDaoJDBC.getInstance();
         SupplierDao supplierDao = SupplierDaoMem.getInstance();
         int cartSize = cartDataStore.getCartNumberOfProducts();
         //System.out.println(req.getParameter("addToCart"));

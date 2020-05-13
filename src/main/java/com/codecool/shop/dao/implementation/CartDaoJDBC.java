@@ -1,34 +1,34 @@
 package com.codecool.shop.dao.implementation;
 
+import com.codecool.shop.connection.DBConnect;
 import com.codecool.shop.dao.CartDao;
 import com.codecool.shop.dao.ProductDao;
 import com.codecool.shop.model.Cart;
 import com.codecool.shop.model.Product;
 import com.codecool.shop.utils.Utils;
 
-import java.sql.Date;
-import java.text.DateFormat;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.*;
 
-public class CartDaoMemJDBC implements CartDao {
+public class CartDaoJDBC implements CartDao {
 
     private Cart cart;
 
 
 
-    private static CartDaoMemJDBC instance = null;
+    private static CartDaoJDBC instance = null;
+    private static DBConnect connection = DBConnect.getInstance();
 
 
-    private CartDaoMemJDBC() {
+    private CartDaoJDBC() {
         this.cart = new Cart();
-        java.util.Date utilDate = new java.util.Date();
-        this.cart.setCartCreatedAtDate(new Date(utilDate.getTime()));
     }
 
 
-    public static CartDaoMemJDBC getInstance(){
+    public static CartDaoJDBC getInstance(){
         if(instance == null) {
-            instance = new CartDaoMemJDBC();
+            instance = new CartDaoJDBC();
         }
         return instance;
     }
@@ -37,6 +37,7 @@ public class CartDaoMemJDBC implements CartDao {
     public void add(int id) {
         ProductDao productsList = ProductDaoMem.getInstance();
         Product product = productsList.find(id);
+        //
         if(cart.getCartContents().containsKey(product)){
             cart.getCartContents().put(product, cart.getCartContents().get(product) + 1);
         } else {
@@ -48,7 +49,7 @@ public class CartDaoMemJDBC implements CartDao {
     public void add(int id, int quantity) {
         ProductDao productList = ProductDaoMem.getInstance();
         Product product = productList.find(id);
-
+        //
         if(cart.getCartContents().containsKey(product)) {
             if (quantity == 0) {
 
@@ -59,12 +60,36 @@ public class CartDaoMemJDBC implements CartDao {
         }
     }
 
+    @Override
+    public int insertInDB(Integer userId) {
+
+        String query = "INSERT INTO carts (user_id) VALUES (?) RETURNING id ;";
+        int lastCart = 0;
+        if (userId == null) {
+            lastCart = -1;
+        }
+
+        try {
+            PreparedStatement statement = connection.getConnection().prepareStatement(query);
+            statement.setInt(1, userId);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                lastCart = resultSet.getInt("id");
+            }
+            statement.close();
+            connection.getConnection().close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return lastCart;
+    }
 
 
     @Override
     public void remove(int id) {
         ProductDao productsList = ProductDaoMem.getInstance();
         Product product = productsList.find(id);
+        //
         if(cart.getCartContents().containsKey(product)) {
             if(cart.getCartContents().get(product) == 1) {
                 cart.getCartContents().remove(product);
