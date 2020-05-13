@@ -2,10 +2,9 @@ package com.codecool.shop.controller;
 
 import com.codecool.shop.config.TemplateEngineUtil;
 import com.codecool.shop.dao.CartDao;
-import com.codecool.shop.dao.OrderDao;
-import com.codecool.shop.dao.implementation.CartDaoMem;
+import com.codecool.shop.dao.implementation.CartDaoJDBC;
+import com.codecool.shop.model.ListItem;
 import com.codecool.shop.model.Product;
-import org.json.simple.JSONObject;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -14,12 +13,9 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.sql.SQLException;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 
 @WebServlet(urlPatterns = {"/cart"})
@@ -28,18 +24,18 @@ public class CartController extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
-        CartDao cartDataStore = CartDaoMem.getInstance();
+        CartDao cartDataStore = CartDaoJDBC.getInstance();
         int cartSize = cartDataStore.getCartNumberOfProducts();
         float cartTotal = cartDataStore.getTotalSum();
-        Map<Product, Integer> cartContents = cartDataStore.getCartContents();
+        Map<ListItem, Integer> cartContents = cartDataStore.getCartContents();
         String defaultCurrency="";
 
 
 
 
-        for (Map.Entry<Product, Integer> product: cartContents.entrySet()
+        for (Map.Entry<ListItem, Integer> product: cartContents.entrySet()
              ) {
-            defaultCurrency = product.getKey().getDefaultCurrency().toString();
+            defaultCurrency = product.getKey().getProductCurrency().toString();
             break;
         }
 
@@ -57,7 +53,7 @@ public class CartController extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
 
-        CartDao cartDataStore = CartDaoMem.getInstance();
+        CartDao cartDataStore = CartDaoJDBC.getInstance();
         int quantity;
         int objectId;
 
@@ -80,8 +76,15 @@ public class CartController extends HttpServlet {
             System.out.println(Arrays.toString(e.getStackTrace()));
         }
 
-        if(req.getParameter("clearCart")!=null) {
-            cartDataStore.eraseMe();
+//        if(req.getParameter("clearCart")!=null) {
+//            cartDataStore.eraseMe();
+//        }
+        if(req.getParameter("saveCart")!=null) {
+            try {
+                cartDataStore.saveInDB(Integer.parseInt(req.getParameter("saveCart")));
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
         }
         doGet(req, resp);
     }

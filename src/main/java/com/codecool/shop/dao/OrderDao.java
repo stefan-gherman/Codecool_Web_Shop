@@ -1,15 +1,18 @@
 package com.codecool.shop.dao;
 
+import com.codecool.shop.model.ListItem;
 import com.codecool.shop.model.Order;
-import com.codecool.shop.model.Product;
 
 import java.util.List;
 
 public interface OrderDao {
 
-    public void add(String fullName, int cartId, String phoneNumber, String email, String billingAddress, String shippingAddress);
-    public void update();
-    public Order get(int id);
-    public List<Product> getItems();
+    public int add(Order order);
+    public void addToOrderItems(Order order);
+    public void update(Order order);
+    public Order getOrderById(int id);
+    public List<ListItem> getItemsByCartId(int cartId);
+    public List<ListItem> getItemsByOrderId(int orderId);
+    public List<Order> getOrderHistoryByUserId(int userId);
 
 }
