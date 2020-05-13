@@ -2,7 +2,7 @@ package com.codecool.shop.controller;
 
 import com.codecool.shop.config.TemplateEngineUtil;
 import com.codecool.shop.dao.OrderDao;
-import com.codecool.shop.dao.implementation.OrderDaoMem;
+import com.codecool.shop.dao.implementation.OrderDaoJDBC;
 import com.codecool.shop.model.Cart;
 import com.codecool.shop.model.Order;
 import com.codecool.shop.model.User;
@@ -38,7 +38,7 @@ public class OrderHistoryController extends HttpServlet {
 
 
         // getting list of orders from DB based on user ID
-        OrderDao orderDao = OrderDaoMem.getInstance();
+        OrderDao orderDao = OrderDaoJDBC.getInstance();
         List<Order> orderHistory = new ArrayList<>();
         orderHistory = orderDao.getOrderHistoryByUserId(tempUser.getId());
         context.setVariable("orderHistory", orderHistory);

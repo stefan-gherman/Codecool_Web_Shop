@@ -15,6 +15,10 @@ public class ListItem {
         this.productCurrency = productCurrency;
     }
 
+    public ListItem() {
+
+    }
+
     public int getProductId() {
         return productId;
     }

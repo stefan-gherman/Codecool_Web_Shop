@@ -2,16 +2,9 @@ package com.codecool.shop.controller;
 
 
 import com.codecool.shop.config.TemplateEngineUtil;
-import com.codecool.shop.dao.CartDao;
-import com.codecool.shop.dao.ProductCategoryDao;
-import com.codecool.shop.dao.ProductDao;
-import com.codecool.shop.dao.SupplierDao;
-import com.codecool.shop.dao.implementation.CartDaoJDBC;
-import com.codecool.shop.dao.implementation.ProductCategoryJDBC;
-import com.codecool.shop.dao.implementation.ProductDaoJDBC;
-import com.codecool.shop.dao.implementation.SupplierDaoJDBC;
-import com.codecool.shop.model.ProductCategory;
-import com.codecool.shop.model.Supplier;
+import com.codecool.shop.dao.*;
+import com.codecool.shop.dao.implementation.*;
+import com.codecool.shop.model.*;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -20,9 +13,11 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 //import com.codecool.shop.dao.implementation.ProductCategoryDaoMem;
 //import com.codecool.shop.dao.implementation.ProductDaoMem;
@@ -37,6 +32,9 @@ public class ProductController extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession();
+        if (session.getAttribute("user")==null) session.setAttribute("user", new User());
+        if (session.getAttribute("cart")==null) session.setAttribute("cart", new Cart());
 
 
         try {
@@ -57,6 +55,8 @@ public class ProductController extends HttpServlet {
         int cartSize = cartDataStore.getCartNumberOfProducts();
 
 
+
+
         //System.out.println(req.getParameter("addToCart"));
         if(req.getParameter("addToCart")!=null) {
             try{
@@ -66,6 +66,30 @@ public class ProductController extends HttpServlet {
                 System.out.println("Current in cart" +cartDataStore.getCartContents());
                 cartSize = cartDataStore.getCartNumberOfProducts();
                 System.out.println("Current size " +cartSize);
+
+                //updating the session cart as well
+                OrderDao orderDao = OrderDaoJDBC.getInstance();
+                int productId = prodIdParses;
+                ListItem tempItem = orderDao.getListItemByProductId(productId);
+                session = req.getSession(false);
+                System.out.println("AAAAAAAAAAAAAAAAAAAAAAAA - Got session.");
+                Cart tempCart = (Cart) session.getAttribute("cart");
+                System.out.println("AAAAAAAAAAAAAAAAAAAAAAAA - Got session cart " + tempCart.getId());
+                Map<ListItem, Integer> tempCartContents = tempCart.getCartContents();
+                System.out.println("AAAAAAAAAAAAAAAAAAAAAAAA - Got session cart contents: " + tempCart.getCartContents());
+                tempCartContents.put(tempItem, 1);
+                System.out.println("AAAAAAAAAAAAAAAAAAAAAAAA - put: " + tempItem.getProductName() + " in contents");
+                tempCart.setCartContents(tempCartContents);
+                System.out.println("AAAAAAAAAAAAAAAAAAAAAAAA - set contents of temp cart again to: " + tempCart.getCartContents());
+                System.out.println("TTTEEEMMMMPPP cart contents len: " + tempCartContents.size());
+                session.removeAttribute("cart");
+                session.setAttribute("cart", tempCart);
+                Cart tempCart2 = (Cart) session.getAttribute("cart");
+                System.out.println("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRemove and re-create cart: " + tempCart2.getCartContents());
+
+
+
+
             } catch (Exception e) {
                 System.out.println(e.getStackTrace());
             }

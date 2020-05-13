@@ -3,7 +3,7 @@ package com.codecool.shop.controller;
 import com.codecool.shop.config.Logger;
 import com.codecool.shop.config.TemplateEngineUtil;
 import com.codecool.shop.dao.OrderDao;
-import com.codecool.shop.dao.implementation.OrderDaoMem;
+import com.codecool.shop.dao.implementation.OrderDaoJDBC;
 import com.codecool.shop.model.Cart;
 import com.codecool.shop.model.ListItem;
 import com.codecool.shop.model.Order;
@@ -39,7 +39,7 @@ public class PaymentMethodSelectController extends HttpServlet implements Logger
         Order tempOrder = (Order) session.getAttribute("order");
 
 
-        OrderDao orderDao = OrderDaoMem.getInstance();
+        OrderDao orderDao = OrderDaoJDBC.getInstance();
 
         Order order = orderDao.getOrderById(tempOrder.getId());
 

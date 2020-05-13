@@ -1,7 +1,5 @@
 package com.codecool.shop.connection;
 
-import com.codecool.shop.dao.implementation.OrderDaoMem;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;

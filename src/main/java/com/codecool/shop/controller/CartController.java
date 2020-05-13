@@ -2,7 +2,9 @@ package com.codecool.shop.controller;
 
 import com.codecool.shop.config.TemplateEngineUtil;
 import com.codecool.shop.dao.CartDao;
+import com.codecool.shop.dao.OrderDao;
 import com.codecool.shop.dao.implementation.CartDaoJDBC;
+import com.codecool.shop.dao.implementation.OrderDaoJDBC;
 import com.codecool.shop.model.Cart;
 import com.codecool.shop.model.ListItem;
 import org.thymeleaf.TemplateEngine;
@@ -36,8 +38,8 @@ public class CartController extends HttpServlet {
         // it has by default user 1 - which will be a default/admin user
         // which is added at the time of creating in the DB
         // the creation in the DB is also important because it gives the cart id
-        HttpSession session = req.getSession();
-        Cart sessionCart = new Cart();
+        HttpSession session = req.getSession(false);
+        Cart sessionCart = (Cart) session.getAttribute("cart");
         sessionCart = cartDataStore.addCartToDB(sessionCart);
         session.setAttribute("cart", sessionCart);
 
@@ -64,6 +66,7 @@ public class CartController extends HttpServlet {
 
 
         CartDao cartDataStore = CartDaoJDBC.getInstance();
+        OrderDao orderDao = OrderDaoJDBC.getInstance();
         int quantity;
         int objectId;
 
@@ -78,6 +81,17 @@ public class CartController extends HttpServlet {
 
                 cartDataStore.add(objectId, quantity);
 
+                //updating the session cart as well
+                int productId = objectId;
+                ListItem tempItem = orderDao.getListItemByProductId(productId);
+                HttpSession session = req.getSession(false);
+                Cart tempCart = (Cart) session.getAttribute("cart");
+                Map<ListItem, Integer> tempCartContents = tempCart.getCartContents();
+                tempCartContents.put(tempItem, quantity);
+                tempCart.setCartContents(tempCartContents);
+                System.out.println("TTTEEEMMMMPPP cart contents len: " + tempCartContents.size());
+                session.setAttribute("cart", tempCart);
+                System.out.println("TTTEEEMMMMPPP cart added to session " + (Cart) ((Cart) session.getAttribute("cart")).getCartContents());
 
             }
 

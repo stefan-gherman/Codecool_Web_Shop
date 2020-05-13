@@ -39,7 +39,7 @@ public class CartDaoJDBC implements CartDao {
         System.out.println("Attempting to add new cart.");
         Connection conn = null;
         PreparedStatement pstmt = null;
-        Cart cartToBeReturned = new Cart();
+        Cart cartToBeReturned = cartToBeAdded;
         try {
             conn = dbConnect.getConnection();
             pstmt = conn.prepareStatement("INSERT INTO carts (user_id) VALUES (1) RETURNING id");
@@ -233,7 +233,7 @@ public class CartDaoJDBC implements CartDao {
     }
 
     public Cart getCart() {
-        return cart;
+        return this.cart;
     }
 
     public void setCart(Cart cart) {

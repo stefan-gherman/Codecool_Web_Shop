@@ -10,22 +10,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class OrderDaoMem implements OrderDao {
+public class OrderDaoJDBC implements OrderDao {
 
     DBConnect dbConnect = DBConnect.getInstance();
-    private static OrderDaoMem instance = null;
+    private static OrderDaoJDBC instance = null;
     static final String DATABASE = "jdbc:postgresql://localhost:5432/codecoolshop";
     static final String USER = "postgres";
     static final String PASS = "postgres";
 
 
-    private OrderDaoMem() {
+    private OrderDaoJDBC() {
 
     }
 
-    public static OrderDaoMem getInstance() {
+    public static OrderDaoJDBC getInstance() {
         if (instance == null) {
-            instance = new OrderDaoMem();
+            instance = new OrderDaoJDBC();
         }
         return instance;
     }
@@ -88,45 +88,54 @@ public class OrderDaoMem implements OrderDao {
         return orderIdFromDb;
     }
 
+
+
     @Override
     public void addToOrderItems(Order order) {
-        String sql = "";
-        StringBuilder sb = new StringBuilder();
-
-        for (int i=0; i<order.getItems().size(); i++) {
-            sb.append("INSERT INTO order_items (order_id, product_id) VALUES ("+ order.getId() +", " + order.getItems().get(i).getProductId() + ");");
-        }
-
-        sql = sb.toString();
-        System.out.println(sql);
-        System.out.println("Attempting to add new order batch to order_items.");
+        System.out.println("Attempting to add new order batch to order_items. Order ID: " + order.getId());
         Connection conn = null;
         PreparedStatement pstmt = null;
-
-        try {
-            conn = dbConnect.getConnection();
-            pstmt = conn.prepareStatement(sql);
-            pstmt.executeUpdate();
-        }
-        catch (SQLException se) {
-            se.printStackTrace();
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
-        finally {
-            try{
-                if(pstmt!=null)
-                    pstmt.close();
-            }catch(SQLException se2){
+        System.out.println("Items list length: " + order.getItems().size());
+        for (ListItem item : order.getItems()){
+            try {
+                System.out.println("Trying to add to order_items: order " + order.getId() + " product " + item.getProductId());
+                conn = dbConnect.getConnection();
+                pstmt = conn.prepareStatement("INSERT INTO order_items (order_id, product_id) VALUES (?, ?)");
+                pstmt.setInt(1, order.getId());
+                pstmt.setInt(2, item.getProductId());
+                pstmt.executeUpdate();
+                System.out.println("Added to order_items: order " + order.getId() + " product " + item.getProductId());
             }
-            try{
-                if(conn!=null)
-                    conn.close();
-            }catch(SQLException se){
+            catch (SQLException se) {
                 se.printStackTrace();
             }
+            catch(Exception e){
+                e.printStackTrace();
+            }
+            finally {
+                try{
+                    if(pstmt!=null)
+                        pstmt.close();
+                }catch(SQLException se2){
+                }
+                try{
+                    if(conn!=null)
+                        conn.close();
+                }catch(SQLException se){
+                    se.printStackTrace();
+                }
+            }
+
+
+
+
+
+
+
         }
+
+
+
 
         System.out.println("order_items add process complete.");
 
@@ -382,6 +391,50 @@ public class OrderDaoMem implements OrderDao {
         System.out.println("History retrieval complete.");
 
         return temp;
+    }
+
+    @Override
+    public ListItem getListItemByProductId(int productId) {
+
+        System.out.println("Attempting to get ListItem by Product ID: " + productId);
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        ListItem tempItem = new ListItem();
+        try {
+            conn = dbConnect.getConnection();
+            pstmt = conn.prepareStatement("" +
+                    "SELECT * FROM products WHERE id = ?;");
+            pstmt.setInt(1, productId);
+            ResultSet resultSet = pstmt.executeQuery();
+            while(resultSet.next()) {
+                tempItem.setProductId(resultSet.getInt("id"));
+                tempItem.setProductName(resultSet.getString("name"));
+                tempItem.setProductImage(resultSet.getString("image"));
+                tempItem.setProductPrice(resultSet.getFloat("price"));
+                tempItem.setProductCurrency(resultSet.getString("currency"));
+            }
+        }
+        catch (SQLException se) {
+            se.printStackTrace();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        finally {
+            try{
+                if(pstmt!=null)
+                    pstmt.close();
+            }catch(SQLException se2){
+            }
+            try{
+                if(conn!=null)
+                    conn.close();
+            }catch(SQLException se){
+                se.printStackTrace();
+            }
+        }
+        System.out.println("ListItem retrieval complete.");
+        return tempItem;
     }
 
     private static Connection getConnection() throws SQLException {

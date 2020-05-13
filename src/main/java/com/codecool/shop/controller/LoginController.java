@@ -43,6 +43,7 @@ public class LoginController extends HttpServlet {
             User userFromDB = userDao.getUserByEmail(email);
             HttpSession session = req.getSession();
             session.setAttribute("user", userFromDB);
+            System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&77 user id from Login: " + userFromDB.getId());
             resp.sendRedirect("/");
         } else {
             resp.sendRedirect("/login");
