@@ -7,13 +7,12 @@ import com.codecool.shop.model.Cart;
 import com.codecool.shop.model.ListItem;
 import com.codecool.shop.model.Product;
 import com.codecool.shop.utils.Utils;
-import com.sun.org.apache.bcel.internal.generic.RETURN;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Map;
 
 public class CartDaoJDBC implements CartDao {
 
@@ -34,6 +33,43 @@ public class CartDaoJDBC implements CartDao {
             instance = new CartDaoJDBC();
         }
         return instance;
+    }
+
+    public Cart addCartToDB(Cart cartToBeAdded) {
+        System.out.println("Attempting to add new cart.");
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        Cart cartToBeReturned = new Cart();
+        try {
+            conn = dbConnect.getConnection();
+            pstmt = conn.prepareStatement("INSERT INTO carts (user_id) VALUES (1) RETURNING id");
+            //pstmt.executeUpdate();
+            ResultSet resultSet = pstmt.executeQuery();
+            while (resultSet.next()) {
+                System.out.println(resultSet.getInt("id"));
+                cartToBeReturned.setId(resultSet.getInt("id"));
+            }
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (pstmt != null)
+                    pstmt.close();
+            } catch (SQLException se2) {
+            }
+            try {
+                if (conn != null)
+                    conn.close();
+            } catch (SQLException se) {
+                se.printStackTrace();
+            }
+        }
+
+        System.out.println("New cart add process complete.");
+        return cartToBeReturned;
+
     }
 
     @Override

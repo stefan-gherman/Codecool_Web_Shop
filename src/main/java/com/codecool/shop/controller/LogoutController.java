@@ -1,9 +1,6 @@
 package com.codecool.shop.controller;
 
 import com.codecool.shop.config.TemplateEngineUtil;
-import com.codecool.shop.dao.UserDao;
-import com.codecool.shop.dao.implementation.UserDaoJDBC;
-import com.codecool.shop.utils.Utils;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -28,12 +25,14 @@ public class LogoutController extends HttpServlet {
             resp.sendRedirect("/");
             System.out.println("Logged Out");
         }
+        resp.sendRedirect("/");
 
 
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        resp.sendRedirect("/");
     }
 
 }

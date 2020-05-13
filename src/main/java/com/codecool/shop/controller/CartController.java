@@ -3,8 +3,8 @@ package com.codecool.shop.controller;
 import com.codecool.shop.config.TemplateEngineUtil;
 import com.codecool.shop.dao.CartDao;
 import com.codecool.shop.dao.implementation.CartDaoJDBC;
+import com.codecool.shop.model.Cart;
 import com.codecool.shop.model.ListItem;
-import com.codecool.shop.model.Product;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -13,6 +13,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -30,6 +31,15 @@ public class CartController extends HttpServlet {
         Map<ListItem, Integer> cartContents = cartDataStore.getCartContents();
         String defaultCurrency="";
 
+        // adding a session cart to the session that will be available
+        // regardless if the user is logged in or not
+        // it has by default user 1 - which will be a default/admin user
+        // which is added at the time of creating in the DB
+        // the creation in the DB is also important because it gives the cart id
+        HttpSession session = req.getSession();
+        Cart sessionCart = new Cart();
+        sessionCart = cartDataStore.addCartToDB(sessionCart);
+        session.setAttribute("cart", sessionCart);
 
 
 

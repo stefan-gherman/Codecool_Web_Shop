@@ -4,7 +4,7 @@ import com.codecool.shop.model.User;
 
 public interface UserDao {
     int add(User user);
-    int getUserIdByEmail(String email);
+    User getUserByEmail(String email);
     String getUserPasswordByEmail(String email);
 
 

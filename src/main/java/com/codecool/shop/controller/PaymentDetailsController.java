@@ -3,8 +3,10 @@ package com.codecool.shop.controller;
 import com.codecool.shop.config.TemplateEngineUtil;
 import com.codecool.shop.dao.OrderDao;
 import com.codecool.shop.dao.implementation.OrderDaoMem;
+import com.codecool.shop.model.Cart;
 import com.codecool.shop.model.ListItem;
 import com.codecool.shop.model.Order;
+import com.codecool.shop.model.User;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -13,6 +15,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,15 +28,21 @@ public class PaymentDetailsController extends HttpServlet {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
-        final int ORDERID = 1;
-        final int USERID= 1;
-        final int CARTID = 1;
+//        final int ORDERID = 1;
+//        final int USERID= 1;
+//        final int CARTID = 1;
+
+        HttpSession session = req.getSession();
+        Cart tempCart = (Cart) session.getAttribute("cart");
+        User tempUser = (User) session.getAttribute("user");
+        Order tempOrder = (Order) session.getAttribute("order");
+
 
         OrderDao orderDao = OrderDaoMem.getInstance();
-        Order order = orderDao.getOrderById(ORDERID);
+        Order order = orderDao.getOrderById(tempOrder.getId());
 
         List<ListItem> temp = new ArrayList<>();
-        temp = orderDao.getItemsByOrderId(ORDERID);
+        temp = orderDao.getItemsByOrderId(tempOrder.getId());
         System.out.println("Items length after retrieval via ORDER ID" + temp.size());
         double total = 0;
         String orderCurrency;
@@ -92,21 +101,34 @@ public class PaymentDetailsController extends HttpServlet {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
-        final int ORDERID = 1;
-        final int USERID= 1;
-        final int CARTID = 1;
+//        final int ORDERID = 1;
+//        final int USERID= 1;
+//        final int CARTID = 1;
+
+        HttpSession session = req.getSession();
+        Cart tempCart = (Cart) session.getAttribute("cart");
+        User tempUser = (User) session.getAttribute("user");
+        Order tempOrder = (Order) session.getAttribute("order");
+
 
         OrderDao orderDao = OrderDaoMem.getInstance();
-        Order order = orderDao.getOrderById(ORDERID);
+        Order order = orderDao.getOrderById(tempOrder.getId());
 
         List<ListItem> temp = new ArrayList<>();
-        temp = orderDao.getItemsByOrderId(ORDERID);
+        temp = orderDao.getItemsByOrderId(tempOrder.getId());
         double total = 0;
         String orderCurrency;
         for (ListItem item:temp) {
             total += item.getProductPrice();
         }
-        orderCurrency = temp.get(0).getProductCurrency();
+
+        if (temp.size()!=0) {
+            orderCurrency = temp.get(0).getProductCurrency();
+        }
+        else {
+            orderCurrency = "";
+        }
+
         context.setVariable("total", total);
         context.setVariable("order", order);
         context.setVariable("currency", orderCurrency);

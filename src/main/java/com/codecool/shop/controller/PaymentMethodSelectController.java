@@ -4,8 +4,10 @@ import com.codecool.shop.config.Logger;
 import com.codecool.shop.config.TemplateEngineUtil;
 import com.codecool.shop.dao.OrderDao;
 import com.codecool.shop.dao.implementation.OrderDaoMem;
+import com.codecool.shop.model.Cart;
 import com.codecool.shop.model.ListItem;
 import com.codecool.shop.model.Order;
+import com.codecool.shop.model.User;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -14,6 +16,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,13 +30,18 @@ public class PaymentMethodSelectController extends HttpServlet implements Logger
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
         // temporary constant until session is implemented
-        final int USERID = 1;
-        final int ORDERID = 1;
-        final int CARTID = 1;
+//        final int USERID = 1;
+//        final int ORDERID = 1;
+//        final int CARTID = 1;
+        HttpSession session = req.getSession();
+        Cart tempCart = (Cart) session.getAttribute("cart");
+        User tempUser = (User) session.getAttribute("user");
+        Order tempOrder = (Order) session.getAttribute("order");
+
 
         OrderDao orderDao = OrderDaoMem.getInstance();
 
-        Order order = orderDao.getOrderById(ORDERID);
+        Order order = orderDao.getOrderById(tempOrder.getId());
 
         String ownerName = req.getParameter("full-name");
         String email = req.getParameter("input-email");
@@ -41,7 +49,7 @@ public class PaymentMethodSelectController extends HttpServlet implements Logger
         String billingAddress = req.getParameter("billing-address");
         String shippingAddress = req.getParameter("shipping-address");
 
-        order.setUserId(USERID);
+        order.setUserId(tempUser.getId());
         order.setOwnerName(ownerName);
         order.setEmail(email);
         order.setPhoneNumber(phoneNumber);
@@ -51,7 +59,7 @@ public class PaymentMethodSelectController extends HttpServlet implements Logger
         orderDao.update(order);
 
         List<ListItem> temp = new ArrayList<>();
-        temp=orderDao.getItemsByOrderId(ORDERID);
+        temp=orderDao.getItemsByOrderId(tempOrder.getId());
 
         System.out.println("size after ORDER ID items retrieval: " + temp.size());
 
@@ -61,8 +69,12 @@ public class PaymentMethodSelectController extends HttpServlet implements Logger
         for (ListItem item:temp) {
             total += item.getProductPrice();
         }
-        orderCurrency = temp.get(0).getProductCurrency();
-
+        if (temp.size()!=0) {
+            orderCurrency = temp.get(0).getProductCurrency();
+        }
+        else {
+            orderCurrency = "";
+        }
         // filling order information from checkout form
 //        if (Validation.validateNameInput(req.getParameter("full-name"))==false) {
 //            orderDataStore.setInvalidFullNameEntryMessage("A 2 to 50 character full name is required.");
