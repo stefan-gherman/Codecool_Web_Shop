@@ -121,11 +121,11 @@ INSERT INTO products (supplier_id, category_id, name, description, image, price,
 VALUES (1, 4, 'HP VH240a 23.8-inch Full HD 1080p',
         'Get the best productivity from home or at the office with the virtually borderless HP VH240a 23.8-Inch display featuring an ergonomic stand, built-in speakers and an ultra-slim design at a competitively low price point',
         'HP VH240a 23.8-inch Full HD 1080p.jpg', 109.99, 'USD');
-
-INSERT INTO users (name, email, password, phone_number, billing_address, shipping_address) VALUES ('John', 'a@a.com', 'asdasdasdasd', '0735678921','45 Left', '6753 Up');
-
-INSERT INTO carts (user_id)
-VALUES (1);
-
-INSERT INTO cart_items (cart_id, product_id) VALUES (1, 1);
-INSERT INTO cart_items (cart_id, product_id) VALUES (1, 1);
+--
+-- INSERT INTO users (name, email, password, phone_number, billing_address, shipping_address) VALUES ('John', 'a@a.com', 'asdasdasdasd', '0735678921','45 Left', '6753 Up');
+--
+-- INSERT INTO carts (user_id)
+-- VALUES (1);
+--
+-- INSERT INTO cart_items (cart_id, product_id) VALUES (1, 1);
+-- INSERT INTO cart_items (cart_id, product_id) VALUES (1, 1);

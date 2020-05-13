@@ -13,16 +13,17 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-@WebServlet(urlPatterns = {"/register"})
-public class RegisterController extends HttpServlet {
+@WebServlet(urlPatterns = {"/login"})
+public class LoginController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
-        engine.process("register.html", context, resp.getWriter());
+        engine.process("login.html", context, resp.getWriter());
 
     }
 
@@ -32,18 +33,21 @@ public class RegisterController extends HttpServlet {
         WebContext context = new WebContext(req, resp, req.getServletContext());
         UserDao userDao = UserDaoJDBC.getInstance();
 
-        String fullName = req.getParameter("full-name");
-        String email = req.getParameter("input-email");
+        String email = req.getParameter("email");
         String password = req.getParameter("password");
-        String phoneNumber = req.getParameter("input-phone");
-        String billingAddress = req.getParameter("billing-address");
-        String shippingAddress = req.getParameter("shipping-address");
 
+        System.out.println(email);
+        String hashedPasswordFromDB = userDao.getUserPasswordByEmail(email);
+        System.out.println(password + " " + hashedPasswordFromDB);
+        if(Utils.checkPassword(password, hashedPasswordFromDB)) {
+            int userIdFromDB = userDao.getUserIdByEmail(email);
+            HttpSession session = req.getSession();
+            session.setAttribute("userId", userIdFromDB);
+            resp.sendRedirect("/");
+        } else {
+            resp.sendRedirect("/login");
+        }
 
-        User user = new User(fullName, email, Utils.hasher(password), phoneNumber, billingAddress, shippingAddress);
-        int dbUserId = userDao.add(user);
-        System.out.println("User id from db:" + dbUserId);
-        resp.sendRedirect("/");
 
     }
 }
