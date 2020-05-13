@@ -32,7 +32,7 @@ public class CheckoutController extends HttpServlet {
         // getting info from DB to create order as Checkout button was pressed
         List<ListItem> temp = new ArrayList<>();
         OrderDao orderDao = OrderDaoMem.getInstance();
-        temp = orderDao.getItems(CARTID);
+        temp = orderDao.getItemsByCartId(CARTID);
         context.setVariable("items", temp);
         double total=0;
         String orderCurrency;
@@ -47,6 +47,8 @@ public class CheckoutController extends HttpServlet {
         tempOrder.setUserId(USERID);
         tempOrder.setItems(temp);
         int orderIdFromDb = orderDao.add(tempOrder);
+        tempOrder.setId(orderIdFromDb);
+        orderDao.addToOrderItems(tempOrder);
         // TODO add items to order_items
 
 

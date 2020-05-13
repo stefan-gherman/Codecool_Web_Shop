@@ -40,7 +40,7 @@ public class OrderDaoMem implements OrderDao {
         String shippingAddress = order.getShippingAddress();
 
 
-        System.out.println("Attempting to add new order." + fullName + phoneNumber + email);
+        System.out.println("Attempting to add new order." + order.getItems().size() + fullName + phoneNumber + email);
         Connection conn = null;
         PreparedStatement pstmt = null;
         int orderIdFromDb = 0;
@@ -86,6 +86,50 @@ public class OrderDaoMem implements OrderDao {
 
         System.out.println("New order add process complete.");
         return orderIdFromDb;
+    }
+
+    @Override
+    public void addToOrderItems(Order order) {
+        String sql = "";
+        StringBuilder sb = new StringBuilder();
+
+        for (int i=0; i<order.getItems().size(); i++) {
+            sb.append("INSERT INTO order_items (order_id, product_id) VALUES ("+ order.getId() +", " + order.getItems().get(i).getProductId() + ");");
+        }
+
+        sql = sb.toString();
+        System.out.println(sql);
+        System.out.println("Attempting to add new order batch to order_items.");
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+
+        try {
+            conn = dbConnect.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.executeUpdate();
+        }
+        catch (SQLException se) {
+            se.printStackTrace();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        finally {
+            try{
+                if(pstmt!=null)
+                    pstmt.close();
+            }catch(SQLException se2){
+            }
+            try{
+                if(conn!=null)
+                    conn.close();
+            }catch(SQLException se){
+                se.printStackTrace();
+            }
+        }
+
+        System.out.println("order_items add process complete.");
+
     }
 
     @Override
@@ -186,7 +230,7 @@ public class OrderDaoMem implements OrderDao {
     }
 
     @Override
-    public List<ListItem> getItems(int cartId) {
+    public List<ListItem> getItemsByCartId(int cartId) {
         System.out.println("Attempting to get items.");
         Connection conn = null;
         PreparedStatement pstmt = null;
@@ -235,11 +279,62 @@ public class OrderDaoMem implements OrderDao {
     }
 
     @Override
+    public List<ListItem> getItemsByOrderId(int orderId) {
+        System.out.println("Attempting to get items by order ID.");
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        List<ListItem> returnedItems = new ArrayList<>();
+        try {
+            conn = dbConnect.getConnection();
+            pstmt = conn.prepareStatement("" +
+                    "SELECT products.id, products.name, " +
+                    "products.image, products.price, products.currency " +
+                    "FROM order_items " +
+                    "JOIN products ON order_items.product_id = products.id " +
+                    "WHERE order_items.order_id = ?;");
+            pstmt.setInt(1, orderId);
+
+            ResultSet resultSet = pstmt.executeQuery();
+            while(resultSet.next()) {
+                returnedItems.add(new ListItem(
+                        resultSet.getInt("id"),
+                        resultSet.getString("name"),
+                        resultSet.getString("image"),
+                        resultSet.getFloat("price"),
+                        resultSet.getString("currency")));
+            }
+        }
+        catch (SQLException se) {
+            se.printStackTrace();
+        }
+        catch(Exception e){
+            e.printStackTrace();
+        }
+        finally {
+            try{
+                if(pstmt!=null)
+                    pstmt.close();
+            }catch(SQLException se2){
+            }
+            try{
+                if(conn!=null)
+                    conn.close();
+            }catch(SQLException se){
+                se.printStackTrace();
+            }
+        }
+        System.out.println("Get items by order ID complete.");
+        return returnedItems;
+    }
+
+
+    @Override
     public List<Order> getOrderHistoryByUserId(int userId) {
         System.out.println("Attempting to get order history.");
         Connection conn = null;
         PreparedStatement pstmt = null;
         List<Order> temp = new ArrayList<>();
+        List<ListItem> tempItems = new ArrayList<>();
         try {
             conn = dbConnect.getConnection();
             pstmt = conn.prepareStatement("" +
@@ -250,6 +345,10 @@ public class OrderDaoMem implements OrderDao {
             ResultSet resultSet = pstmt.executeQuery();
             while(resultSet.next()) {
                 tempOrder.setId(resultSet.getInt("id"));
+
+                tempItems = getItemsByOrderId(resultSet.getInt("id"));
+                tempOrder.setItems(tempItems);
+
                 tempOrder.setDateCreated(resultSet.getDate("date_created"));
                 tempOrder.setCartId(resultSet.getInt("cart_id"));
                 tempOrder.setUserId(resultSet.getInt("user_id"));

@@ -44,7 +44,7 @@ public class ConfirmationController extends HttpServlet {
         Order order = orderDao.getOrderById(ORDERID);
 
         List<ListItem> temp = new ArrayList<>();
-        temp = orderDao.getItems(CARTID);
+        temp = orderDao.getItemsByOrderId(ORDERID);
         double total = 0;
         String orderCurrency;
         for (ListItem item : temp) {

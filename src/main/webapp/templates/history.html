@@ -12,14 +12,17 @@
 <br>
 <div class="text-center">
 
-    <tr th:each="order: ${parsedHistory}">
-        <p th:text="${'Order ID: '} + ${order.getOrderId()}"></p>
-        <p th:text="${'Order date: '} + ${order.getOrderDate()}"></p>
-        <p>test</p>
-        <tr th:each="item: ${order.items}">
-            <p th:text="${'Item ID: '} + ${item.getProductId()}"></p>
+    <tr th:each="order: ${orderHistory}">
+        <p th:text="${'Order ID: '} + ${order.getId()}"></p>
+        <p th:text="${'Order date: '} + ${order.getDateCreated()}"></p>
 
-        </tr>
+        <p>test 0</p>
+        <h4 th:each="item: ${order.getItems()}" >
+            <p th:text="${'ID: '} + ${item.getProductId()} + ${' Name: '} + ${item.getProductName()} + ${' price: '} + ${item.getProductPrice()} + ${' '} + ${item.getProductCurrency()}" ></p>
+        </h4>
+        <p>test 1</p>
+
+
         <p>test 2</p>
 
 
