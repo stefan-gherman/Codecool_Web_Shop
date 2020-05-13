@@ -6,10 +6,14 @@ import com.codecool.shop.dao.CartDao;
 import com.codecool.shop.dao.ProductCategoryDao;
 import com.codecool.shop.dao.ProductDao;
 import com.codecool.shop.dao.SupplierDao;
+import com.codecool.shop.dao.implementation.CartDaoJDBC;
+//import com.codecool.shop.dao.implementation.ProductCategoryDaoMem;
+//import com.codecool.shop.dao.implementation.ProductDaoMem;
 import com.codecool.shop.dao.implementation.*;
 
 import com.codecool.shop.config.TemplateEngineUtil;
 import com.codecool.shop.model.Product;
+//import com.codecool.shop.dao.implementation.SupplierDaoMem;
 import com.codecool.shop.model.ProductCategory;
 import com.codecool.shop.model.Supplier;
 import org.thymeleaf.TemplateEngine;
@@ -52,7 +56,7 @@ public class ProductController extends HttpServlet {
             throwables.printStackTrace();
         }
 
-        CartDao cartDataStore = CartDaoMem.getInstance();
+        CartDao cartDataStore = CartDaoJDBC.getInstance();
         int cartSize = cartDataStore.getCartNumberOfProducts();
 
 
@@ -62,9 +66,9 @@ public class ProductController extends HttpServlet {
                 int prodIdParses = Integer.parseInt(req.getParameter("addToCart"));
                 System.out.println(prodIdParses);
                 cartDataStore.add(prodIdParses);
-                System.out.println(cartDataStore.getCartContents());
+                System.out.println("Current in cart" +cartDataStore.getCartContents());
                 cartSize = cartDataStore.getCartNumberOfProducts();
-                System.out.println(cartSize);
+                System.out.println("Current size " +cartSize);
             } catch (Exception e) {
                 System.out.println(e.getStackTrace());
             }

@@ -3,11 +3,13 @@ package com.codecool.shop.model;
 import java.sql.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class Cart {
     private int id;
     private int userId;
-    private HashMap<Product, Integer> cartContents = new LinkedHashMap<>();
+    private Map<ListItem, Integer> cartContents = new HashMap<>();
     private Date cartCreatedAtDate;
 
     public int getId() {
@@ -26,11 +28,11 @@ public class Cart {
         this.userId = userId;
     }
 
-    public HashMap<Product, Integer> getCartContents() {
+    public Map<ListItem, Integer> getCartContents() {
         return cartContents;
     }
 
-    public void setCartContents(HashMap<Product, Integer> cartContents) {
+    public void setCartContents(Map<ListItem, Integer> cartContents) {
         this.cartContents = cartContents;
     }
 

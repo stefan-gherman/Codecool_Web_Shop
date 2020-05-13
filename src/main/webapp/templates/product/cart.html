@@ -36,16 +36,16 @@
                     </thead>
                     <tbody>
                     <tr th:each="instance : ${cartContents}">
-                        <td th:text="${instance.key.getName()}"></td>
-                        <td th:text="${instance.key.getId()}"></td>
+                        <td th:text="${instance.key.getProductName()}"></td>
+                        <td th:text="${instance.key.getProductId()}"></td>
                         <td th:text="${instance.value}"></td>
-                        <td th:text="${ #numbers.formatDecimal(instance.value * instance.key.getDefaultPrice(), 0, 'COMMA',2,'POINT')}  + ' ' + ${defaultCurrency}"></td>
+                        <td th:text="${ #numbers.formatDecimal(instance.value * instance.key.getProductPrice(), 0, 'COMMA',2,'POINT')}  + ' ' + ${defaultCurrency}"></td>
                         <td>
                             <form action="/cart" method="post">
                                 <div class="inner_form" style="">
                                     <input type="number" min="0" th:value="${instance.value}"
-                                           th:id="'inputSubmit' + ${instance.key.getId()}" name="quantity" class="inputInner">
-                                    <input type="hidden" onkeydown="return false" th:value="${instance.key.getId()}"
+                                           th:id="'inputSubmit' + ${instance.key.getProductId()}" name="quantity" class="inputInner">
+                                    <input type="hidden" onkeydown="return false" th:value="${instance.key.getProductId()}"
                                            name="objectId">
                                     <input class="btn btn-primary btn_small" style="display: none"
                                            type="Submit" value="Change Quantity">
@@ -69,6 +69,12 @@
                                     <a href="/checkout">
                                         <button class="btn btn-primary cart_button">Checkout</button>
                                     </a>
+                                </td>
+                                <td>
+                                    <form action="/cart" method="post">
+                                        <input type="hidden" value="2" name="saveCart">
+                                        <input type="submit" class="btn btn-primary cart_button" value="Save Cart">
+                                    </form>
                                 </td>
                                 <td>
                                     <form action="/cart" method="post">
