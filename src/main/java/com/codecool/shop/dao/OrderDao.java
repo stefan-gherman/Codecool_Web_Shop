@@ -8,9 +8,11 @@ import java.util.List;
 public interface OrderDao {
 
     public int add(Order order);
+    public void addToOrderItems(Order order);
     public void update(Order order);
     public Order getOrderById(int id);
-    public List<ListItem> getItems(int userId);
+    public List<ListItem> getItemsByCartId(int cartId);
+    public List<ListItem> getItemsByOrderId(int orderId);
     public List<Order> getOrderHistoryByUserId(int userId);
 
 }

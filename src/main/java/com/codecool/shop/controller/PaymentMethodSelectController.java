@@ -51,7 +51,10 @@ public class PaymentMethodSelectController extends HttpServlet implements Logger
         orderDao.update(order);
 
         List<ListItem> temp = new ArrayList<>();
-        temp=orderDao.getItems(CARTID);
+        temp=orderDao.getItemsByOrderId(ORDERID);
+
+        System.out.println("size after ORDER ID items retrieval: " + temp.size());
+
         context.setVariable("items", temp);
         double total = 0;
         String orderCurrency;
