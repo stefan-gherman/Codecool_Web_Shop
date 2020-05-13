@@ -5,6 +5,7 @@ import com.codecool.shop.dao.ProductDao;
 import com.codecool.shop.model.Product;
 import com.codecool.shop.utils.Utils;
 
+import java.sql.SQLException;
 import java.util.*;
 
 public class CartDaoMem implements CartDao {
@@ -25,8 +26,8 @@ public class CartDaoMem implements CartDao {
     }
 
     @Override
-    public void add(int id) {
-        ProductDao productsList = ProductDaoMem.getInstance();
+    public void add(int id) throws SQLException {
+        ProductDao productsList = ProductDaoJDBC.getInstance();
         Product product = productsList.find(id);
         if(cartContents.containsKey(product)){
             cartContents.put(product, cartContents.get(product) + 1);
@@ -36,8 +37,8 @@ public class CartDaoMem implements CartDao {
     }
 
     @Override
-    public void add(int id, int quantity) {
-        ProductDao productList = ProductDaoMem.getInstance();
+    public void add(int id, int quantity) throws SQLException {
+        ProductDao productList = ProductDaoJDBC.getInstance();
         Product product = productList.find(id);
 
         if(cartContents.containsKey(product)) {
@@ -53,8 +54,8 @@ public class CartDaoMem implements CartDao {
 
 
     @Override
-    public void remove(int id) {
-        ProductDao productsList = ProductDaoMem.getInstance();
+    public void remove(int id) throws SQLException {
+        ProductDao productsList = ProductDaoJDBC.getInstance();
         Product product = productsList.find(id);
         if(cartContents.containsKey(product)) {
             if(cartContents.get(product) == 1) {
