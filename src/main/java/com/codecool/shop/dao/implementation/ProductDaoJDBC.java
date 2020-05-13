@@ -58,9 +58,9 @@ public class ProductDaoJDBC implements ProductDao {
         } catch(Exception ex){
             System.out.println("Error: " + ex.getMessage() + " when adding product to the database.");
         } finally {
-            if(dbConnect.getConnection() != null){
-                dbConnect.getConnection().close();
-            }
+            try { resultSet.close(); } catch (Exception e) { /* ignored */ }
+            try { preparedStatement.close(); } catch (Exception e) { /* ignored */ }
+            try { connection.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
@@ -104,9 +104,9 @@ public class ProductDaoJDBC implements ProductDao {
         } catch(Exception ex){
             System.out.println("Error: " + ex.getMessage() + " when removing product from database.");
         } finally {
-            if(dbConnect.getConnection() != null){
-                dbConnect.getConnection().close();
-            }
+            try { resultSet.close(); } catch (Exception e) { /* ignored */ }
+            try { preparedStatement.close(); } catch (Exception e) { /* ignored */ }
+            try { connection.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
@@ -129,7 +129,6 @@ public class ProductDaoJDBC implements ProductDao {
                 productList.add(new Product(id, supplierDao.find(supplierId),
                         productCategoryDao.find(categoryId), name, description, image, price, currency));
             }
-            System.out.println(productList);
         } catch(Exception ex){
             System.out.println("Error: " + ex.getMessage() + " when getting all products from database.");
         } finally {
@@ -213,10 +212,14 @@ public class ProductDaoJDBC implements ProductDao {
         try {
             productList.clear();
             connection = dbConnect.getConnection();
-            preparedStatement = connection.prepareStatement("SELECT * FROM products " +
-                    "WHERE category_id = ? AND supplier_id = ?");
-            preparedStatement.setInt(1, categoryId);
-            preparedStatement.setInt(2, supplierId);
+            if(supplierId != 0){
+                preparedStatement = connection.prepareStatement("SELECT * FROM products " +
+                        "WHERE category_id = ? AND supplier_id = ?");
+                preparedStatement.setInt(1, categoryId);
+                preparedStatement.setInt(2, supplierId);
+            } else {
+                getBy(productCategoryDao.find(categoryId));
+            }
 
             resultSet = preparedStatement.executeQuery();
 
