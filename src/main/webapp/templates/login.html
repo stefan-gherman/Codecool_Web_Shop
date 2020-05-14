@@ -4,12 +4,10 @@
     <title id="pageTitle">Login</title>
 </head>
 <body>
-
 <div class="jumbotron text-center">
     <h1>Login</h1>
 </div>
-
-
+<div th:include="navbar.html :: copy"></div>
 
 
 <br>
@@ -21,27 +19,26 @@
     <form action="/login" method="post">
         <div class="form-group">
             <label for="email">Email address</label>
-            <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp" placeholder="Enter email">
+            <input aria-describedby="emailHelp" class="form-control" id="email" name="email" placeholder="Enter email"
+                   type="email">
             <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
         </div>
         <div class="form-group">
             <label for="password">Password</label>
-            <input type="password" class="form-control" id="password" name="password" aria-describedby="password-help" >
+            <input aria-describedby="password-help" class="form-control" id="password" name="password" type="password">
             <small id="password-help" class="form-text text-muted">Choose a strong password!</small>
         </div>
 
         <button type="submit" class="btn btn-primary">Login</button>
-        <a href="/register"><button class="btn btn-primary" type="button">Register</button></a>
+        <a href="/register">
+            <button class="btn btn-primary" type="button">Register</button>
+        </a>
 
     </form>
     <br>
     <a href="/">Back to Shop</a>
 </div>
-
-</div>
-
 <br>
-
 <div th:replace="footer.html :: copy"></div>
 </body>
 </html>

@@ -27,7 +27,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav_link" href="/cart"><i class="fas fa-shopping-cart fa-2x"></i></a>
-                        <span th:if="${cartSize} > 0">
+                        <span th:if="${cartSize > 0}">
                             <sup class="badge badge-danger" th:text="${cartSize}">300</sup>
                         </span>
                     </li>

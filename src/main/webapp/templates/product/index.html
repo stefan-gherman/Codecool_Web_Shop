@@ -1,19 +1,24 @@
 <!doctype html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-
     <div th:replace="header.html :: copy"></div>
-
-  <title>Codecool Shop</title>
+    <title>Codecool Shop</title>
 </head>
 
 <body>
 <div th:replace="navbar.html :: copy"></div>
 
+<!--<div th:fragment="menu" class="jumbotron text-center">-->
+<!--    <h1>Codecool Shop</h1>-->
+<!--    <p><a href="/register">Register</a></p>-->
+<!--    <p><a href="/login">Log In</a></p>-->
+<!--    <p><a href="/logout">Log Out</a></p>-->
+
+<!--</div>-->
+
 <div class="container">
-    <br><br>
-<!--    <div th:replace="mainHeader.html :: jumbotron"></div>-->
-    <div th:replace="mainHeader.html :: carousel"></div>
+    <br>
+    <div th:replace="mainHeader.html ::carousel"></div>
 
     <!-- category and supplier -->
     <div class="col ">
@@ -39,14 +44,14 @@
                     </select>
                 </div>
 <!--                <div class="float-right" style="margin-left: auto; margin-right: 0px;">-->
-<!--                <div class="form-group">-->
+                <!--                    <div class="form-group">-->
 
-<!--                    <p class="nav_links" ><a href="/cart"><i class="fas fa-shopping-cart fa-2x"></i></a></p>-->
-<!--                    <span th:if="${cartSize} > 0">-->
-<!--        <sup class="badge badge-danger" th:text="${cartSize}">300</sup>-->
-<!--    </span>-->
-<!--                    </div>-->
-<!--                </div>-->
+                <!--                        <p class="nav_links" ><a href="/cart"><i class="fas fa-shopping-cart fa-2x"></i></a></p>-->
+                <!--                        <span th:if="${cartSize} > 0">-->
+                <!--        <sup class="badge badge-danger" th:text="${cartSize}">300</sup>-->
+                <!--    </span>-->
+                <!--                    </div>-->
+                <!--                </div>-->
             </div>
 
 
