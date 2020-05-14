@@ -39,7 +39,6 @@ public class ProductController extends HttpServlet {
             session.setMaxInactiveInterval(MAX_SESSION_LIFE_IN_SECONDS);
             if (session.getAttribute("user") == null) session.setAttribute("user", new User());
             if (session.getAttribute("cart") == null) session.setAttribute("cart", new Cart());
-            if (session.getAttribute("order") == null) session.setAttribute("order", new Order());
         }
 
         try {
@@ -58,21 +57,19 @@ public class ProductController extends HttpServlet {
 
         CartDao cartDataStore = CartDaoJDBC.getInstance();
         User currentUser = (User) session.getAttribute("user");
+        Cart currentCart = (Cart) session.getAttribute("cart");
 
         if(currentUser.getFullName() != null) {
             try {
-                Cart currentCart = (Cart) session.getAttribute("cart");
                 if (cartDataStore.createCartFromQuery(currentUser.getId()).getCartContents().size()==0) {
                     currentCart = (Cart) session.getAttribute("cart");
                 }
                 else {
-                    session.setAttribute("cart", cartDataStore.createCartFromQuery(
-                            currentUser.getId()));
+                    session.setAttribute("cart", cartDataStore.createCartFromQuery(currentUser.getId()));
                     currentCart = (Cart) session.getAttribute("cart");
                 }
                 if(currentCart.getCartNumberOfProducts()!= 0 && currentCart.getCartNumberOfProducts() !=
-                        cartDataStore.createCartFromQuery(
-                                currentUser.getId()).getCartNumberOfProducts()){
+                        cartDataStore.createCartFromQuery(currentUser.getId()).getCartNumberOfProducts()){
                     session.setAttribute("cart", currentCart);
                 } else {
                     session.setAttribute("cart", cartDataStore.createCartFromQuery(

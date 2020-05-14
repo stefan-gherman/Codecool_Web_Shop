@@ -64,7 +64,7 @@ public class ConfirmationController extends HttpServlet {
         session.removeAttribute("order");
 
         // send confirmation email to customer
-//        sendEmailConfirmation(tempOrder.getEmail(), tempOrder.getOwnerName(), tempOrder.getId(), String.valueOf(total));
+        sendEmailConfirmation(tempOrder.getEmail(), tempOrder.getOwnerName(), tempOrder.getId(), String.valueOf(total));
 
     }
 
@@ -75,7 +75,7 @@ public class ConfirmationController extends HttpServlet {
         String subject = "EDUCATIONAL PROJECT - shop order confirmation";
         String body =  "EDUCATIONAL PROJECT - content with order details";
         final String user = "ionionescu2020demo@gmail.com";
-        final String pass = "verystrongpassword";
+        final String pass = "notverystrongpassword";
 
         Properties props = new Properties();
         props.put("mail.smtp.host", host);
