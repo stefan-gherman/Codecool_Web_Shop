@@ -9,6 +9,7 @@ import com.codecool.shop.model.ProductCategory;
 import com.codecool.shop.model.Supplier;
 
 import javax.xml.transform.Result;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -25,11 +26,11 @@ public class SupplierDaoJDBC implements SupplierDao {
 
     private static SupplierDaoJDBC instance;
 
-    private SupplierDaoJDBC() {
+    private SupplierDaoJDBC() throws IOException {
 
     }
 
-    public static SupplierDaoJDBC getInstance() {
+    public static SupplierDaoJDBC getInstance() throws IOException {
         if (instance == null) {
             instance = new SupplierDaoJDBC();
         }
@@ -37,7 +38,7 @@ public class SupplierDaoJDBC implements SupplierDao {
     }
 
     @Override
-    public void add(Supplier supplier) throws SQLException {
+    public void add(Supplier supplier) {
         try {
             connection = dbConnect.getConnection();
             preparedStatement = connection.prepareStatement("INSERT INTO suppliers (name, description)" +
@@ -55,7 +56,7 @@ public class SupplierDaoJDBC implements SupplierDao {
     }
 
     @Override
-    public Supplier find(int id) throws SQLException {
+    public Supplier find(int id) {
         try {
             connection = dbConnect.getConnection();
             preparedStatement = connection.prepareStatement("SELECT * FROM suppliers WHERE id = ?");
@@ -80,7 +81,7 @@ public class SupplierDaoJDBC implements SupplierDao {
     }
 
     @Override
-    public void remove(int id) throws SQLException {
+    public void remove(int id) {
         try {
             connection = dbConnect.getConnection();
             preparedStatement = connection.prepareStatement("DELETE FROM suppliers WHERE id = ?");
@@ -96,7 +97,7 @@ public class SupplierDaoJDBC implements SupplierDao {
     }
 
     @Override
-    public List<Supplier> getAll() throws SQLException {
+    public List<Supplier> getAll() {
         try {
             supplierList.clear();
             connection = dbConnect.getConnection();

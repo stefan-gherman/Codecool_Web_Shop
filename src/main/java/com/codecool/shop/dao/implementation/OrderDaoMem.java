@@ -5,6 +5,7 @@ import com.codecool.shop.dao.OrderDao;
 import com.codecool.shop.model.ListItem;
 import com.codecool.shop.model.Order;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,11 +20,11 @@ public class OrderDaoMem implements OrderDao {
     static final String PASS = "postgres";
 
 
-    private OrderDaoMem() {
+    private OrderDaoMem() throws IOException {
 
     }
 
-    public static OrderDaoMem getInstance() {
+    public static OrderDaoMem getInstance() throws IOException {
         if (instance == null) {
             instance = new OrderDaoMem();
         }

@@ -10,6 +10,7 @@ import com.codecool.shop.model.Supplier;
 import jdk.jfr.Category;
 
 import javax.xml.transform.Result;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -27,11 +28,11 @@ public class ProductCategoryJDBC implements ProductCategoryDao {
 
     private static ProductCategoryJDBC instance;
 
-    private ProductCategoryJDBC() throws SQLException {
+    private ProductCategoryJDBC() throws IOException {
 
     }
 
-    public static ProductCategoryJDBC getInstance() throws SQLException {
+    public static ProductCategoryJDBC getInstance() throws IOException {
         if (instance == null) {
             instance = new ProductCategoryJDBC();
         }
@@ -40,7 +41,7 @@ public class ProductCategoryJDBC implements ProductCategoryDao {
 
 
     @Override
-    public void add(ProductCategory category) throws SQLException {
+    public void add(ProductCategory category) {
         try {
             connection = dbConnect.getConnection();
             preparedStatement = connection.prepareStatement("INSERT INTO categories (name, " +
@@ -59,7 +60,7 @@ public class ProductCategoryJDBC implements ProductCategoryDao {
     }
 
     @Override
-    public ProductCategory find(int id) throws SQLException {
+    public ProductCategory find(int id){
         try {
             connection = dbConnect.getConnection();
             preparedStatement = connection.prepareStatement("SELECT * FROM categories WHERE id = ?");
@@ -84,7 +85,7 @@ public class ProductCategoryJDBC implements ProductCategoryDao {
     }
 
     @Override
-    public void remove(int id) throws SQLException {
+    public void remove(int id) {
         try {
             connection = dbConnect.getConnection();
             preparedStatement = connection.prepareStatement("DELETE FROM categories WHERE id = ?");
@@ -100,7 +101,7 @@ public class ProductCategoryJDBC implements ProductCategoryDao {
     }
 
     @Override
-    public List<ProductCategory> getAll() throws SQLException {
+    public List<ProductCategory> getAll(){
         try {
             connection = dbConnect.getConnection();
             preparedStatement = connection.prepareStatement("SELECT * FROM categories");

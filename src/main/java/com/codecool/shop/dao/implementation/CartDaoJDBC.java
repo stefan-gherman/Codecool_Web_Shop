@@ -9,6 +9,7 @@ import com.codecool.shop.model.Product;
 import com.codecool.shop.utils.Utils;
 import com.sun.org.apache.bcel.internal.generic.RETURN;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,12 +25,12 @@ public class CartDaoJDBC implements CartDao {
     private static CartDaoJDBC instance = null;
     private DBConnect dbConnect = DBConnect.getInstance();
 
-    private CartDaoJDBC() {
+    private CartDaoJDBC() throws IOException {
         this.cart = new Cart();
     }
 
 
-    public static CartDaoJDBC getInstance(){
+    public static CartDaoJDBC getInstance() throws IOException {
         if(instance == null) {
             instance = new CartDaoJDBC();
         }
@@ -37,7 +38,7 @@ public class CartDaoJDBC implements CartDao {
     }
 
     @Override
-    public void add(int id) throws SQLException {
+    public void add(int id) throws SQLException, IOException {
         ProductDao productsList = ProductDaoJDBC.getInstance();
         Product product = productsList.find(id);
         Map<ListItem, Integer> tempMap = cart.getCartContents();
@@ -72,7 +73,7 @@ public class CartDaoJDBC implements CartDao {
     }
 
     @Override
-    public void add(int id, int quantity) throws SQLException {
+    public void add(int id, int quantity) throws SQLException, IOException {
         ProductDao productsList = ProductDaoJDBC.getInstance();
         Product product = productsList.find(id);
         //

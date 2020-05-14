@@ -9,6 +9,7 @@ import com.codecool.shop.model.ProductCategory;
 import com.codecool.shop.model.Supplier;
 
 import javax.xml.transform.Result;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -29,11 +30,11 @@ public class ProductDaoJDBC implements ProductDao {
 
     private static ProductDaoJDBC instance;
 
-    private ProductDaoJDBC() throws SQLException {
+    private ProductDaoJDBC() throws SQLException, IOException {
 
     }
 
-    public static ProductDaoJDBC getInstance() throws SQLException {
+    public static ProductDaoJDBC getInstance() throws SQLException, IOException {
         if (instance == null) {
             instance = new ProductDaoJDBC();
         }
@@ -42,7 +43,7 @@ public class ProductDaoJDBC implements ProductDao {
 
 
     @Override
-    public void add(Product product) throws SQLException {
+    public void add(Product product){
         try {
             preparedStatement = dbConnect.getConnection().prepareStatement("INSERT INTO products (supplier_id, " +
                     "category_id, name, description, image, price, currency) " +
@@ -65,7 +66,7 @@ public class ProductDaoJDBC implements ProductDao {
     }
 
     @Override
-    public Product find(int id) throws SQLException {
+    public Product find(int id) {
         try {
             connection = dbConnect.getConnection();
             preparedStatement = connection.prepareStatement("SELECT * FROM products WHERE id= ?");
@@ -95,7 +96,7 @@ public class ProductDaoJDBC implements ProductDao {
     }
 
     @Override
-    public void remove(int id) throws SQLException {
+    public void remove(int id){
         try {
             preparedStatement = dbConnect.getConnection().prepareStatement("DELETE FROM products " +
                     "WHERE id = ?");
@@ -111,7 +112,7 @@ public class ProductDaoJDBC implements ProductDao {
     }
 
     @Override
-    public List<Product> getAll() throws SQLException {
+    public List<Product> getAll(){
         try {
             connection = dbConnect.getConnection();
             preparedStatement = connection.prepareStatement("SELECT * FROM products");
@@ -140,8 +141,9 @@ public class ProductDaoJDBC implements ProductDao {
     }
 
     @Override
-    public List<Product> getBy(Supplier supplier) throws SQLException {
+    public List<Product> getBy(Supplier supplier){
         try {
+            productList.clear();
             connection = dbConnect.getConnection();
             productList.clear();
             preparedStatement = connection.prepareStatement("SELECT * FROM products " +
@@ -174,7 +176,7 @@ public class ProductDaoJDBC implements ProductDao {
     }
 
     @Override
-    public List<Product> getBy(ProductCategory productCategory) throws SQLException {
+    public List<Product> getBy(ProductCategory productCategory) {
         try {
             productList.clear();
             connection = dbConnect.getConnection();
@@ -208,7 +210,7 @@ public class ProductDaoJDBC implements ProductDao {
     }
 
     @Override
-    public List<Product> getBy(int categoryId, int supplierId) throws SQLException {
+    public List<Product> getBy(int categoryId, int supplierId){
         try {
             productList.clear();
             connection = dbConnect.getConnection();
