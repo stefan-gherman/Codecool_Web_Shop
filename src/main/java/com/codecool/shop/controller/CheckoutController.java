@@ -42,7 +42,6 @@ public class CheckoutController extends HttpServlet {
         System.out.println("**************************** Got cart contents from session: " + tempCart.getCartContents());
         User tempUser = (User) session.getAttribute("user");
 
-
         // create new order object in memory and also in the DB with the limited data
         Order tempOrder = new Order();
 
@@ -89,6 +88,7 @@ public class CheckoutController extends HttpServlet {
 
         }
 
+        context.setVariable("user", tempUser);
         context.setVariable("items", tempOrder.getItems());
         context.setVariable("total", total);
         context.setVariable("currency", orderCurrency);
