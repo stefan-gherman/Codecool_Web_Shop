@@ -62,8 +62,15 @@ public class ProductController extends HttpServlet {
 
         if(currentUser.getFullName() != null) {
             try {
-                session.setAttribute("cart", cartDataStore.createCartFromQuery(
-                        currentUser.getId()));
+                Cart currentCart = (Cart) session.getAttribute("cart");
+                if(currentCart.getCartNumberOfProducts()!= 0 && currentCart.getCartNumberOfProducts() !=
+                        cartDataStore.createCartFromQuery(
+                        currentUser.getId()).getCartNumberOfProducts()){
+                        session.setAttribute("cart", currentCart);
+                } else {
+                    session.setAttribute("cart", cartDataStore.createCartFromQuery(
+                            currentUser.getId()));
+                }
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }

@@ -30,8 +30,8 @@ public class CartController extends HttpServlet {
         WebContext context = new WebContext(req, resp, req.getServletContext());
         CartDao cartDataStore = CartDaoJDBC.getInstance();
 
-        Map<ListItem, Integer> cartContents = cartDataStore.getCartContents();
-        String defaultCurrency = "";
+
+
 
         // adding a session cart to the session that will be available
         // regardless if the user is logged in or not
@@ -39,19 +39,22 @@ public class CartController extends HttpServlet {
         // which is added at the time of creating in the DB
         // the creation in the DB is also important because it gives the cart id
         HttpSession session = req.getSession(false);
-
         Cart sessionCart = (Cart) session.getAttribute("cart");
+        Map<ListItem, Integer> cartContents = sessionCart.getCartContents();
+        String defaultCurrency = "";
         int cartSize = sessionCart.getCartNumberOfProducts();
         float cartTotal = sessionCart.getTotalSum();
 //        sessionCart = cartDataStore.addCartToDB(sessionCart);
         session.setAttribute("cart", sessionCart);
 
 
-        for (Map.Entry<ListItem, Integer> product : cartContents.entrySet()
+        for (Map.Entry<ListItem, Integer> product : sessionCart.getCartContents().entrySet()
         ) {
-            defaultCurrency = product.getKey().getProductCurrency().toString();
+            defaultCurrency = product.getKey().getProductCurrency();
             break;
         }
+
+        System.out.println("Default currency " + defaultCurrency);
 
 
         context.setVariable("cartSize", sessionCart.getCartNumberOfProducts());
