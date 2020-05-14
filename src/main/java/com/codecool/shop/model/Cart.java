@@ -127,17 +127,12 @@ public class Cart {
                             System.out.println("COntine");
                             System.out.println(entry.getKey().getProductName());
                             tempMap.remove(entry.getKey());
-                        } else
-                        {
+                        } else {
                             System.out.println("DOes not contain");
                         }
 
-
-                    } else if (entry.getValue() > quantity ) {
-                        tempMap.put(entry.getKey(), quantity);
-
                     } else {
-                        tempMap.put(entry.getKey(), entry.getValue() + (quantity - entry.getValue()));
+                        tempMap.put(entry.getKey(), quantity);
 
                     }
                     break;

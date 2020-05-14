@@ -29,6 +29,7 @@ public class ProductController extends HttpServlet {
     ProductCategoryDao productCategoryDataStore = null;
     ProductDao productDataStore = null;
     SupplierDao supplierDao = null;
+    private final int MAX_SESSION_LIFE_IN_SECONDS = 3600;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -36,6 +37,7 @@ public class ProductController extends HttpServlet {
         if(session == null) {
             System.out.println("Session null");
             session = req.getSession();
+            session.setMaxInactiveInterval(MAX_SESSION_LIFE_IN_SECONDS);
             if (session.getAttribute("user") == null) session.setAttribute("user", new User());
             if (session.getAttribute("cart") == null) session.setAttribute("cart", new Cart());
         }

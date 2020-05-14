@@ -18,7 +18,8 @@ public interface CartDao {
 //    void eraseMe();
     float getTotalSum();
     Cart getCart();
-    int saveInDB(Integer userId) throws SQLException;
+    int saveInDB(int userId) throws SQLException;
+    void saveCartAndListItems ( int cartId, Cart cart);
     void add(int id, int quantity) throws SQLException;
 
 

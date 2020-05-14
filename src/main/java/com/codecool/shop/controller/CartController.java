@@ -43,7 +43,7 @@ public class CartController extends HttpServlet {
         Cart sessionCart = (Cart) session.getAttribute("cart");
         int cartSize = sessionCart.getCartNumberOfProducts();
         float cartTotal = sessionCart.getTotalSum();
-        sessionCart = cartDataStore.addCartToDB(sessionCart);
+//        sessionCart = cartDataStore.addCartToDB(sessionCart);
         session.setAttribute("cart", sessionCart);
 
 
@@ -62,9 +62,11 @@ public class CartController extends HttpServlet {
         String username = currentUser.getFullName();
         if(username != null) {
             context.setVariable("username", username);
+            context.setVariable("userId", currentUser.getId());
         }
         else {
             context.setVariable("username", "null");
+            context.setVariable("userId", "null");
         }
         engine.process("product/cart.html", context, resp.getWriter());
     }
@@ -111,7 +113,13 @@ public class CartController extends HttpServlet {
         }
         if (req.getParameter("saveCart") != null) {
             try {
-                cartDataStore.saveInDB(Integer.parseInt(req.getParameter("saveCart")));
+
+                HttpSession session = req.getSession(false);
+                if (session != null) {
+                    Cart tempCart = (Cart) session.getAttribute("cart");
+                    int lastCart = cartDataStore.saveInDB(Integer.parseInt(req.getParameter("saveCart")));
+                    cartDataStore.saveCartAndListItems(lastCart, tempCart);
+                }
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }

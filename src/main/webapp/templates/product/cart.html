@@ -82,7 +82,7 @@
                                 </td>
                                 <td th:if="${username} != 'null'">
                                     <form action="/cart" method="post">
-                                        <input type="hidden" value="2" name="saveCart">
+                                        <input type="hidden" th:value="${userId}" name="saveCart">
                                         <input type="submit" class="btn btn-primary cart_button" value="Save Cart">
                                     </form>
                                 </td>
