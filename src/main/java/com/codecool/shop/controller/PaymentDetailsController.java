@@ -46,17 +46,17 @@ public class PaymentDetailsController extends HttpServlet {
         System.out.println("Items length after retrieval via ORDER ID" + temp.size());
         double total = 0;
         String orderCurrency;
-        for (ListItem item:temp) {
+        for (ListItem item:tempOrder.getItems()) {
             total += item.getProductPrice();
         }
-        if (temp.size()!=0) {
-            orderCurrency = temp.get(0).getProductCurrency();
+        if (tempOrder.getItems().size()!=0) {
+            orderCurrency = tempOrder.getItems().get(0).getProductCurrency();
         }
         else {
             orderCurrency = "";
         }
         context.setVariable("total", total);
-        context.setVariable("order", order);
+        context.setVariable("order", tempOrder);
         context.setVariable("currency", orderCurrency);
 
         if (req.getParameter("payment-method").equals("card")) {
@@ -118,19 +118,18 @@ public class PaymentDetailsController extends HttpServlet {
         temp = orderDao.getItemsByOrderId(tempOrder.getId());
         double total = 0;
         String orderCurrency;
-        for (ListItem item:temp) {
+        for (ListItem item:tempOrder.getItems()) {
             total += item.getProductPrice();
         }
-
-        if (temp.size()!=0) {
-            orderCurrency = temp.get(0).getProductCurrency();
+        if (tempOrder.getItems().size()!=0) {
+            orderCurrency = tempOrder.getItems().get(0).getProductCurrency();
         }
         else {
             orderCurrency = "";
         }
 
         context.setVariable("total", total);
-        context.setVariable("order", order);
+        context.setVariable("order", tempOrder);
         context.setVariable("currency", orderCurrency);
 
         if (req.getParameter("payment-method").equals("card")) {

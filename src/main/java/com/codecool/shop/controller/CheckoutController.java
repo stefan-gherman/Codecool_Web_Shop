@@ -68,15 +68,14 @@ public class CheckoutController extends HttpServlet {
         // adding the items in the order to the DB
         orderDao.addToOrderItems(tempOrder);
 
-
         // setting up info for the Checkout page
         double total = 0;
         String orderCurrency;
-        for (ListItem item:temp) {
+        for (ListItem item:tempOrder.getItems()) {
             total += item.getProductPrice();
         }
-        if (temp.size()!=0) {
-            orderCurrency = temp.get(0).getProductCurrency();
+        if (tempOrder.getItems().size()!=0) {
+            orderCurrency = tempOrder.getItems().get(0).getProductCurrency();
         }
         else {
             orderCurrency = "";
@@ -85,7 +84,6 @@ public class CheckoutController extends HttpServlet {
         for (ListItem item :
                 tempOrder.getItems()) {
             System.out.println(item.getProductName() + " " + item.getProductPrice());
-
         }
 
         context.setVariable("user", tempUser);

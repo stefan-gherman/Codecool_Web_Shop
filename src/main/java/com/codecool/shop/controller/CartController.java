@@ -30,26 +30,26 @@ public class CartController extends HttpServlet {
         WebContext context = new WebContext(req, resp, req.getServletContext());
         CartDao cartDataStore = CartDaoJDBC.getInstance();
 
-        Map<ListItem, Integer> cartContents = cartDataStore.getCartContents();
-        String defaultCurrency = "";
-
         // adding a session cart to the session that will be available
         // regardless if the user is logged in or not
         // it has by default user 1 - which will be a default/admin user
         // which is added at the time of creating in the DB
         // the creation in the DB is also important because it gives the cart id
         HttpSession session = req.getSession(false);
+        session.removeAttribute("order");
 
         Cart sessionCart = (Cart) session.getAttribute("cart");
+        Map<ListItem, Integer> cartContents = sessionCart.getCartContents();
+        String defaultCurrency = "";
         int cartSize = sessionCart.getCartNumberOfProducts();
         float cartTotal = sessionCart.getTotalSum();
-//        sessionCart = cartDataStore.addCartToDB(sessionCart);
+        sessionCart = cartDataStore.addCartToDB(sessionCart);
         session.setAttribute("cart", sessionCart);
 
 
-        for (Map.Entry<ListItem, Integer> product : cartContents.entrySet()
+        for (Map.Entry<ListItem, Integer> product : sessionCart.getCartContents().entrySet()
         ) {
-            defaultCurrency = product.getKey().getProductCurrency().toString();
+            defaultCurrency = product.getKey().getProductCurrency();
             break;
         }
 
@@ -74,12 +74,10 @@ public class CartController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-
         CartDao cartDataStore = CartDaoJDBC.getInstance();
         OrderDao orderDao = OrderDaoJDBC.getInstance();
         int quantity;
         int objectId;
-
 
         try {
             if (req.getParameter("quantity") != null && req.getParameter("objectId") != null) {
