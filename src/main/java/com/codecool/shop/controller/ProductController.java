@@ -33,13 +33,16 @@ public class ProductController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         HttpSession session = req.getSession(false);
-        if(session == null) {
+        int cartSize = 0;
+        if (session == null) {
             System.out.println("Session null");
             session = req.getSession();
             session.setMaxInactiveInterval(MAX_SESSION_LIFE_IN_SECONDS);
             if (session.getAttribute("user") == null) session.setAttribute("user", new User());
             if (session.getAttribute("cart") == null) session.setAttribute("cart", new Cart());
         }
+        if (session.getAttribute("user") == null) session.setAttribute("user", new User());
+        if (session.getAttribute("cart") == null) session.setAttribute("cart", new Cart());
 
         try {
             productDataStore = ProductDaoJDBC.getInstance();
@@ -59,35 +62,36 @@ public class ProductController extends HttpServlet {
         User currentUser = (User) session.getAttribute("user");
         Cart currentCart = (Cart) session.getAttribute("cart");
 
-        if(currentUser.getFullName() != null) {
+        if (currentUser.getFullName() != null) {
             try {
-                if (cartDataStore.createCartFromQuery(currentUser.getId()).getCartContents().size()==0) {
+                if (cartDataStore.createCartFromQuery(currentUser.getId()).getCartContents().size() == 0) {
                     currentCart = (Cart) session.getAttribute("cart");
-                }
-                else {
+                } else {
                     session.setAttribute("cart", cartDataStore.createCartFromQuery(currentUser.getId()));
                     currentCart = (Cart) session.getAttribute("cart");
                 }
-                if(currentCart.getCartNumberOfProducts()!= 0 && currentCart.getCartNumberOfProducts() !=
-                        cartDataStore.createCartFromQuery(currentUser.getId()).getCartNumberOfProducts()){
-                    session.setAttribute("cart", currentCart);
-                } else {
-                    session.setAttribute("cart", cartDataStore.createCartFromQuery(
-                            currentUser.getId()));
-                }
+//                if(currentCart.getCartNumberOfProducts()!= 0 && currentCart.getCartNumberOfProducts() !=
+//                        cartDataStore.createCartFromQuery(currentUser.getId()).getCartNumberOfProducts()){
+//                    session.setAttribute("cart", currentCart);
+//                } else {
+//                    session.setAttribute("cart", cartDataStore.createCartFromQuery(
+//                            currentUser.getId()));
+//                }
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
         }
         Cart tempCart = (Cart) session.getAttribute("cart");
-        int cartSize = tempCart.getCartNumberOfProducts();
-
-
+        if (tempCart == null) {
+            cartSize = 0;
+        } else {
+            cartSize = tempCart.getCartNumberOfProducts();
+        }
 
 
         //System.out.println(req.getParameter("addToCart"));
-        if(req.getParameter("addToCart")!=null) {
-            try{
+        if (req.getParameter("addToCart") != null) {
+            try {
                 int prodIdParses = Integer.parseInt(req.getParameter("addToCart"));
 //                System.out.println(prodIdParses);
 //                cartDataStore.add(prodIdParses);
@@ -118,8 +122,6 @@ public class ProductController extends HttpServlet {
 //                System.out.println("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRemove and re-create cart: " + tempCart2.getCartContents());
 
 
-
-
             } catch (Exception e) {
                 System.out.println(e.getStackTrace());
             }
@@ -135,10 +137,9 @@ public class ProductController extends HttpServlet {
             int supplierId = getIdFromSupplier(req, supplierDao);
             currentUser = (User) session.getAttribute("user");
             String username = currentUser.getFullName();
-            if(username != null) {
+            if (username != null) {
                 context.setVariable("username", username);
-            }
-            else {
+            } else {
                 context.setVariable("username", "null");
             }
 
@@ -160,23 +161,22 @@ public class ProductController extends HttpServlet {
      * @param resp                     resp
      * @param productCategoryDataStore productCategoryDataStore
      * @param productDataStore         productDataStore
-     * @param categoryId                       category id
-     * @param supplierId                       supplier id
+     * @param categoryId               category id
+     * @param supplierId               supplier id
      * @throws IOException exception
      */
     private void displayProducts(WebContext context, TemplateEngine engine, HttpServletResponse resp,
                                  ProductCategoryDao productCategoryDataStore,
                                  ProductDao productDataStore, int categoryId, int supplierId,
-                                 int cartSize, SupplierDao supplierDao, HttpSession session, User currentUser )
+                                 int cartSize, SupplierDao supplierDao, HttpSession session, User currentUser)
             throws IOException, SQLException {
 
         context.setVariable("category", productCategoryDataStore.find(categoryId));
         //Suggestion
-        if(supplierDao.find(supplierId) == null) {
+        if (supplierDao.find(supplierId) == null) {
             //System.out.println("Supplier null");
-            context.setVariable("supplier", "all" );
-        }
-        else {
+            context.setVariable("supplier", "all");
+        } else {
             //System.out.println("Supplier not null");
             context.setVariable("supplier", supplierDao.find(supplierId));
         }
@@ -184,16 +184,11 @@ public class ProductController extends HttpServlet {
         context.setVariable("cartSize", cartSize);
 
 
-
         context.setVariable("user", currentUser);
         System.out.println("tet sess " + session.getId());
         context.setVariable("session", session);
         engine.process("product/index.html", context, resp.getWriter());
     }
-
-
-
-
 
 
     /**
@@ -227,13 +222,14 @@ public class ProductController extends HttpServlet {
 
     /**
      * Get id from supplier
-     * @param req req from HttpServletRequest
+     *
+     * @param req         req from HttpServletRequest
      * @param supplierDao supplier interface using DAO pattern
      * @return supplier id
      */
     private int getIdFromSupplier(HttpServletRequest req, SupplierDao supplierDao) throws SQLException {
 
-        if(req.getParameter("supplier") == null){
+        if (req.getParameter("supplier") == null) {
             return 0;
         }
 
@@ -250,7 +246,6 @@ public class ProductController extends HttpServlet {
         }
 
         return 0;
-
 
 
     }

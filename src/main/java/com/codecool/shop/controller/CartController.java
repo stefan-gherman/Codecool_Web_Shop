@@ -20,6 +20,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 @WebServlet(urlPatterns = {"/cart"})
@@ -29,6 +30,7 @@ public class CartController extends HttpServlet {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
         CartDao cartDataStore = CartDaoJDBC.getInstance();
+        Map<ListItem, Integer> cartContents;
 
         // adding a session cart to the session that will be available
         // regardless if the user is logged in or not
@@ -39,7 +41,11 @@ public class CartController extends HttpServlet {
         if (session.getAttribute("order")!=null) session.removeAttribute("order");
 
         Cart sessionCart = (Cart) session.getAttribute("cart");
-        Map<ListItem, Integer> cartContents = sessionCart.getCartContents();
+        if(sessionCart.getCartNumberOfProducts() == 0) {
+            cartContents = new HashMap<>();
+        } else {
+            cartContents = sessionCart.getCartContents();
+        }
         String defaultCurrency = "";
         int cartSize = sessionCart.getCartNumberOfProducts();
         float cartTotal = sessionCart.getTotalSum();
@@ -47,7 +53,7 @@ public class CartController extends HttpServlet {
         session.setAttribute("cart", sessionCart);
 
 
-        for (Map.Entry<ListItem, Integer> product : sessionCart.getCartContents().entrySet()
+        for (Map.Entry<ListItem, Integer> product : cartContents.entrySet()
         ) {
             defaultCurrency = product.getKey().getProductCurrency();
             break;
