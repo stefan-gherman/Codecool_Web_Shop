@@ -7,6 +7,7 @@ import com.codecool.shop.dao.implementation.CartDaoJDBC;
 import com.codecool.shop.dao.implementation.OrderDaoJDBC;
 import com.codecool.shop.model.Cart;
 import com.codecool.shop.model.ListItem;
+import com.codecool.shop.model.User;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -28,10 +29,9 @@ public class CartController extends HttpServlet {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
         CartDao cartDataStore = CartDaoJDBC.getInstance();
-        int cartSize = cartDataStore.getCartNumberOfProducts();
-        float cartTotal = cartDataStore.getTotalSum();
+
         Map<ListItem, Integer> cartContents = cartDataStore.getCartContents();
-        String defaultCurrency="";
+        String defaultCurrency = "";
 
         // adding a session cart to the session that will be available
         // regardless if the user is logged in or not
@@ -39,26 +39,34 @@ public class CartController extends HttpServlet {
         // which is added at the time of creating in the DB
         // the creation in the DB is also important because it gives the cart id
         HttpSession session = req.getSession(false);
+
         Cart sessionCart = (Cart) session.getAttribute("cart");
+        int cartSize = sessionCart.getCartNumberOfProducts();
+        float cartTotal = sessionCart.getTotalSum();
         sessionCart = cartDataStore.addCartToDB(sessionCart);
         session.setAttribute("cart", sessionCart);
 
 
-
-        for (Map.Entry<ListItem, Integer> product: cartContents.entrySet()
-             ) {
+        for (Map.Entry<ListItem, Integer> product : cartContents.entrySet()
+        ) {
             defaultCurrency = product.getKey().getProductCurrency().toString();
             break;
         }
 
 
-
-            context.setVariable("cartSize",cartSize);
-            context.setVariable("cartContents", sessionCart.getCartContents());
-            context.setVariable("cartTotal", cartTotal);
-            context.setVariable("defaultCurrency", defaultCurrency);
-            engine.process("product/cart.html", context, resp.getWriter());
-
+        context.setVariable("cartSize", sessionCart.getCartNumberOfProducts());
+        context.setVariable("cartContents", sessionCart.getCartContents());
+        context.setVariable("cartTotal", sessionCart.getTotalSum());
+        context.setVariable("defaultCurrency", defaultCurrency);
+        User currentUser = (User) session.getAttribute("user");
+        String username = currentUser.getFullName();
+        if(username != null) {
+            context.setVariable("username", username);
+        }
+        else {
+            context.setVariable("username", "null");
+        }
+        engine.process("product/cart.html", context, resp.getWriter());
     }
 
     @Override
@@ -71,11 +79,8 @@ public class CartController extends HttpServlet {
         int objectId;
 
 
-
-
-
-        try{
-            if( req.getParameter("quantity")!= null && req.getParameter("objectId")!=null) {
+        try {
+            if (req.getParameter("quantity") != null && req.getParameter("objectId") != null) {
                 quantity = Integer.parseInt(req.getParameter("quantity"));
                 objectId = Integer.parseInt(req.getParameter("objectId"));
 
@@ -86,24 +91,25 @@ public class CartController extends HttpServlet {
                 ListItem tempItem = orderDao.getListItemByProductId(productId);
                 HttpSession session = req.getSession(false);
                 Cart tempCart = (Cart) session.getAttribute("cart");
-                Map<ListItem, Integer> tempCartContents = tempCart.getCartContents();
-                tempCartContents.put(tempItem, quantity);
-                tempCart.setCartContents(tempCartContents);
-                System.out.println("TTTEEEMMMMPPP cart contents len: " + tempCartContents.size());
+                tempCart.add(objectId, quantity);
+                System.out.println("TTTEEEMMMMPPP cart contents len: " + tempCart.getCartNumberOfProducts());
                 session.setAttribute("cart", tempCart);
                 System.out.println("TTTEEEMMMMPPP cart added to session " + (Cart) ((Cart) session.getAttribute("cart")).getCartContents());
 
             }
 
 
-        } catch ( Exception e) {
+        } catch (Exception e) {
             System.out.println(Arrays.toString(e.getStackTrace()));
         }
 
-//        if(req.getParameter("clearCart")!=null) {
-//            cartDataStore.eraseMe();
-//        }
-        if(req.getParameter("saveCart")!=null) {
+        if(req.getParameter("clearCart")!=null) {
+            HttpSession session = req.getSession(false);
+            Cart tempCart = (Cart) session.getAttribute("cart");
+            tempCart.eraseMe();
+            session.setAttribute("cart", tempCart);
+        }
+        if (req.getParameter("saveCart") != null) {
             try {
                 cartDataStore.saveInDB(Integer.parseInt(req.getParameter("saveCart")));
             } catch (SQLException throwables) {
