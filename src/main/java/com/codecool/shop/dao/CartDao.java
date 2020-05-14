@@ -22,6 +22,6 @@ public interface CartDao {
     void saveCartAndListItems ( int cartId, Cart cart);
     void add(int id, int quantity) throws SQLException;
     void deleteUserCart(int id) throws SQLException;
-
+    Cart createCartFromQuery(int id) throws SQLException;
 
 }

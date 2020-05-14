@@ -70,6 +70,28 @@ public class Cart {
         return totalSum;
     }
 
+    public void addListItem(ListItem item) {
+        Map<ListItem, Integer> tempMap = cartContents;
+        int count = 0;
+        if (cartContents.size() == 0) {
+            cartContents.put(item, 1);
+        } else {
+            for (Map.Entry<ListItem, Integer> entry : this.cartContents.entrySet()
+            ) {
+                if (entry.getKey().getProductId() == item.getProductId()) {
+                    tempMap.put(entry.getKey(), entry.getValue() + 1);
+                    break;
+                } else {
+                    count++;
+                }
+            }
+        }
+        if( count == this.cartContents.size()) {
+            tempMap.put(item, 1);
+        }
+        this.setCartContents(tempMap);
+    }
+
     public void add(int id) throws SQLException {
         ProductDao productsList = ProductDaoJDBC.getInstance();
         Product product = productsList.find(id);
@@ -87,7 +109,6 @@ public class Cart {
 
                 if (entry.getKey().getProductId() == product.getId()) {
                     System.out.println("Adding existing");
-
                     tempMap.put(entry.getKey(), entry.getValue() + 1);
                     break;
                 } else {
@@ -122,13 +143,12 @@ public class Cart {
                 if (entry.getKey().getProductId() == product.getId()) {
                     System.out.println("Adding existing");
                     if (quantity == 0) {
-                        System.out.println("ZeroZero");
+
                         if (tempMap.containsKey(entry.getKey())) {
-                            System.out.println("COntine");
                             System.out.println(entry.getKey().getProductName());
                             tempMap.remove(entry.getKey());
                         } else {
-                            System.out.println("DOes not contain");
+                            System.out.println("Debug: Does not contain");
                         }
 
                     } else {

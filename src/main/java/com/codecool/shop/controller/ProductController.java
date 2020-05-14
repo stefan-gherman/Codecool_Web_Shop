@@ -58,6 +58,16 @@ public class ProductController extends HttpServlet {
         }
 
         CartDao cartDataStore = CartDaoJDBC.getInstance();
+        User currentUser = (User) session.getAttribute("user");
+
+        if(currentUser.getFullName() != null) {
+            try {
+                session.setAttribute("cart", cartDataStore.createCartFromQuery(
+                        currentUser.getId()));
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
         Cart tempCart = (Cart) session.getAttribute("cart");
         int cartSize = tempCart.getCartNumberOfProducts();
 

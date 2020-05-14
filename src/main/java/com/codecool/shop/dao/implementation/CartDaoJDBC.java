@@ -122,6 +122,7 @@ public class CartDaoJDBC implements CartDao {
     @Override
     public void deleteUserCart(int id) throws SQLException {
         String query = "DELETE FROM carts WHERE user_id = ?";
+
         try {
             Connection connection = dbConnect.getConnection();
             PreparedStatement statement = connection.prepareStatement(query);
@@ -132,6 +133,49 @@ public class CartDaoJDBC implements CartDao {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public Cart createCartFromQuery(int id) throws SQLException {
+        //Getting a cart from the db from id
+        int userCart = 0;
+        String query = "SELECT id FROM carts WHERE user_id = ?";
+        ProductDao productsList = ProductDaoJDBC.getInstance();
+        try {
+            Connection connection = dbConnect.getConnection();
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                userCart = resultSet.getInt("id");
+            }
+            statement.close();
+            connection.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if(userCart != 0) {
+            query = "SELECT product_id FROM cart_items WHERE cart_id = ?";
+            try {
+                Connection connection = dbConnect.getConnection();
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setInt(1, userCart);
+                ResultSet resultSet = statement.executeQuery();
+                Cart currentCart = new Cart();
+                ListItem extractedProduct = new ListItem();
+                while (resultSet.next()) {
+                    Product product = productsList.find(resultSet.getInt("product_id"));
+                    currentCart.addListItem(new ListItem(resultSet.getInt("product_id"), product.getName(), product.getImage(),
+                            product.getDefaultPrice(), product.getDefaultCurrency().toString()));
+                }
+                statement.close();
+                connection.close();
+                return currentCart;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return new Cart();
     }
 
     @Override
