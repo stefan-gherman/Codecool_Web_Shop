@@ -120,21 +120,26 @@ public class CartDaoJDBC implements CartDao {
     }
 
     @Override
-    public int saveInDB(int userId) throws SQLException {
-        //Delete last cart on user re-save
+    public void deleteUserCart(int id) throws SQLException {
         String query = "DELETE FROM carts WHERE user_id = ?";
         try {
             Connection connection = dbConnect.getConnection();
             PreparedStatement statement = connection.prepareStatement(query);
-            statement.setInt(1, userId);
+            statement.setInt(1,id);
             statement.executeUpdate();
             statement.close();
             connection.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public int saveInDB(int userId) throws SQLException {
+        //Delete last cart on user re-save
+        this.deleteUserCart(userId);
         //First statement concerning saving the cart to its specific table
-        query = "INSERT INTO carts (user_id) VALUES (?) RETURNING id ;";
+        String query = "INSERT INTO carts (user_id) VALUES (?) RETURNING id ;";
         int lastCart = 0;
 
 

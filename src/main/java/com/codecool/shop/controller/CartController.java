@@ -108,6 +108,14 @@ public class CartController extends HttpServlet {
         if(req.getParameter("clearCart")!=null) {
             HttpSession session = req.getSession(false);
             Cart tempCart = (Cart) session.getAttribute("cart");
+            User currentUser = (User) session.getAttribute("user");
+            if(currentUser.getFullName() != null) {
+                try {
+                    cartDataStore.deleteUserCart(currentUser.getId());
+                } catch (SQLException throwables) {
+                    throwables.printStackTrace();
+                }
+            }
             tempCart.eraseMe();
             session.setAttribute("cart", tempCart);
         }
