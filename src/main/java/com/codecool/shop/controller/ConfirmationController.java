@@ -57,6 +57,21 @@ public class ConfirmationController extends HttpServlet {
         context.setVariable("total", total);
         context.setVariable("order", tempOrder);
         context.setVariable("currency", orderCurrency);
+        User currentUser = (User) session.getAttribute("user");
+        String username = currentUser.getFullName();
+        if (username != null) {
+            context.setVariable("username", username);
+        } else {
+            context.setVariable("username", "null");
+        }
+        int cartSize = 0;
+        tempCart = (Cart) session.getAttribute("cart");
+        if (tempCart == null) {
+            cartSize = 0;
+        } else {
+            cartSize = tempCart.getCartNumberOfProducts();
+            context.setVariable("cartSize", cartSize);
+        }
         engine.process("payment-confirmation.html", context, resp.getWriter());
 
         // clearing the cart and the order from the session as the purchase is completed and backup isn't needed

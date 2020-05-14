@@ -3,6 +3,7 @@ package com.codecool.shop.controller;
 import com.codecool.shop.config.TemplateEngineUtil;
 import com.codecool.shop.dao.UserDao;
 import com.codecool.shop.dao.implementation.UserDaoJDBC;
+import com.codecool.shop.model.Cart;
 import com.codecool.shop.model.User;
 import com.codecool.shop.utils.Utils;
 import org.thymeleaf.TemplateEngine;
@@ -22,7 +23,22 @@ public class LoginController extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
-
+        HttpSession session = req.getSession(false);
+        User currentUser = (User) session.getAttribute("user");
+        String username = currentUser.getFullName();
+        if (username != null) {
+            context.setVariable("username", username);
+        } else {
+            context.setVariable("username", "null");
+        }
+        int cartSize = 0;
+        Cart tempCart = (Cart) session.getAttribute("cart");
+        if (tempCart == null) {
+            cartSize = 0;
+        } else {
+            cartSize = tempCart.getCartNumberOfProducts();
+            context.setVariable("cartSize", cartSize);
+        }
         engine.process("login.html", context, resp.getWriter());
 
     }

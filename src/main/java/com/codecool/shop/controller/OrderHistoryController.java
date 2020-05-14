@@ -63,6 +63,21 @@ public class OrderHistoryController extends HttpServlet {
 //
 //        context.setVariable("total", total);
 //        context.setVariable("currency", orderCurrency);
+        User currentUser = (User) session.getAttribute("user");
+        String username = currentUser.getFullName();
+        if (username != null) {
+            context.setVariable("username", username);
+        } else {
+            context.setVariable("username", "null");
+        }
+        int cartSize = 0;
+        tempCart = (Cart) session.getAttribute("cart");
+        if (tempCart == null) {
+            cartSize = 0;
+        } else {
+            cartSize = tempCart.getCartNumberOfProducts();
+            context.setVariable("cartSize", cartSize);
+        }
         engine.process("history.html", context, resp.getWriter());
     }
 

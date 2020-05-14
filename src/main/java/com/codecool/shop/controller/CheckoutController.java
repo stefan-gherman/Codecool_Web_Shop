@@ -43,7 +43,7 @@ public class CheckoutController extends HttpServlet {
         Map<ListItem, Integer> tempMap = tempCart.getCartContents();
         List<ListItem> temp = new ArrayList<>();
         for (Map.Entry<ListItem, Integer> entry : tempMap.entrySet()) {
-            for (int i=1; i<=entry.getValue(); i++) {
+            for (int i = 1; i <= entry.getValue(); i++) {
                 temp.add(entry.getKey());
             }
         }
@@ -52,10 +52,10 @@ public class CheckoutController extends HttpServlet {
         // setting up info for the Checkout page, the total is needed at the update as well
         double total = 0;
         String orderCurrency = "";
-        for (ListItem item:tempOrder.getItems()) {
+        for (ListItem item : tempOrder.getItems()) {
             total += item.getProductPrice();
         }
-        if (tempOrder.getItems().size()!=0) orderCurrency = tempOrder.getItems().get(0).getProductCurrency();
+        if (tempOrder.getItems().size() != 0) orderCurrency = tempOrder.getItems().get(0).getProductCurrency();
 
         // creating the new order in the DB and in the session
         int orderIdFromDb = orderDao.add(tempOrder);
@@ -74,11 +74,25 @@ public class CheckoutController extends HttpServlet {
 
         // adding the items in the order to the DB
         orderDao.addToOrderItems(tempOrder);
-
+        int cartSize = 0;
+        tempCart = (Cart) session.getAttribute("cart");
+        if (tempCart == null) {
+            cartSize = 0;
+        } else {
+            cartSize = tempCart.getCartNumberOfProducts();
+            context.setVariable("cartSize", cartSize);
+        }
         context.setVariable("user", tempUser);
         context.setVariable("items", tempOrder.getItems());
         context.setVariable("total", total);
         context.setVariable("currency", orderCurrency);
+        User currentUser = (User) session.getAttribute("user");
+        String username = currentUser.getFullName();
+        if (username != null) {
+            context.setVariable("username", username);
+        } else {
+            context.setVariable("username", "null");
+        }
         engine.process("checkout.html", context, resp.getWriter());
     }
 

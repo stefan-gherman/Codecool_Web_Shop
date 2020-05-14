@@ -22,8 +22,8 @@ import java.io.IOException;
 @WebServlet(urlPatterns = {"/payment-method-select"})
 public class PaymentMethodSelectController extends HttpServlet implements Logger {
 
-        @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException  {
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
@@ -55,14 +55,29 @@ public class PaymentMethodSelectController extends HttpServlet implements Logger
         // setting up info for display on html - currency as string for demo
         double total = 0;
         String orderCurrency = "";
-        for (ListItem item:tempOrder.getItems()) {
+        for (ListItem item : tempOrder.getItems()) {
             total += item.getProductPrice();
         }
-        if (tempOrder.getItems().size()!=0) orderCurrency = tempOrder.getItems().get(0).getProductCurrency();
+        if (tempOrder.getItems().size() != 0) orderCurrency = tempOrder.getItems().get(0).getProductCurrency();
 
         context.setVariable("total", total);
         context.setVariable("order", tempOrder);
         context.setVariable("currency", orderCurrency);
+        User currentUser = (User) session.getAttribute("user");
+        String username = currentUser.getFullName();
+        if (username != null) {
+            context.setVariable("username", username);
+        } else {
+            context.setVariable("username", "null");
+        }
+        int cartSize = 0;
+        tempCart = (Cart) session.getAttribute("cart");
+        if (tempCart == null) {
+            cartSize = 0;
+        } else {
+            cartSize = tempCart.getCartNumberOfProducts();
+            context.setVariable("cartSize", cartSize);
+        }
         engine.process("payment-method-select.html", context, resp.getWriter());
     }
 
