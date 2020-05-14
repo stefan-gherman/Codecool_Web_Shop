@@ -55,17 +55,17 @@ public class ConfirmationController extends HttpServlet {
         temp = orderDao.getItemsByOrderId(tempOrder.getId());
         double total = 0;
         String orderCurrency;
-        for (ListItem item : temp) {
+        for (ListItem item:tempOrder.getItems()) {
             total += item.getProductPrice();
         }
-        if (temp.size()!=0) {
-            orderCurrency = temp.get(0).getProductCurrency();
+        if (tempOrder.getItems().size()!=0) {
+            orderCurrency = tempOrder.getItems().get(0).getProductCurrency();
         }
         else {
             orderCurrency = "";
         }
         context.setVariable("total", total);
-        context.setVariable("order", order);
+        context.setVariable("order", tempOrder);
         context.setVariable("currency", orderCurrency);
 
         engine.process("payment-confirmation.html", context, resp.getWriter());

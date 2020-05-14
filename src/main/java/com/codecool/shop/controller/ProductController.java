@@ -17,7 +17,6 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
 //import com.codecool.shop.dao.implementation.ProductCategoryDaoMem;
 //import com.codecool.shop.dao.implementation.ProductDaoMem;
@@ -40,8 +39,8 @@ public class ProductController extends HttpServlet {
             session.setMaxInactiveInterval(MAX_SESSION_LIFE_IN_SECONDS);
             if (session.getAttribute("user") == null) session.setAttribute("user", new User());
             if (session.getAttribute("cart") == null) session.setAttribute("cart", new Cart());
+            if (session.getAttribute("order") == null) session.setAttribute("order", new Order());
         }
-
 
         try {
             productDataStore = ProductDaoJDBC.getInstance();
@@ -62,8 +61,23 @@ public class ProductController extends HttpServlet {
 
         if(currentUser.getFullName() != null) {
             try {
-                session.setAttribute("cart", cartDataStore.createCartFromQuery(
-                        currentUser.getId()));
+                Cart currentCart = (Cart) session.getAttribute("cart");
+                if (cartDataStore.createCartFromQuery(currentUser.getId()).getCartContents().size()==0) {
+                    currentCart = (Cart) session.getAttribute("cart");
+                }
+                else {
+                    session.setAttribute("cart", cartDataStore.createCartFromQuery(
+                            currentUser.getId()));
+                    currentCart = (Cart) session.getAttribute("cart");
+                }
+                if(currentCart.getCartNumberOfProducts()!= 0 && currentCart.getCartNumberOfProducts() !=
+                        cartDataStore.createCartFromQuery(
+                                currentUser.getId()).getCartNumberOfProducts()){
+                    session.setAttribute("cart", currentCart);
+                } else {
+                    session.setAttribute("cart", cartDataStore.createCartFromQuery(
+                            currentUser.getId()));
+                }
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }
