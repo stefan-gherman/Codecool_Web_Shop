@@ -15,4 +15,5 @@ public interface OrderDao {
     public List<ListItem> getItemsByOrderId(int orderId);
     public List<Order> getOrderHistoryByUserId(int userId);
 
+    ListItem getListItemByProductId(int productId);
 }

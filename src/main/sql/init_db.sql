@@ -32,6 +32,7 @@ CREATE TABLE orders
     date_created     TIMESTAMP          NOT NULL DEFAULT NOW(),
     cart_id          INTEGER REFERENCES carts (id) ON DELETE CASCADE,
     user_id          INTEGER REFERENCES users (id) ON DELETE CASCADE,
+    status           VARCHAR(20),
     owner_name       VARCHAR(50),
     owner_phone      VARCHAR(20),
     owner_email      VARCHAR(50),

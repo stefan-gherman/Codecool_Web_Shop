@@ -2,8 +2,10 @@ package com.codecool.shop.controller;
 
 import com.codecool.shop.config.TemplateEngineUtil;
 import com.codecool.shop.dao.OrderDao;
-import com.codecool.shop.dao.implementation.OrderDaoMem;
+import com.codecool.shop.dao.implementation.OrderDaoJDBC;
+import com.codecool.shop.model.Cart;
 import com.codecool.shop.model.Order;
+import com.codecool.shop.model.User;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -12,6 +14,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,14 +28,19 @@ public class OrderHistoryController extends HttpServlet {
         WebContext context = new WebContext(req, resp, req.getServletContext());
         System.out.println("********************** Order history button pressed.");
         // temporary constants until shopping cart id is passed to /checkout
-        final int CARTID = 1;
-        final int USERID = 1;
-        final String PLACEHOLDER = "PLACEHOLDER";
+//        final int CARTID = 1;
+//        final int USERID = 1;
+//        final String PLACEHOLDER = "PLACEHOLDER";
+
+        HttpSession session = req.getSession();
+        Cart tempCart = (Cart) session.getAttribute("cart");
+        User tempUser = (User) session.getAttribute("user");
+
 
         // getting list of orders from DB based on user ID
-        OrderDao orderDao = OrderDaoMem.getInstance();
+        OrderDao orderDao = OrderDaoJDBC.getInstance();
         List<Order> orderHistory = new ArrayList<>();
-        orderHistory = orderDao.getOrderHistoryByUserId(USERID);
+        orderHistory = orderDao.getOrderHistoryByUserId(tempUser.getId());
         context.setVariable("orderHistory", orderHistory);
 
 

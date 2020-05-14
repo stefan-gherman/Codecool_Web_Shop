@@ -1,6 +1,6 @@
 package com.codecool.shop.connection;
 
-import com.codecool.shop.dao.implementation.OrderDaoMem;
+//import com.codecool.shop.dao.implementation.OrderDaoMem;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -12,10 +12,9 @@ import java.util.Properties;
 
 public class DBConnect {
 
-
     private String DATABASE = getConnectionProperties("url");
-    private  String USER = getConnectionProperties("user");
-    private  String PASS = getConnectionProperties("pass");
+    private String USER = getConnectionProperties("user");
+    private String PASS = getConnectionProperties("pass");
     private static DBConnect instance;
 
     private DBConnect() throws IOException {
@@ -29,7 +28,7 @@ public class DBConnect {
         return instance;
     }
 
-    public Connection getConnection() throws SQLException{
+    public Connection getConnection() throws SQLException {
         return DriverManager.getConnection(DATABASE, USER, PASS);
     }
 
@@ -44,11 +43,11 @@ public class DBConnect {
         String user = dbProperties.getProperty("user");
         String pass = dbProperties.getProperty("pass");
 
-        if(property.equalsIgnoreCase("url")){
+        if (property.equalsIgnoreCase("url")) {
             return url;
-        } else if(property.equalsIgnoreCase("user")){
+        } else if (property.equalsIgnoreCase("user")) {
             return user;
-        } else if(property.equalsIgnoreCase("pass")){
+        } else if (property.equalsIgnoreCase("pass")) {
             return pass;
         }
         return null;

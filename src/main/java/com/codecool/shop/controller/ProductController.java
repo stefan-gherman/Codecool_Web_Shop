@@ -2,20 +2,9 @@ package com.codecool.shop.controller;
 
 
 import com.codecool.shop.config.TemplateEngineUtil;
-import com.codecool.shop.dao.CartDao;
-import com.codecool.shop.dao.ProductCategoryDao;
-import com.codecool.shop.dao.ProductDao;
-import com.codecool.shop.dao.SupplierDao;
-import com.codecool.shop.dao.implementation.CartDaoJDBC;
-//import com.codecool.shop.dao.implementation.ProductCategoryDaoMem;
-//import com.codecool.shop.dao.implementation.ProductDaoMem;
+import com.codecool.shop.dao.*;
 import com.codecool.shop.dao.implementation.*;
-
-import com.codecool.shop.config.TemplateEngineUtil;
-import com.codecool.shop.model.Product;
-//import com.codecool.shop.dao.implementation.SupplierDaoMem;
-import com.codecool.shop.model.ProductCategory;
-import com.codecool.shop.model.Supplier;
+import com.codecool.shop.model.*;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -24,14 +13,15 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
-
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.IntStream;
+
+//import com.codecool.shop.dao.implementation.ProductCategoryDaoMem;
+//import com.codecool.shop.dao.implementation.ProductDaoMem;
+//import com.codecool.shop.dao.implementation.SupplierDaoMem;
 
 
 @WebServlet(urlPatterns = {"/"})
@@ -39,9 +29,20 @@ public class ProductController extends HttpServlet {
     ProductCategoryDao productCategoryDataStore = null;
     ProductDao productDataStore = null;
     SupplierDao supplierDao = null;
+    private final int MAX_SESSION_LIFE_IN_SECONDS = 3600;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession session = req.getSession(false);
+        if(session == null) {
+            System.out.println("Session null");
+            session = req.getSession();
+            session.setMaxInactiveInterval(MAX_SESSION_LIFE_IN_SECONDS);
+            if (session.getAttribute("user") == null) session.setAttribute("user", new User());
+            if (session.getAttribute("cart") == null) session.setAttribute("cart", new Cart());
+        }
+
+
         try {
             productDataStore = ProductDaoJDBC.getInstance();
             productCategoryDataStore = ProductCategoryJDBC.getInstance();
@@ -57,18 +58,57 @@ public class ProductController extends HttpServlet {
         }
 
         CartDao cartDataStore = CartDaoJDBC.getInstance();
-        int cartSize = cartDataStore.getCartNumberOfProducts();
+        User currentUser = (User) session.getAttribute("user");
+
+        if(currentUser.getFullName() != null) {
+            try {
+                session.setAttribute("cart", cartDataStore.createCartFromQuery(
+                        currentUser.getId()));
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+        Cart tempCart = (Cart) session.getAttribute("cart");
+        int cartSize = tempCart.getCartNumberOfProducts();
+
+
 
 
         //System.out.println(req.getParameter("addToCart"));
         if(req.getParameter("addToCart")!=null) {
             try{
                 int prodIdParses = Integer.parseInt(req.getParameter("addToCart"));
-                System.out.println(prodIdParses);
-                cartDataStore.add(prodIdParses);
-                System.out.println("Current in cart" +cartDataStore.getCartContents());
-                cartSize = cartDataStore.getCartNumberOfProducts();
-                System.out.println("Current size " +cartSize);
+//                System.out.println(prodIdParses);
+//                cartDataStore.add(prodIdParses);
+//                System.out.println("Current in cart" +cartDataStore.getCartContents());
+//                cartSize = cartDataStore.getCartNumberOfProducts();
+//                System.out.println("Current size " +cartSize);
+
+                //updating the session cart as well
+                OrderDao orderDao = OrderDaoJDBC.getInstance();
+                int productId = prodIdParses;
+                ListItem tempItem = orderDao.getListItemByProductId(productId);
+                session = req.getSession(false);
+                System.out.println("AAAAAAAAAAAAAAAAAAAAAAAA - Got session.");
+                tempCart = (Cart) session.getAttribute("cart");
+                System.out.println("AAAAAAAAAAAAAAAAAAAAAAAA - Got session cart " + tempCart.getId());
+                tempCart.add(productId);
+                System.out.println("AAAAAAAAAAAAAAAAAAAAAAAA - Got session cart contents: " + tempCart.getCartContents());
+//                tempCartContents.put(tempItem, 1);
+                System.out.println("AAAAAAAAAAAAAAAAAAAAAAAA - put: " + tempItem.getProductName() + " in contents");
+//                tempCart.setCartContents(tempCartContents);
+                System.out.println("AAAAAAAAAAAAAAAAAAAAAAAA - set contents of temp cart again to: " + tempCart.getCartContents());
+                System.out.println("TTTEEEMMMMPPP cart contents len: " + tempCart.getCartNumberOfProducts());
+                session.removeAttribute("cart");
+                session.setAttribute("cart", tempCart);
+                tempCart = (Cart) session.getAttribute("cart");
+                cartSize = tempCart.getCartNumberOfProducts();
+//                Cart tempCart2 = (Cart) session.getAttribute("cart");
+//                System.out.println("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRemove and re-create cart: " + tempCart2.getCartContents());
+
+
+
+
             } catch (Exception e) {
                 System.out.println(e.getStackTrace());
             }

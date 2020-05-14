@@ -40,9 +40,10 @@ public class LoginController extends HttpServlet {
         String hashedPasswordFromDB = userDao.getUserPasswordByEmail(email);
         System.out.println(password + " " + hashedPasswordFromDB);
         if(Utils.checkPassword(password, hashedPasswordFromDB)) {
-            int userIdFromDB = userDao.getUserIdByEmail(email);
+            User userFromDB = userDao.getUserByEmail(email);
             HttpSession session = req.getSession();
-            session.setAttribute("userId", userIdFromDB);
+            session.setAttribute("user", userFromDB);
+            System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&77 user id from Login: " + userFromDB.getId());
             resp.sendRedirect("/");
         } else {
             resp.sendRedirect("/login");

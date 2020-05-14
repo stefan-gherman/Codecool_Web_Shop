@@ -37,6 +37,43 @@ public class CartDaoJDBC implements CartDao {
         return instance;
     }
 
+    public Cart addCartToDB(Cart cartToBeAdded) {
+        System.out.println("Attempting to add new cart.");
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        Cart cartToBeReturned = cartToBeAdded;
+        try {
+            conn = dbConnect.getConnection();
+            pstmt = conn.prepareStatement("INSERT INTO carts (user_id) VALUES (1) RETURNING id");
+            //pstmt.executeUpdate();
+            ResultSet resultSet = pstmt.executeQuery();
+            while (resultSet.next()) {
+                System.out.println(resultSet.getInt("id"));
+                cartToBeReturned.setId(resultSet.getInt("id"));
+            }
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (pstmt != null)
+                    pstmt.close();
+            } catch (SQLException se2) {
+            }
+            try {
+                if (conn != null)
+                    conn.close();
+            } catch (SQLException se) {
+                se.printStackTrace();
+            }
+        }
+
+        System.out.println("New cart add process complete.");
+        return cartToBeReturned;
+
+    }
+
     @Override
     public void add(int id) throws SQLException, IOException {
         ProductDao productsList = ProductDaoJDBC.getInstance();
@@ -44,10 +81,10 @@ public class CartDaoJDBC implements CartDao {
         Map<ListItem, Integer> tempMap = cart.getCartContents();
         int count = 0;
         //
-        System.out.println("Product to be added Id:" +product.getId());
+        System.out.println("Product to be added Id:" + product.getId());
         System.out.println("Adding");
-        if(cart.getCartContents().size() == 0) {
-           cart.getCartContents().put(new ListItem(id, product.getName(), product.getImage(),
+        if (cart.getCartContents().size() == 0) {
+            cart.getCartContents().put(new ListItem(id, product.getName(), product.getImage(),
                     product.getDefaultPrice(), product.getDefaultCurrency().toString()), 1);
         } else {
             for (Map.Entry<ListItem, Integer> entry : cart.getCartContents().entrySet()
@@ -58,12 +95,12 @@ public class CartDaoJDBC implements CartDao {
                     tempMap.put(entry.getKey(), entry.getValue() + 1);
                     break;
                 } else {
-                   count ++;
+                    count++;
                 }
 
             }
         }
-        if(count == cart.getCartContents().size()) {
+        if (count == cart.getCartContents().size()) {
             System.out.println("Adding non existing");
             tempMap.put(new ListItem(id, product.getName(), product.getImage(),
                     product.getDefaultPrice(), product.getDefaultCurrency().toString()), 1);
@@ -79,22 +116,79 @@ public class CartDaoJDBC implements CartDao {
         //
         for (Map.Entry<ListItem, Integer> entry : cart.getCartContents().entrySet()
         ) {
-            if(entry.getKey().getProductId() == product.getId()) {
+            if (entry.getKey().getProductId() == product.getId()) {
                 cart.getCartContents().put(entry.getKey(), entry.getValue() + quantity);
             }
         }
     }
 
     @Override
-    public int saveInDB(Integer userId) throws SQLException {
-        //Check statement to see if the data is already saved
+    public void deleteUserCart(int id) throws SQLException {
+        String query = "DELETE FROM carts WHERE user_id = ?";
 
+        try {
+            Connection connection = dbConnect.getConnection();
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1,id);
+            statement.executeUpdate();
+            statement.close();
+            connection.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public Cart createCartFromQuery(int id) throws SQLException, IOException{
+        //Getting a cart from the db from id
+        int userCart = 0;
+        String query = "SELECT id FROM carts WHERE user_id = ?";
+        ProductDao productsList = ProductDaoJDBC.getInstance();
+        try {
+            Connection connection = dbConnect.getConnection();
+            PreparedStatement statement = connection.prepareStatement(query);
+            statement.setInt(1, id);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                userCart = resultSet.getInt("id");
+            }
+            statement.close();
+            connection.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if(userCart != 0) {
+            query = "SELECT product_id FROM cart_items WHERE cart_id = ?";
+            try {
+                Connection connection = dbConnect.getConnection();
+                PreparedStatement statement = connection.prepareStatement(query);
+                statement.setInt(1, userCart);
+                ResultSet resultSet = statement.executeQuery();
+                Cart currentCart = new Cart();
+                ListItem extractedProduct = new ListItem();
+                while (resultSet.next()) {
+                    Product product = productsList.find(resultSet.getInt("product_id"));
+                    currentCart.addListItem(new ListItem(resultSet.getInt("product_id"), product.getName(), product.getImage(),
+                            product.getDefaultPrice(), product.getDefaultCurrency().toString()));
+                }
+                statement.close();
+                connection.close();
+                return currentCart;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return new Cart();
+    }
+
+    @Override
+    public int saveInDB(int userId) throws SQLException {
+        //Delete last cart on user re-save
+        this.deleteUserCart(userId);
         //First statement concerning saving the cart to its specific table
         String query = "INSERT INTO carts (user_id) VALUES (?) RETURNING id ;";
         int lastCart = 0;
-        if (userId == null) {
-           return -1;
-        }
+
 
         try {
             Connection connection = dbConnect.getConnection();
@@ -111,18 +205,20 @@ public class CartDaoJDBC implements CartDao {
         }
 
         //Second Statement concerning saving cart and product id in the db
-        this.saveCartAndListItems(lastCart);
+        System.out.println(lastCart);
         return lastCart;
     }
 
-    public void saveCartAndListItems ( Integer cartId) {
+    @Override
+    public void saveCartAndListItems(int cartId, Cart cart) {
+        //Save each item
+        System.out.println("It gets here.");
         String query = "INSERT INTO cart_items (cart_id, product_id) VALUES (?,?);";
         try {
 
-            for (Map.Entry<ListItem, Integer> entry: cart.getCartContents().entrySet()
-                 ) {
-                for (int i =0 ; i < entry.getValue(); i++) {
-                    System.out.println("Element count");
+            for (Map.Entry<ListItem, Integer> entry : cart.getCartContents().entrySet()
+            ) {
+                for (int i = 0; i < entry.getValue(); i++) {
                     Connection connection = dbConnect.getConnection();
                     PreparedStatement statement = connection.prepareStatement(query);
                     statement.setInt(1, cartId);
@@ -137,7 +233,7 @@ public class CartDaoJDBC implements CartDao {
         }
     }
 
-    public boolean checkIfAlreadySaved (Integer userId) {
+    public boolean checkIfAlreadySaved(Integer userId) {
         return true;
     }
 
@@ -176,7 +272,7 @@ public class CartDaoJDBC implements CartDao {
         int numberOfProudcts = 0;
 
         for (Map.Entry<ListItem, Integer> entry : cart.getCartContents().entrySet()
-             ) {
+        ) {
             numberOfProudcts += entry.getValue();
         }
         return numberOfProudcts;
@@ -190,7 +286,7 @@ public class CartDaoJDBC implements CartDao {
     @Override
     public float getTotalSum() {
         float totalSum = 0;
-        for (Map.Entry<ListItem, Integer> product: cart.getCartContents().entrySet()
+        for (Map.Entry<ListItem, Integer> product : cart.getCartContents().entrySet()
         ) {
             totalSum += product.getValue() * product.getKey().getProductPrice();
         }
@@ -198,7 +294,7 @@ public class CartDaoJDBC implements CartDao {
     }
 
     public Cart getCart() {
-        return cart;
+        return this.cart;
     }
 
     public void setCart(Cart cart) {

@@ -12,7 +12,12 @@
     <div class="row">
         <div class="col text-center">
             <div th:if="${cartSize} > 0">
-
+                <div th:if="${username} != 'null' " >
+                    <p>Hello <span th:text="${username}"></span>!</p>
+                </div>
+                <div th:if="${cartSize} == 'null'">
+                    <p>Hourglass</p>
+                </div>
                 <table class="table table-borderless">
                     <thead class="table">
                     <th>
@@ -65,14 +70,19 @@
                     <div class="row">
                         <table align="center">
                             <tr>
-                                <td>
+                                <td th:if="${username} != 'null'">
                                     <a href="/checkout">
                                         <button class="btn btn-primary cart_button">Checkout</button>
                                     </a>
                                 </td>
-                                <td>
+                                <td th:if="${username} == 'null'">
+                                    <a href="/login">
+                                        <button class="btn btn-primary cart_button">Checkout</button>
+                                    </a>
+                                </td>
+                                <td th:if="${username} != 'null'">
                                     <form action="/cart" method="post">
-                                        <input type="hidden" value="2" name="saveCart">
+                                        <input type="hidden" th:value="${userId}" name="saveCart">
                                         <input type="submit" class="btn btn-primary cart_button" value="Save Cart">
                                     </form>
                                 </td>
