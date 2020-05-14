@@ -2,18 +2,9 @@ package com.codecool.shop.controller;
 
 
 import com.codecool.shop.config.TemplateEngineUtil;
-import com.codecool.shop.dao.CartDao;
-import com.codecool.shop.dao.ProductCategoryDao;
-import com.codecool.shop.dao.ProductDao;
-import com.codecool.shop.dao.SupplierDao;
-import com.codecool.shop.dao.implementation.CartDaoMem;
-import com.codecool.shop.dao.implementation.ProductCategoryDaoMem;
-import com.codecool.shop.dao.implementation.ProductDaoMem;
-
-import com.codecool.shop.config.TemplateEngineUtil;
-import com.codecool.shop.dao.implementation.SupplierDaoMem;
-import com.codecool.shop.model.ProductCategory;
-import com.codecool.shop.model.Supplier;
+import com.codecool.shop.dao.*;
+import com.codecool.shop.dao.implementation.*;
+import com.codecool.shop.model.*;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -22,34 +13,109 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
-
-import java.util.Arrays;
-import java.util.HashMap;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.IntStream;
+
+//import com.codecool.shop.dao.implementation.ProductCategoryDaoMem;
+//import com.codecool.shop.dao.implementation.ProductDaoMem;
+//import com.codecool.shop.dao.implementation.SupplierDaoMem;
 
 
 @WebServlet(urlPatterns = {"/"})
 public class ProductController extends HttpServlet {
+    ProductCategoryDao productCategoryDataStore = null;
+    ProductDao productDataStore = null;
+    SupplierDao supplierDao = null;
+    private final int MAX_SESSION_LIFE_IN_SECONDS = 3600;
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        ProductDao productDataStore = ProductDaoMem.getInstance();
-        ProductCategoryDao productCategoryDataStore = ProductCategoryDaoMem.getInstance();
-        CartDao cartDataStore = CartDaoMem.getInstance();
-        SupplierDao supplierDao = SupplierDaoMem.getInstance();
-        int cartSize = cartDataStore.getCartNumberOfProducts();
+        HttpSession session = req.getSession(false);
+        if(session == null) {
+            System.out.println("Session null");
+            session = req.getSession();
+            session.setMaxInactiveInterval(MAX_SESSION_LIFE_IN_SECONDS);
+            if (session.getAttribute("user") == null) session.setAttribute("user", new User());
+            if (session.getAttribute("cart") == null) session.setAttribute("cart", new Cart());
+        }
+
+
+        try {
+            productDataStore = ProductDaoJDBC.getInstance();
+            productCategoryDataStore = ProductCategoryJDBC.getInstance();
+            supplierDao = SupplierDaoJDBC.getInstance();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        try {
+            System.out.println(supplierDao.find(2));
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        CartDao cartDataStore = CartDaoJDBC.getInstance();
+        User currentUser = (User) session.getAttribute("user");
+
+        if(currentUser.getFullName() != null) {
+            try {
+                Cart currentCart = (Cart) session.getAttribute("cart");
+                if(currentCart.getCartNumberOfProducts()!= 0 && currentCart.getCartNumberOfProducts() !=
+                        cartDataStore.createCartFromQuery(
+                        currentUser.getId()).getCartNumberOfProducts()){
+                        session.setAttribute("cart", currentCart);
+                } else {
+                    session.setAttribute("cart", cartDataStore.createCartFromQuery(
+                            currentUser.getId()));
+                }
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+        Cart tempCart = (Cart) session.getAttribute("cart");
+        int cartSize = tempCart.getCartNumberOfProducts();
+
+
+
+
         //System.out.println(req.getParameter("addToCart"));
         if(req.getParameter("addToCart")!=null) {
             try{
                 int prodIdParses = Integer.parseInt(req.getParameter("addToCart"));
-                System.out.println(prodIdParses);
-                cartDataStore.add(prodIdParses);
-                System.out.println(cartDataStore.getCartContents());
-                cartSize = cartDataStore.getCartNumberOfProducts();
-                System.out.println(cartSize);
+//                System.out.println(prodIdParses);
+//                cartDataStore.add(prodIdParses);
+//                System.out.println("Current in cart" +cartDataStore.getCartContents());
+//                cartSize = cartDataStore.getCartNumberOfProducts();
+//                System.out.println("Current size " +cartSize);
+
+                //updating the session cart as well
+                OrderDao orderDao = OrderDaoJDBC.getInstance();
+                int productId = prodIdParses;
+                ListItem tempItem = orderDao.getListItemByProductId(productId);
+                session = req.getSession(false);
+                System.out.println("AAAAAAAAAAAAAAAAAAAAAAAA - Got session.");
+                tempCart = (Cart) session.getAttribute("cart");
+                System.out.println("AAAAAAAAAAAAAAAAAAAAAAAA - Got session cart " + tempCart.getId());
+                tempCart.add(productId);
+                System.out.println("AAAAAAAAAAAAAAAAAAAAAAAA - Got session cart contents: " + tempCart.getCartContents());
+//                tempCartContents.put(tempItem, 1);
+                System.out.println("AAAAAAAAAAAAAAAAAAAAAAAA - put: " + tempItem.getProductName() + " in contents");
+//                tempCart.setCartContents(tempCartContents);
+                System.out.println("AAAAAAAAAAAAAAAAAAAAAAAA - set contents of temp cart again to: " + tempCart.getCartContents());
+                System.out.println("TTTEEEMMMMPPP cart contents len: " + tempCart.getCartNumberOfProducts());
+                session.removeAttribute("cart");
+                session.setAttribute("cart", tempCart);
+                tempCart = (Cart) session.getAttribute("cart");
+                cartSize = tempCart.getCartNumberOfProducts();
+//                Cart tempCart2 = (Cart) session.getAttribute("cart");
+//                System.out.println("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRemove and re-create cart: " + tempCart2.getCartContents());
+
+
+
+
             } catch (Exception e) {
                 System.out.println(e.getStackTrace());
             }
@@ -87,7 +153,7 @@ public class ProductController extends HttpServlet {
                                  ProductCategoryDao productCategoryDataStore,
                                  ProductDao productDataStore, int categoryId, int supplierId,
                                  int cartSize, SupplierDao supplierDao)
-            throws IOException {
+            throws IOException, SQLException {
 
         context.setVariable("category", productCategoryDataStore.find(categoryId));
         //Suggestion
@@ -116,7 +182,7 @@ public class ProductController extends HttpServlet {
      * @param productCategoryDataStore productCategory Interface using DAO pattern
      * @return category id
      */
-    private int getIdFromCategory(HttpServletRequest req, ProductCategoryDao productCategoryDataStore) {
+    private int getIdFromCategory(HttpServletRequest req, ProductCategoryDao productCategoryDataStore) throws SQLException {
         int defaultCategory = 1;
         String[] categoryArray;
 
@@ -144,7 +210,7 @@ public class ProductController extends HttpServlet {
      * @param supplierDao supplier interface using DAO pattern
      * @return supplier id
      */
-    private int getIdFromSupplier(HttpServletRequest req, SupplierDao supplierDao){
+    private int getIdFromSupplier(HttpServletRequest req, SupplierDao supplierDao) throws SQLException {
 
         if(req.getParameter("supplier") == null){
             return 0;
