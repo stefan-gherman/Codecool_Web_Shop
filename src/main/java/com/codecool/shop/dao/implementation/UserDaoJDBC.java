@@ -4,6 +4,7 @@ import com.codecool.shop.connection.DBConnect;
 import com.codecool.shop.dao.UserDao;
 import com.codecool.shop.model.User;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,11 +16,11 @@ public class UserDaoJDBC implements UserDao {
 
     private static UserDaoJDBC instance;
 
-    private UserDaoJDBC() {
+    private UserDaoJDBC() throws IOException {
 
     }
 
-    public static UserDaoJDBC getInstance() {
+    public static UserDaoJDBC getInstance() throws IOException {
         if (instance == null) {
             instance = new UserDaoJDBC();
         }

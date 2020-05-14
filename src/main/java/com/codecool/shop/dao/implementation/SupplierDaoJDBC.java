@@ -9,6 +9,7 @@ import com.codecool.shop.model.ProductCategory;
 import com.codecool.shop.model.Supplier;
 
 import javax.xml.transform.Result;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -18,16 +19,18 @@ import java.util.List;
 
 public class SupplierDaoJDBC implements SupplierDao {
     DBConnect dbConnect = DBConnect.getInstance();
+    Connection connection = null;
     PreparedStatement preparedStatement = null;
+    ResultSet resultSet = null;
     List<Supplier> supplierList = new ArrayList<>();
 
     private static SupplierDaoJDBC instance;
 
-    private SupplierDaoJDBC() {
+    private SupplierDaoJDBC() throws IOException {
 
     }
 
-    public static SupplierDaoJDBC getInstance() {
+    public static SupplierDaoJDBC getInstance() throws IOException {
         if (instance == null) {
             instance = new SupplierDaoJDBC();
         }
@@ -35,9 +38,10 @@ public class SupplierDaoJDBC implements SupplierDao {
     }
 
     @Override
-    public void add(Supplier supplier) throws SQLException {
+    public void add(Supplier supplier) {
         try {
-            preparedStatement = dbConnect.getConnection().prepareStatement("INSERT INTO suppliers (name, description)" +
+            connection = dbConnect.getConnection();
+            preparedStatement = connection.prepareStatement("INSERT INTO suppliers (name, description)" +
                     "VALUES (?, ?)");
             preparedStatement.setString(1, supplier.getName());
             preparedStatement.setString(2, supplier.getDescription());
@@ -45,18 +49,19 @@ public class SupplierDaoJDBC implements SupplierDao {
         } catch (Exception ex) {
             System.out.println("Error: " + ex.getMessage() + " when adding supplier.");
         } finally {
-            if (dbConnect.getConnection() != null) {
-                dbConnect.getConnection().close();
-            }
+            try { resultSet.close(); } catch (Exception e) { /* ignored */ }
+            try { preparedStatement.close(); } catch (Exception e) { /* ignored */ }
+            try { connection.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     @Override
-    public Supplier find(int id) throws SQLException {
+    public Supplier find(int id) {
         try {
-            preparedStatement = dbConnect.getConnection().prepareStatement("SELECT * FROM suppliers WHERE id = ?");
+            connection = dbConnect.getConnection();
+            preparedStatement = connection.prepareStatement("SELECT * FROM suppliers WHERE id = ?");
             preparedStatement.setInt(1, id);
-            ResultSet resultSet = preparedStatement.executeQuery();
+            resultSet = preparedStatement.executeQuery();
 
             while(resultSet.next()){
                 String name = resultSet.getString("name");
@@ -66,36 +71,38 @@ public class SupplierDaoJDBC implements SupplierDao {
 
         } catch(Exception ex){
             System.out.println("Error: " + ex.getMessage() + " when searching for category.");
-        }  finally {
-            if(dbConnect.getConnection() != null){
-                dbConnect.getConnection().close();
-            }
+        } finally {
+            try { resultSet.close(); } catch (Exception e) { /* ignored */ }
+            try { preparedStatement.close(); } catch (Exception e) { /* ignored */ }
+            try { connection.close(); } catch (Exception e) { /* ignored */ }
         }
         return null;
 
     }
 
     @Override
-    public void remove(int id) throws SQLException {
+    public void remove(int id) {
         try {
-            preparedStatement = dbConnect.getConnection().prepareStatement("DELETE FROM suppliers WHERE id = ?");
+            connection = dbConnect.getConnection();
+            preparedStatement = connection.prepareStatement("DELETE FROM suppliers WHERE id = ?");
             preparedStatement.setInt(1, id);
             int deleteRow = preparedStatement.executeUpdate();
         } catch (Exception ex) {
             System.out.println("Error: " + ex.getMessage() + " when removing supplier from database.");
         } finally {
-            if (dbConnect.getConnection() != null) {
-                dbConnect.getConnection().close();
-            }
+            try { resultSet.close(); } catch (Exception e) { /* ignored */ }
+            try { preparedStatement.close(); } catch (Exception e) { /* ignored */ }
+            try { connection.close(); } catch (Exception e) { /* ignored */ }
         }
     }
 
     @Override
-    public List<Supplier> getAll() throws SQLException {
+    public List<Supplier> getAll() {
         try {
             supplierList.clear();
-            preparedStatement = dbConnect.getConnection().prepareStatement("SELECT * FROM suppliers");
-            ResultSet resultSet = preparedStatement.executeQuery();
+            connection = dbConnect.getConnection();
+            preparedStatement = connection.prepareStatement("SELECT * FROM suppliers");
+            resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
@@ -107,9 +114,9 @@ public class SupplierDaoJDBC implements SupplierDao {
         } catch (Exception ex) {
             System.out.println("Error: " + ex.getMessage() + " when getting all suppliers from database.");
         } finally {
-            if (dbConnect.getConnection() != null) {
-                dbConnect.getConnection().close();
-            }
+            try { resultSet.close(); } catch (Exception e) { /* ignored */ }
+            try { preparedStatement.close(); } catch (Exception e) { /* ignored */ }
+            try { connection.close(); } catch (Exception e) { /* ignored */ }
         }
         return null;
     }

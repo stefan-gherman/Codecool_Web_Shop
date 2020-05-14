@@ -4,6 +4,7 @@ import com.codecool.shop.dao.ProductDao;
 import com.codecool.shop.dao.implementation.ProductDaoJDBC;
 import com.codecool.shop.utils.Utils;
 
+import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -92,7 +93,7 @@ public class Cart {
         this.setCartContents(tempMap);
     }
 
-    public void add(int id) throws SQLException {
+    public void add(int id) throws SQLException, IOException {
         ProductDao productsList = ProductDaoJDBC.getInstance();
         Product product = productsList.find(id);
         Map<ListItem, Integer> tempMap = cartContents;
@@ -125,7 +126,7 @@ public class Cart {
         this.setCartContents(tempMap);
     }
 
-    public void add(int id, int quantity) throws SQLException {
+    public void add(int id, int quantity) throws SQLException, IOException {
         ProductDao productsList = ProductDaoJDBC.getInstance();
         Product product = productsList.find(id);
         Map<ListItem, Integer> tempMap = cartContents;

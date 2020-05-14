@@ -7,28 +7,31 @@ import com.codecool.shop.model.Cart;
 import com.codecool.shop.model.ListItem;
 import com.codecool.shop.model.Product;
 import com.codecool.shop.utils.Utils;
+import com.sun.org.apache.bcel.internal.generic.RETURN;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Map;
+import java.util.*;
 
 public class CartDaoJDBC implements CartDao {
 
     private Cart cart;
 
 
+
     private static CartDaoJDBC instance = null;
     private DBConnect dbConnect = DBConnect.getInstance();
 
-    private CartDaoJDBC() {
+    private CartDaoJDBC() throws IOException {
         this.cart = new Cart();
     }
 
 
-    public static CartDaoJDBC getInstance() {
-        if (instance == null) {
+    public static CartDaoJDBC getInstance() throws IOException {
+        if(instance == null) {
             instance = new CartDaoJDBC();
         }
         return instance;
@@ -72,7 +75,7 @@ public class CartDaoJDBC implements CartDao {
     }
 
     @Override
-    public void add(int id) throws SQLException {
+    public void add(int id) throws SQLException, IOException {
         ProductDao productsList = ProductDaoJDBC.getInstance();
         Product product = productsList.find(id);
         Map<ListItem, Integer> tempMap = cart.getCartContents();
@@ -107,7 +110,7 @@ public class CartDaoJDBC implements CartDao {
     }
 
     @Override
-    public void add(int id, int quantity) throws SQLException {
+    public void add(int id, int quantity) throws SQLException, IOException {
         ProductDao productsList = ProductDaoJDBC.getInstance();
         Product product = productsList.find(id);
         //
@@ -136,7 +139,7 @@ public class CartDaoJDBC implements CartDao {
     }
 
     @Override
-    public Cart createCartFromQuery(int id) throws SQLException {
+    public Cart createCartFromQuery(int id) throws SQLException, IOException{
         //Getting a cart from the db from id
         int userCart = 0;
         String query = "SELECT id FROM carts WHERE user_id = ?";

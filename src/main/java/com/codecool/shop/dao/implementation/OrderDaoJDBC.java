@@ -5,6 +5,7 @@ import com.codecool.shop.dao.OrderDao;
 import com.codecool.shop.model.ListItem;
 import com.codecool.shop.model.Order;
 
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,11 +20,11 @@ public class OrderDaoJDBC implements OrderDao {
     static final String PASS = "postgres";
 
 
-    private OrderDaoJDBC() {
+    private OrderDaoJDBC() throws IOException {
 
     }
 
-    public static OrderDaoJDBC getInstance() {
+    public static OrderDaoJDBC getInstance() throws IOException {
         if (instance == null) {
             instance = new OrderDaoJDBC();
         }
@@ -88,15 +89,13 @@ public class OrderDaoJDBC implements OrderDao {
         return orderIdFromDb;
     }
 
-
-
     @Override
     public void addToOrderItems(Order order) {
         System.out.println("Attempting to add new order batch to order_items. Order ID: " + order.getId());
         Connection conn = null;
         PreparedStatement pstmt = null;
         System.out.println("Items list length: " + order.getItems().size());
-        for (ListItem item : order.getItems()){
+        for (ListItem item : order.getItems()) {
             try {
                 System.out.println("Trying to add to order_items: order " + order.getId() + " product " + item.getProductId());
                 conn = dbConnect.getConnection();
@@ -105,40 +104,27 @@ public class OrderDaoJDBC implements OrderDao {
                 pstmt.setInt(2, item.getProductId());
                 pstmt.executeUpdate();
                 System.out.println("Added to order_items: order " + order.getId() + " product " + item.getProductId());
-            }
-            catch (SQLException se) {
+            } catch (SQLException se) {
                 se.printStackTrace();
-            }
-            catch(Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
-            }
-            finally {
-                try{
-                    if(pstmt!=null)
+            } finally {
+                try {
+                    if (pstmt != null)
                         pstmt.close();
-                }catch(SQLException se2){
+                } catch (SQLException se2) {
                 }
-                try{
-                    if(conn!=null)
+                try {
+                    if (conn != null)
                         conn.close();
-                }catch(SQLException se){
+                } catch (SQLException se) {
                     se.printStackTrace();
                 }
             }
 
-
-
-
-
-
+            System.out.println("order_items add process complete.");
 
         }
-
-
-
-
-        System.out.println("order_items add process complete.");
-
     }
 
     @Override
