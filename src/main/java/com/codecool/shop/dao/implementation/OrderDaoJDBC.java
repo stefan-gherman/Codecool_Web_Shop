@@ -133,26 +133,42 @@ public class OrderDaoJDBC implements OrderDao {
         Connection conn = null;
         PreparedStatement pstmt = null;
         try {
+            System.out.println("ENTERED UPDATE <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< try");
             conn = dbConnect.getConnection();
             pstmt = conn.prepareStatement("UPDATE orders " +
                     "SET date_created = ?, " +
                         "cart_id = ?," +
                         "user_id = ?," +
+                        "status = ?," +
                         "owner_name = ?," +
                         "owner_phone = ?," +
                         "owner_email = ?," +
                         "billing_address = ?," +
-                        "shipping_address = ?" +
+                        "shipping_address = ?," +
+                        "total = ?" +
                     "WHERE id = ?;");
             pstmt.setDate(1, order.getDateCreated());
+            System.out.println("1" + order.getDateCreated());
             pstmt.setInt(2, order.getCartId());
+            System.out.println("2" + order.getCartId());
             pstmt.setInt(3, order.getUserId());
-            pstmt.setString(4, order.getOwnerName());
-            pstmt.setString(5, order.getPhoneNumber());
-            pstmt.setString(6, order.getEmail());
-            pstmt.setString(7, order.getBillingAddress());
-            pstmt.setString(8, order.getShippingAddress());
-            pstmt.setInt(9, order.getId());
+            System.out.println("3" + order.getUserId());
+            pstmt.setString(4, order.getStatus());
+            System.out.println("4" + order.getStatus());
+            pstmt.setString(5, order.getOwnerName());
+            System.out.println("5" + order.getOwnerName());
+            pstmt.setString(6, order.getPhoneNumber());
+            System.out.println("6" + order.getPhoneNumber());
+            pstmt.setString(7, order.getEmail());
+            System.out.println("7" + order.getEmail());
+            pstmt.setString(8, order.getBillingAddress());
+            System.out.println("8" + order.getBillingAddress());
+            pstmt.setString(9, order.getShippingAddress());
+            System.out.println("9" + order.getShippingAddress());
+            pstmt.setFloat(10, order.getTotal());
+            System.out.println("10" + order.getTotal());
+            pstmt.setInt(11, order.getId());
+            System.out.println("11" + order.getId());
             pstmt.executeUpdate();
         }
         catch (SQLException se) {
@@ -325,34 +341,25 @@ public class OrderDaoJDBC implements OrderDao {
 
     @Override
     public List<Order> getOrderHistoryByUserId(int userId) {
-        System.out.println("Attempting to get order history.");
+        System.out.println("Attempting to get order history for user " + userId + ".");
         Connection conn = null;
         PreparedStatement pstmt = null;
+        List<Integer> ids = new ArrayList<>();
         List<Order> temp = new ArrayList<>();
         List<ListItem> tempItems = new ArrayList<>();
+
+        // get list from DB of all the ids of the orders of the user
         try {
             conn = dbConnect.getConnection();
+            System.out.println("HISTORY _ got connection");
             pstmt = conn.prepareStatement("" +
-                    "SELECT * FROM orders WHERE id = ?;");
+                    "SELECT id FROM orders WHERE user_id = ?;");
             pstmt.setInt(1, userId);
-
-            Order tempOrder = new Order();
             ResultSet resultSet = pstmt.executeQuery();
+            System.out.println("HISTORY _ query executed");
             while(resultSet.next()) {
-                tempOrder.setId(resultSet.getInt("id"));
-
-                tempItems = getItemsByOrderId(resultSet.getInt("id"));
-                tempOrder.setItems(tempItems);
-
-                tempOrder.setDateCreated(resultSet.getDate("date_created"));
-                tempOrder.setCartId(resultSet.getInt("cart_id"));
-                tempOrder.setUserId(resultSet.getInt("user_id"));
-                tempOrder.setOwnerName(resultSet.getString("owner_name"));
-                tempOrder.setPhoneNumber(resultSet.getString("owner_phone"));
-                tempOrder.setEmail(resultSet.getString("owner_email"));
-                tempOrder.setBillingAddress(resultSet.getString("billing_address"));
-                tempOrder.setShippingAddress(resultSet.getString("shipping_address"));
-                temp.add(tempOrder);
+                System.out.println("HISTORY _ entered result set");
+                ids.add(resultSet.getInt("id"));
             }
         }
         catch (SQLException se) {
@@ -372,6 +379,58 @@ public class OrderDaoJDBC implements OrderDao {
                     conn.close();
             }catch(SQLException se){
                 se.printStackTrace();
+            }
+        }
+        System.out.println("HISTORY ORDERS IDS: " + ids.toString());
+
+        // loop through all the ids above and add each order to the list
+        for (Integer historyId : ids) {
+            try {
+                conn = dbConnect.getConnection();
+                System.out.println("HISTORY _ got connection");
+                pstmt = conn.prepareStatement("" +
+                        "SELECT * FROM orders WHERE id = ?;");
+                pstmt.setInt(1, historyId);
+                Order tempOrder = new Order();
+                ResultSet resultSet = pstmt.executeQuery();
+                System.out.println("HISTORY _ query executed");
+                while(resultSet.next()) {
+                    System.out.println("HISTORY _ entered result set");
+                    tempOrder.setId(resultSet.getInt("id"));
+
+                    tempItems = getItemsByOrderId(resultSet.getInt("id"));
+                    tempOrder.setItems(tempItems);
+
+                    tempOrder.setDateCreated(resultSet.getDate("date_created"));
+                    tempOrder.setCartId(resultSet.getInt("cart_id"));
+                    tempOrder.setUserId(resultSet.getInt("user_id"));
+                    tempOrder.setOwnerName(resultSet.getString("owner_name"));
+                    tempOrder.setPhoneNumber(resultSet.getString("owner_phone"));
+                    tempOrder.setEmail(resultSet.getString("owner_email"));
+                    tempOrder.setBillingAddress(resultSet.getString("billing_address"));
+                    tempOrder.setShippingAddress(resultSet.getString("shipping_address"));
+                    temp.add(tempOrder);
+                    System.out.println("History order " + tempOrder.getId() + " added.");
+                }
+            }
+            catch (SQLException se) {
+                se.printStackTrace();
+            }
+            catch(Exception e){
+                e.printStackTrace();
+            }
+            finally {
+                try{
+                    if(pstmt!=null)
+                        pstmt.close();
+                }catch(SQLException se2){
+                }
+                try{
+                    if(conn!=null)
+                        conn.close();
+                }catch(SQLException se){
+                    se.printStackTrace();
+                }
             }
         }
         System.out.println("History retrieval complete.");
