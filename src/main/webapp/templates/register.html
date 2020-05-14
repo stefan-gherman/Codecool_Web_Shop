@@ -4,14 +4,11 @@
     <title id="pageTitle">Register</title>
 </head>
 <body>
+<div th:replace="navbar.html :: copy"></div>
 
 <div class="jumbotron text-center">
     <h1>Register</h1>
 </div>
-
-
-
-
 <br>
 <div class="text-center">
     <h2><strong>Please fill in the account details.</strong></h2>
@@ -51,6 +48,8 @@
         </div>
 
         <button type="submit" class="btn btn-primary">Register</button>
+        <a href="/login"><button class="btn btn-primary" type="button">Login</button></a>
+
     </form>
     <br>
     <a href="/">Back to Shop</a>

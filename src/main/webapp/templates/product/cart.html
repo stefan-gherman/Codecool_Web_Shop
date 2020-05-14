@@ -4,11 +4,14 @@
     <title id="pageTitle">Cart</title>
 </head>
 <body>
-<div th:replace="product/index.html::menu">
-
-</div>
+<!--<div th:replace="product/index.html::menu">-->
+<div th:replace="navbar.html :: copy"></div>
 
 <div class="container">
+    <div class="jumbotron text-center">
+        <h1>Cart</h1>
+    </div>
+
     <div class="row">
         <div class="col text-center">
             <div th:if="${cartSize} > 0">

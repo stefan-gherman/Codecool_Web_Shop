@@ -41,7 +41,7 @@ public class LoginController extends HttpServlet {
         System.out.println(password + " " + hashedPasswordFromDB);
         if(Utils.checkPassword(password, hashedPasswordFromDB)) {
             User userFromDB = userDao.getUserByEmail(email);
-            HttpSession session = req.getSession();
+            HttpSession session = req.getSession(false);
             session.setAttribute("user", userFromDB);
             System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&77 user id from Login: " + userFromDB.getId());
             resp.sendRedirect("/");
@@ -49,6 +49,8 @@ public class LoginController extends HttpServlet {
             resp.sendRedirect("/login");
         }
 
-
     }
+
 }
+
+

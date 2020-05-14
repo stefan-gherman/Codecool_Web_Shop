@@ -17,7 +17,6 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 
 //import com.codecool.shop.dao.implementation.ProductCategoryDaoMem;
 //import com.codecool.shop.dao.implementation.ProductDaoMem;
@@ -42,7 +41,6 @@ public class ProductController extends HttpServlet {
             if (session.getAttribute("cart") == null) session.setAttribute("cart", new Cart());
         }
 
-
         try {
             productDataStore = ProductDaoJDBC.getInstance();
             productCategoryDataStore = ProductCategoryJDBC.getInstance();
@@ -59,14 +57,20 @@ public class ProductController extends HttpServlet {
 
         CartDao cartDataStore = CartDaoJDBC.getInstance();
         User currentUser = (User) session.getAttribute("user");
+        Cart currentCart = (Cart) session.getAttribute("cart");
 
         if(currentUser.getFullName() != null) {
             try {
-                Cart currentCart = (Cart) session.getAttribute("cart");
+                if (cartDataStore.createCartFromQuery(currentUser.getId()).getCartContents().size()==0) {
+                    currentCart = (Cart) session.getAttribute("cart");
+                }
+                else {
+                    session.setAttribute("cart", cartDataStore.createCartFromQuery(currentUser.getId()));
+                    currentCart = (Cart) session.getAttribute("cart");
+                }
                 if(currentCart.getCartNumberOfProducts()!= 0 && currentCart.getCartNumberOfProducts() !=
-                        cartDataStore.createCartFromQuery(
-                        currentUser.getId()).getCartNumberOfProducts()){
-                        session.setAttribute("cart", currentCart);
+                        cartDataStore.createCartFromQuery(currentUser.getId()).getCartNumberOfProducts()){
+                    session.setAttribute("cart", currentCart);
                 } else {
                     session.setAttribute("cart", cartDataStore.createCartFromQuery(
                             currentUser.getId()));
@@ -124,11 +128,22 @@ public class ProductController extends HttpServlet {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
+
         try {
+            System.out.println("ID SESSION" + session.getId());
             int categoryId = getIdFromCategory(req, productCategoryDataStore);
             int supplierId = getIdFromSupplier(req, supplierDao);
+            currentUser = (User) session.getAttribute("user");
+            String username = currentUser.getFullName();
+            if(username != null) {
+                context.setVariable("username", username);
+            }
+            else {
+                context.setVariable("username", "null");
+            }
+
             displayProducts(context, engine, resp, productCategoryDataStore, productDataStore,
-                    categoryId, supplierId, cartSize, supplierDao );
+                    categoryId, supplierId, cartSize, supplierDao, session, currentUser);
         } catch (Exception notFound) {
             engine.process("product/notFound.html", context, resp.getWriter());
 
@@ -152,7 +167,7 @@ public class ProductController extends HttpServlet {
     private void displayProducts(WebContext context, TemplateEngine engine, HttpServletResponse resp,
                                  ProductCategoryDao productCategoryDataStore,
                                  ProductDao productDataStore, int categoryId, int supplierId,
-                                 int cartSize, SupplierDao supplierDao)
+                                 int cartSize, SupplierDao supplierDao, HttpSession session, User currentUser )
             throws IOException, SQLException {
 
         context.setVariable("category", productCategoryDataStore.find(categoryId));
@@ -167,6 +182,12 @@ public class ProductController extends HttpServlet {
         }
         context.setVariable("products", productDataStore.getBy(categoryId, supplierId));
         context.setVariable("cartSize", cartSize);
+
+
+
+        context.setVariable("user", currentUser);
+        System.out.println("tet sess " + session.getId());
+        context.setVariable("session", session);
         engine.process("product/index.html", context, resp.getWriter());
     }
 

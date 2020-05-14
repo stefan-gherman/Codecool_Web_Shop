@@ -27,8 +27,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 @WebServlet(urlPatterns = {"/payment-confirmation"})
@@ -39,76 +37,37 @@ public class ConfirmationController extends HttpServlet {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
-        final int ORDERID = 1;
-        final int USERID = 1;
-        final int CARTID = 1;
-
-        HttpSession session = req.getSession();
+        HttpSession session = req.getSession(false);
         Cart tempCart = (Cart) session.getAttribute("cart");
         User tempUser = (User) session.getAttribute("user");
         Order tempOrder = (Order) session.getAttribute("order");
 
-        OrderDao orderDao = OrderDaoJDBC.getInstance();
-        Order order = orderDao.getOrderById(tempOrder.getId());
-
-        List<ListItem> temp = new ArrayList<>();
-        temp = orderDao.getItemsByOrderId(tempOrder.getId());
         double total = 0;
-        String orderCurrency;
-        for (ListItem item : temp) {
+        String orderCurrency = "";
+        for (ListItem item:tempOrder.getItems()) {
             total += item.getProductPrice();
         }
-        if (temp.size()!=0) {
-            orderCurrency = temp.get(0).getProductCurrency();
-        }
-        else {
-            orderCurrency = "";
-        }
-        context.setVariable("total", total);
-        context.setVariable("order", order);
-        context.setVariable("currency", orderCurrency);
+        if (tempOrder.getItems().size()!=0) orderCurrency = tempOrder.getItems().get(0).getProductCurrency();
 
+        OrderDao orderDao = OrderDaoJDBC.getInstance();
+        tempOrder.setStatus("Shipped");
+        tempOrder.setTotal(total);
+        orderDao.update(tempOrder);
+
+        context.setVariable("total", total);
+        context.setVariable("order", tempOrder);
+        context.setVariable("currency", orderCurrency);
         engine.process("payment-confirmation.html", context, resp.getWriter());
+
+        // clearing the cart and the order from the session as the purchase is completed and backup isn't needed
+        session.removeAttribute("cart");
+        session.removeAttribute("order");
+
+        // send confirmation email to customer
+        sendEmailConfirmation(tempOrder.getEmail(), tempOrder.getOwnerName(), tempOrder.getId(), String.valueOf(total));
 
     }
 
-
-
-//        OrderDao orderDataStore = OrderDaoMem.getInstance();
-//        if (Validation.validateCardNumberInput(req.getParameter("card-number"))==false) {
-//            orderDataStore.setInvalidCardNumberMessage("A 16 digit card number is required.");
-//            resp.sendRedirect("payment-details");
-//        } else {
-//            orderDataStore.setInvalidCardNumberMessage("");
-//        }
-//
-//
-//        orderDataStore.addLogEntry(orderDataStore, "Confirmation");
-//        String fullName = orderDataStore.getFullName();
-//        int orderId = orderDataStore.getId();
-//        String total = orderDataStore.getTotal();
-
-//        // transform Order into JSON and export to file
-//        jsonify(orderDataStore);
-//
-//        // send confirmation email to customer
-//        String custEmail = orderDataStore.getEmail();
-//        sendEmailConfirmation(custEmail, fullName, orderId, total);
-//
-//        double totalAmount = Double.parseDouble(orderDataStore.getTotal());
-//
-//
-//        context.setVariable("total", totalAmount);
-//
-//        context.setVariable("order", orderDataStore);
-//
-//        engine.process("payment-confirmation.html", context, resp.getWriter());
-//        orderDataStore.addLogEntry(orderDataStore, "Confirmation Successful");
-//
-//        orderDataStore.clear();
-//        CartDao cartDataStore = CartDaoMem.getInstance();
-//        cartDataStore.eraseMe();
-//    }
 
     private void sendEmailConfirmation(String custEmail, String fullName, int orderId, String total) {
         String to = custEmail;
@@ -116,7 +75,7 @@ public class ConfirmationController extends HttpServlet {
         String subject = "EDUCATIONAL PROJECT - shop order confirmation";
         String body =  "EDUCATIONAL PROJECT - content with order details";
         final String user = "ionionescu2020demo@gmail.com";
-        final String pass = "verystrongpassword";
+        final String pass = "notverystrongpassword";
 
         Properties props = new Properties();
         props.put("mail.smtp.host", host);

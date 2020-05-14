@@ -1,25 +1,25 @@
 <!doctype html>
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-
     <div th:replace="header.html :: copy"></div>
-
-  <title>Codecool Shop</title>
+    <title>Codecool Shop</title>
 </head>
 
 <body>
+<div th:replace="navbar.html :: copy"></div>
 
-<div th:fragment="menu" class="jumbotron text-center">
-    <h1>Codecool Shop</h1>
-    <p><a href="/register">Register</a></p>
-    <p><a href="/login">Log In</a></p>
-    <p><a href="/logout">Log Out</a></p>
-    
-</div>
-</div>
+<!--<div th:fragment="menu" class="jumbotron text-center">-->
+<!--    <h1>Codecool Shop</h1>-->
+<!--    <p><a href="/register">Register</a></p>-->
+<!--    <p><a href="/login">Log In</a></p>-->
+<!--    <p><a href="/logout">Log Out</a></p>-->
 
+<!--</div>-->
 
 <div class="container">
+    <br>
+    <div th:replace="mainHeader.html ::carousel"></div>
+
     <!-- category and supplier -->
     <div class="col ">
         <form>
@@ -43,15 +43,6 @@
                         <option value="supplier=walmart">Walmart</option>
                     </select>
                 </div>
-                <div class="float-right" style="margin-left: auto; margin-right: 0px;">
-                <div class="form-group">
-
-                    <p class="nav_links" ><a href="/cart"><i class="fas fa-shopping-cart fa-2x"></i></a></p>
-                    <span th:if="${cartSize} > 0">
-        <sup class="badge badge-danger" th:text="${cartSize}">300</sup>
-    </span>
-                    </div>
-                </div>
             </div>
 
 
@@ -59,23 +50,55 @@
 
     </div>
 
-    <div class="card">
-        <strong th:text="${category.name}">Category Title</strong>
+    <div class="jumbotron text-center">
+        <h3 th:text="${category.name}"></h3>
     </div>
+    <br>
+
+    <!--    product cards -->
+<!--    <div id="products" class="row">-->
+<!--        <div class="col col-sm-12 col-md-6 col-lg-4" th:each="prod,iterStat : ${products}">-->
+<!--            <div class="card">-->
+<!--                <img class="" src="http://placehold.it/400x250/000/fff"-->
+<!--                     th:attr="src='/static/img/' + ${prod.image}" alt=""/>-->
+<!--                <div class="card-header">-->
+<!--                    <h4 class="card-title" th:text="${prod.name}">Product name</h4>-->
+<!--                    <p class="card-text" th:text="${prod.description}">Product description... </p>-->
+<!--                </div>-->
+<!--                <div class="card-body">-->
+<!--                    <div class="card-text">-->
+<!--                        <p class="lead" th:text="${prod.getPrice()}">100 USD</p>-->
+<!--                    </div>-->
+<!--                    <div class="card-text">-->
+<!--                        <div th:if="${supplier} == 'all'">-->
+<!--                            <form method="post"-->
+<!--                                  th:action="@{/(productCategory=${category.getName().toLowerCase()})}">-->
+<!--                                <input type="hidden" name="addToCart" th:value="${prod.getId()}">-->
+<!--                                <input type="submit" class="btn btn-success" value="Add to Cart">-->
+<!--                            </form>-->
+<!--                        </div>-->
+<!--                        <div th:if="${supplier} != 'all'">-->
+<!--                            <form method="post"-->
+<!--                                  th:action="@{/(productCategory=${category.getName().toLowerCase()}, supplier=${supplier.getName().toLowerCase()})}">-->
+<!--                                <input type="hidden" name="addToCart" th:value="${prod.getId()}">-->
+<!--                                <input type="submit" class="btn btn-success" value="Add to Cart">-->
+<!--                            </form>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
 
     <div id="products" class="row">
-        <div class="col col-sm-12 col-md-6 col-lg-4" th:each="prod,iterStat : ${products}">
-            <div class="card">
+        <div class="col col-sm-12 col-md-4 col-lg-4" th:each="prod,iterStat : ${products}">
+            <div class="card bg-light mb-3" style="width: 18rem;">
                 <img class="" src="http://placehold.it/400x250/000/fff"
                      th:attr="src='/static/img/' + ${prod.image}" alt=""/>
-                <div class="card-header">
-                    <h4 class="card-title" th:text="${prod.name}">Product name</h4>
-                    <p class="card-text" th:text="${prod.description}">Product description... </p>
-                </div>
+                <div class="card-header" th:text="${prod.name}"></div>
                 <div class="card-body">
-                    <div class="card-text">
+                    <p class="card-text" th:text="${#strings.abbreviate(prod.description,60)}">
                         <p class="lead" th:text="${prod.getPrice()}">100 USD</p>
-                    </div>
                     <div class="card-text">
                         <div th:if="${supplier} == 'all'">
                             <form method="post"
@@ -94,8 +117,10 @@
                     </div>
                 </div>
             </div>
+            <br>
         </div>
     </div>
+
 
 </div>
 

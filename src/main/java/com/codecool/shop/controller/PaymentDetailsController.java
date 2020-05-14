@@ -28,35 +28,26 @@ public class PaymentDetailsController extends HttpServlet {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
-//        final int ORDERID = 1;
-//        final int USERID= 1;
-//        final int CARTID = 1;
-
-        HttpSession session = req.getSession();
+        HttpSession session = req.getSession(false);
         Cart tempCart = (Cart) session.getAttribute("cart");
         User tempUser = (User) session.getAttribute("user");
         Order tempOrder = (Order) session.getAttribute("order");
-
-
-        OrderDao orderDao = OrderDaoJDBC.getInstance();
-        Order order = orderDao.getOrderById(tempOrder.getId());
-
-        List<ListItem> temp = new ArrayList<>();
-        temp = orderDao.getItemsByOrderId(tempOrder.getId());
-        System.out.println("Items length after retrieval via ORDER ID" + temp.size());
+//
+//        OrderDao orderDao = OrderDaoJDBC.getInstance();
+//        Order order = orderDao.getOrderById(tempOrder.getId());
+//
+//        List<ListItem> temp = new ArrayList<>();
+//        temp = orderDao.getItemsByOrderId(tempOrder.getId());
+//        System.out.println("Items length after retrieval via ORDER ID" + temp.size());
         double total = 0;
-        String orderCurrency;
-        for (ListItem item:temp) {
+        String orderCurrency = "";
+        for (ListItem item : tempOrder.getItems()) {
             total += item.getProductPrice();
         }
-        if (temp.size()!=0) {
-            orderCurrency = temp.get(0).getProductCurrency();
-        }
-        else {
-            orderCurrency = "";
-        }
+        if (tempOrder.getItems().size()!=0) orderCurrency = tempOrder.getItems().get(0).getProductCurrency();
+
         context.setVariable("total", total);
-        context.setVariable("order", order);
+        context.setVariable("order", tempOrder);
         context.setVariable("currency", orderCurrency);
 
         if (req.getParameter("payment-method").equals("card")) {
@@ -118,19 +109,18 @@ public class PaymentDetailsController extends HttpServlet {
         temp = orderDao.getItemsByOrderId(tempOrder.getId());
         double total = 0;
         String orderCurrency;
-        for (ListItem item:temp) {
+        for (ListItem item:tempOrder.getItems()) {
             total += item.getProductPrice();
         }
-
-        if (temp.size()!=0) {
-            orderCurrency = temp.get(0).getProductCurrency();
+        if (tempOrder.getItems().size()!=0) {
+            orderCurrency = tempOrder.getItems().get(0).getProductCurrency();
         }
         else {
             orderCurrency = "";
         }
 
         context.setVariable("total", total);
-        context.setVariable("order", order);
+        context.setVariable("order", tempOrder);
         context.setVariable("currency", orderCurrency);
 
         if (req.getParameter("payment-method").equals("card")) {

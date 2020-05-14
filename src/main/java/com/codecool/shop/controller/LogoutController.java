@@ -21,9 +21,11 @@ public class LogoutController extends HttpServlet {
         HttpSession session = req.getSession(false);
 
         if(session != null) {
+            System.out.println("TESTT");
             session.invalidate();
             resp.sendRedirect("/");
             System.out.println("Logged Out");
+            return;
         }
         resp.sendRedirect("/");
 
@@ -32,6 +34,7 @@ public class LogoutController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
         resp.sendRedirect("/");
     }
 
