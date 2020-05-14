@@ -49,7 +49,21 @@ public class PaymentDetailsController extends HttpServlet {
         context.setVariable("total", total);
         context.setVariable("order", tempOrder);
         context.setVariable("currency", orderCurrency);
-
+        User currentUser = (User) session.getAttribute("user");
+        String username = currentUser.getFullName();
+        if (username != null) {
+            context.setVariable("username", username);
+        } else {
+            context.setVariable("username", "null");
+        }
+        int cartSize = 0;
+        tempCart = (Cart) session.getAttribute("cart");
+        if (tempCart == null) {
+            cartSize = 0;
+        } else {
+            cartSize = tempCart.getCartNumberOfProducts();
+            context.setVariable("cartSize", cartSize);
+        }
         if (req.getParameter("payment-method").equals("card")) {
 //            order.setPaymentMethodCard(true);
             engine.process("payment-details-card.html", context, resp.getWriter());
@@ -122,7 +136,21 @@ public class PaymentDetailsController extends HttpServlet {
         context.setVariable("total", total);
         context.setVariable("order", tempOrder);
         context.setVariable("currency", orderCurrency);
-
+        User currentUser = (User) session.getAttribute("user");
+        String username = currentUser.getFullName();
+        if (username != null) {
+            context.setVariable("username", username);
+        } else {
+            context.setVariable("username", "null");
+        }
+        int cartSize = 0;
+        tempCart = (Cart) session.getAttribute("cart");
+        if (tempCart == null) {
+            cartSize = 0;
+        } else {
+            cartSize = tempCart.getCartNumberOfProducts();
+            context.setVariable("cartSize", cartSize);
+        }
         if (req.getParameter("payment-method").equals("card")) {
             order.setPaymentMethodCard(true);
             engine.process("payment-details-card.html", context, resp.getWriter());
