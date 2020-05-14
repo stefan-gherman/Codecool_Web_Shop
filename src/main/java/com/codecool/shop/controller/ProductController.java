@@ -131,11 +131,22 @@ public class ProductController extends HttpServlet {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
+
         try {
+            System.out.println("ID SESSION" + session.getId());
             int categoryId = getIdFromCategory(req, productCategoryDataStore);
             int supplierId = getIdFromSupplier(req, supplierDao);
+            currentUser = (User) session.getAttribute("user");
+            String username = currentUser.getFullName();
+            if(username != null) {
+                context.setVariable("username", username);
+            }
+            else {
+                context.setVariable("username", "null");
+            }
+
             displayProducts(context, engine, resp, productCategoryDataStore, productDataStore,
-                    categoryId, supplierId, cartSize, supplierDao );
+                    categoryId, supplierId, cartSize, supplierDao, session, currentUser);
         } catch (Exception notFound) {
             engine.process("product/notFound.html", context, resp.getWriter());
 
@@ -159,7 +170,7 @@ public class ProductController extends HttpServlet {
     private void displayProducts(WebContext context, TemplateEngine engine, HttpServletResponse resp,
                                  ProductCategoryDao productCategoryDataStore,
                                  ProductDao productDataStore, int categoryId, int supplierId,
-                                 int cartSize, SupplierDao supplierDao)
+                                 int cartSize, SupplierDao supplierDao, HttpSession session, User currentUser )
             throws IOException, SQLException {
 
         context.setVariable("category", productCategoryDataStore.find(categoryId));
@@ -174,6 +185,12 @@ public class ProductController extends HttpServlet {
         }
         context.setVariable("products", productDataStore.getBy(categoryId, supplierId));
         context.setVariable("cartSize", cartSize);
+
+
+
+        context.setVariable("user", currentUser);
+        System.out.println("tet sess " + session.getId());
+        context.setVariable("session", session);
         engine.process("product/index.html", context, resp.getWriter());
     }
 
