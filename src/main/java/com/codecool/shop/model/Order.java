@@ -17,12 +17,14 @@ public class Order {
     private int cartId;
     private int userId;
     private java.sql.Date dateCreated;
+    private String status;
     private List<ListItem> items;
     private String ownerName;
     private String email;
     private String phoneNumber;
     private String billingAddress;
     private String shippingAddress;
+    private double total;
     private boolean paymentMethodCard = false;
     private String cardHolder;
     private String cardNumber;
@@ -55,12 +57,24 @@ public class Order {
         this.id = id;
     }
 
+    public void setTotal(double total) {
+        this.total = total;
+    }
+
     public java.sql.Date getDateCreated() {
         return dateCreated;
     }
 
     public void setDateCreated(java.sql.Date dateCreated) {
         this.dateCreated = dateCreated;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public boolean isPaymentMethodCard() {

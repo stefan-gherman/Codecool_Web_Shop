@@ -36,7 +36,7 @@ public class CartController extends HttpServlet {
         // which is added at the time of creating in the DB
         // the creation in the DB is also important because it gives the cart id
         HttpSession session = req.getSession(false);
-        session.removeAttribute("order");
+        if (session.getAttribute("order")!=null) session.removeAttribute("order");
 
         Cart sessionCart = (Cart) session.getAttribute("cart");
         Map<ListItem, Integer> cartContents = sessionCart.getCartContents();

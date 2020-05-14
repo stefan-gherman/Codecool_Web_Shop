@@ -27,13 +27,10 @@ public class PaymentMethodSelectController extends HttpServlet implements Logger
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
-        HttpSession session = req.getSession();
+        HttpSession session = req.getSession(false);
         Cart tempCart = (Cart) session.getAttribute("cart");
         User tempUser = (User) session.getAttribute("user");
         Order tempOrder = (Order) session.getAttribute("order");
-
-        OrderDao orderDao = OrderDaoJDBC.getInstance();
-        Order order = orderDao.getOrderById(tempOrder.getId());
 
         // get info from previous checkout form
         String ownerName = req.getParameter("full-name");
@@ -43,16 +40,17 @@ public class PaymentMethodSelectController extends HttpServlet implements Logger
         String shippingAddress = req.getParameter("shipping-address");
 
         // attach form info to the order
-        order.setUserId(tempUser.getId());
-        order.setOwnerName(ownerName);
-        order.setEmail(email);
-        order.setPhoneNumber(phoneNumber);
-        order.setBillingAddress(billingAddress);
-        order.setShippingAddress(shippingAddress);
+        tempOrder.setUserId(tempUser.getId());
+        tempOrder.setOwnerName(ownerName);
+        tempOrder.setEmail(email);
+        tempOrder.setPhoneNumber(phoneNumber);
+        tempOrder.setBillingAddress(billingAddress);
+        tempOrder.setShippingAddress(shippingAddress);
 
         // update the new order details in the DB and in the session
-        orderDao.update(order);
-        session.setAttribute("order", order);
+        OrderDao orderDao = OrderDaoJDBC.getInstance();
+        orderDao.update(tempOrder);
+        session.setAttribute("order", tempOrder);
 
         // setting up info for display on html - currency as string for demo
         double total = 0;

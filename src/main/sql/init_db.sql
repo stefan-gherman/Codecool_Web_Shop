@@ -29,15 +29,16 @@ CREATE TABLE carts
 CREATE TABLE orders
 (
     id               SERIAL PRIMARY KEY NOT NULL,
-    date_created     TIMESTAMP          NOT NULL DEFAULT NOW(),
+    date_created     TIMESTAMP          DEFAULT NOW(),
     cart_id          INTEGER REFERENCES carts (id) ON DELETE CASCADE,
     user_id          INTEGER REFERENCES users (id) ON DELETE CASCADE,
-    status           VARCHAR(20),
+    status           VARCHAR(20) DEFAULT 'started',
     owner_name       VARCHAR(50),
     owner_phone      VARCHAR(20),
     owner_email      VARCHAR(50),
     billing_address  VARCHAR(100),
-    shipping_address VARCHAR(100)
+    shipping_address VARCHAR(100),
+    total            NUMERIC
 );
 
 CREATE TABLE categories
