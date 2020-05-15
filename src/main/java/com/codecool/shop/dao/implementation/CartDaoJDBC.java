@@ -151,6 +151,7 @@ public class CartDaoJDBC implements CartDao {
             ResultSet resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 userCart = resultSet.getInt("id");
+                break;
             }
             statement.close();
             connection.close();

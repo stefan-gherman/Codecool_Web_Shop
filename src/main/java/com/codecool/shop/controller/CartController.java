@@ -20,6 +20,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 
 @WebServlet(urlPatterns = {"/cart"})
@@ -29,9 +30,7 @@ public class CartController extends HttpServlet {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
         CartDao cartDataStore = CartDaoJDBC.getInstance();
-
-
-
+        Map<ListItem, Integer> cartContents;
 
         // adding a session cart to the session that will be available
         // regardless if the user is logged in or not
@@ -39,22 +38,26 @@ public class CartController extends HttpServlet {
         // which is added at the time of creating in the DB
         // the creation in the DB is also important because it gives the cart id
         HttpSession session = req.getSession(false);
+        if (session.getAttribute("order")!=null) session.removeAttribute("order");
+
         Cart sessionCart = (Cart) session.getAttribute("cart");
-        Map<ListItem, Integer> cartContents = sessionCart.getCartContents();
+        if(sessionCart.getCartNumberOfProducts() == 0) {
+            cartContents = new HashMap<>();
+        } else {
+            cartContents = sessionCart.getCartContents();
+        }
         String defaultCurrency = "";
         int cartSize = sessionCart.getCartNumberOfProducts();
         float cartTotal = sessionCart.getTotalSum();
-//        sessionCart = cartDataStore.addCartToDB(sessionCart);
+        sessionCart = cartDataStore.addCartToDB(sessionCart);
         session.setAttribute("cart", sessionCart);
 
 
-        for (Map.Entry<ListItem, Integer> product : sessionCart.getCartContents().entrySet()
+        for (Map.Entry<ListItem, Integer> product : cartContents.entrySet()
         ) {
             defaultCurrency = product.getKey().getProductCurrency();
             break;
         }
-
-        System.out.println("Default currency " + defaultCurrency);
 
 
         context.setVariable("cartSize", sessionCart.getCartNumberOfProducts());
@@ -77,12 +80,10 @@ public class CartController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
-
         CartDao cartDataStore = CartDaoJDBC.getInstance();
         OrderDao orderDao = OrderDaoJDBC.getInstance();
         int quantity;
         int objectId;
-
 
         try {
             if (req.getParameter("quantity") != null && req.getParameter("objectId") != null) {

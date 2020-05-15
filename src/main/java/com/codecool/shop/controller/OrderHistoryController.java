@@ -26,22 +26,17 @@ public class OrderHistoryController extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
-        System.out.println("********************** Order history button pressed.");
-        // temporary constants until shopping cart id is passed to /checkout
-//        final int CARTID = 1;
-//        final int USERID = 1;
-//        final String PLACEHOLDER = "PLACEHOLDER";
 
-        HttpSession session = req.getSession();
+        HttpSession session = req.getSession(false);
         Cart tempCart = (Cart) session.getAttribute("cart");
         User tempUser = (User) session.getAttribute("user");
-
 
         // getting list of orders from DB based on user ID
         OrderDao orderDao = OrderDaoJDBC.getInstance();
         List<Order> orderHistory = new ArrayList<>();
         orderHistory = orderDao.getOrderHistoryByUserId(tempUser.getId());
         context.setVariable("orderHistory", orderHistory);
+        context.setVariable("user", tempUser);
 
 
 
@@ -68,6 +63,21 @@ public class OrderHistoryController extends HttpServlet {
 //
 //        context.setVariable("total", total);
 //        context.setVariable("currency", orderCurrency);
+        User currentUser = (User) session.getAttribute("user");
+        String username = currentUser.getFullName();
+        if (username != null) {
+            context.setVariable("username", username);
+        } else {
+            context.setVariable("username", "null");
+        }
+        int cartSize = 0;
+        tempCart = (Cart) session.getAttribute("cart");
+        if (tempCart == null) {
+            cartSize = 0;
+        } else {
+            cartSize = tempCart.getCartNumberOfProducts();
+            context.setVariable("cartSize", cartSize);
+        }
         engine.process("history.html", context, resp.getWriter());
     }
 

@@ -18,76 +18,67 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @WebServlet(urlPatterns = {"/payment-method-select"})
 public class PaymentMethodSelectController extends HttpServlet implements Logger {
 
-        @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException  {
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
-        // temporary constant until session is implemented
-//        final int USERID = 1;
-//        final int ORDERID = 1;
-//        final int CARTID = 1;
-        HttpSession session = req.getSession();
+        HttpSession session = req.getSession(false);
         Cart tempCart = (Cart) session.getAttribute("cart");
         User tempUser = (User) session.getAttribute("user");
         Order tempOrder = (Order) session.getAttribute("order");
 
-
-        OrderDao orderDao = OrderDaoJDBC.getInstance();
-
-        Order order = orderDao.getOrderById(tempOrder.getId());
-
+        // get info from previous checkout form
         String ownerName = req.getParameter("full-name");
         String email = req.getParameter("input-email");
         String phoneNumber = req.getParameter("input-phone");
         String billingAddress = req.getParameter("billing-address");
         String shippingAddress = req.getParameter("shipping-address");
 
-        order.setUserId(tempUser.getId());
-        order.setOwnerName(ownerName);
-        order.setEmail(email);
-        order.setPhoneNumber(phoneNumber);
-        order.setBillingAddress(billingAddress);
-        order.setShippingAddress(shippingAddress);
+        // attach form info to the order
+        tempOrder.setUserId(tempUser.getId());
+        tempOrder.setOwnerName(ownerName);
+        tempOrder.setEmail(email);
+        tempOrder.setPhoneNumber(phoneNumber);
+        tempOrder.setBillingAddress(billingAddress);
+        tempOrder.setShippingAddress(shippingAddress);
 
-        orderDao.update(order);
+        // update the new order details in the DB and in the session
+        OrderDao orderDao = OrderDaoJDBC.getInstance();
+        orderDao.update(tempOrder);
+        session.setAttribute("order", tempOrder);
 
-        List<ListItem> temp = new ArrayList<>();
-        temp=orderDao.getItemsByOrderId(tempOrder.getId());
-
-        System.out.println("size after ORDER ID items retrieval: " + temp.size());
-
-        context.setVariable("items", temp);
+        // setting up info for display on html - currency as string for demo
         double total = 0;
-        String orderCurrency;
-        for (ListItem item:temp) {
+        String orderCurrency = "";
+        for (ListItem item : tempOrder.getItems()) {
             total += item.getProductPrice();
         }
-        if (temp.size()!=0) {
-            orderCurrency = temp.get(0).getProductCurrency();
-        }
-        else {
-            orderCurrency = "";
-        }
-        // filling order information from checkout form
-//        if (Validation.validateNameInput(req.getParameter("full-name"))==false) {
-//            orderDataStore.setInvalidFullNameEntryMessage("A 2 to 50 character full name is required.");
-//            resp.sendRedirect("checkout");
-//        } else {
-//            orderDataStore.setInvalidFullNameEntryMessage("");
-//        }
+        if (tempOrder.getItems().size() != 0) orderCurrency = tempOrder.getItems().get(0).getProductCurrency();
 
         context.setVariable("total", total);
-        context.setVariable("order", order);
+        context.setVariable("order", tempOrder);
         context.setVariable("currency", orderCurrency);
+        User currentUser = (User) session.getAttribute("user");
+        String username = currentUser.getFullName();
+        if (username != null) {
+            context.setVariable("username", username);
+        } else {
+            context.setVariable("username", "null");
+        }
+        int cartSize = 0;
+        tempCart = (Cart) session.getAttribute("cart");
+        if (tempCart == null) {
+            cartSize = 0;
+        } else {
+            cartSize = tempCart.getCartNumberOfProducts();
+            context.setVariable("cartSize", cartSize);
+        }
         engine.process("payment-method-select.html", context, resp.getWriter());
-//        adminLog(req, orderDataStore, "payment-method");
     }
 
 
@@ -97,9 +88,6 @@ public class PaymentMethodSelectController extends HttpServlet implements Logger
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
         engine.process("paymentUnavailable.html", context, resp.getWriter());
-
     }
-
-
 }
 

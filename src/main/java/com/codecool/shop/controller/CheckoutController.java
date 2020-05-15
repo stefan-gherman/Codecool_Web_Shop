@@ -28,24 +28,14 @@ public class CheckoutController extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
-        System.out.println("********************** Checkout button pressed.");
-        // temporary constants until shopping cart id is passed to /checkout
-//        final int CARTID = 1;
-//        final int USERID = 1;
+
         OrderDao orderDao = OrderDaoJDBC.getInstance();
         HttpSession session = req.getSession(false);
-        System.out.println("*************************** Got session");
         Cart tempCart = (Cart) session.getAttribute("cart");
-        User tempUserOrig = (User) session.getAttribute("user");
-        System.out.println("**************************** user from session ID: " + tempUserOrig.getId());
-        System.out.println("**************************** Got cart from session: " + tempCart);
-        System.out.println("**************************** Got cart contents from session: " + tempCart.getCartContents());
         User tempUser = (User) session.getAttribute("user");
-
 
         // create new order object in memory and also in the DB with the limited data
         Order tempOrder = new Order();
-
         tempOrder.setCartId(tempCart.getId());
         tempOrder.setUserId(tempUser.getId());
 
@@ -53,45 +43,56 @@ public class CheckoutController extends HttpServlet {
         Map<ListItem, Integer> tempMap = tempCart.getCartContents();
         List<ListItem> temp = new ArrayList<>();
         for (Map.Entry<ListItem, Integer> entry : tempMap.entrySet()) {
-            System.out.println("WWWOOOWWWOOOWWWOOOWWWOOO" + entry.getKey() + " = " + entry.getValue());
-            for (int i=1; i<=entry.getValue(); i++) {
+            for (int i = 1; i <= entry.getValue(); i++) {
                 temp.add(entry.getKey());
             }
         }
-        System.out.println("From Checkout Controller - length of items list: " + temp.size());
         tempOrder.setItems(temp);
+
+        // setting up info for the Checkout page, the total is needed at the update as well
+        double total = 0;
+        String orderCurrency = "";
+        for (ListItem item : tempOrder.getItems()) {
+            total += item.getProductPrice();
+        }
+        if (tempOrder.getItems().size() != 0) orderCurrency = tempOrder.getItems().get(0).getProductCurrency();
 
         // creating the new order in the DB and in the session
         int orderIdFromDb = orderDao.add(tempOrder);
         tempOrder.setId(orderIdFromDb);
+        tempOrder.setCartId(tempCart.getId());
+        tempOrder.setUserId(tempUser.getId());
+        tempOrder.setStatus("Checked out");
+        tempOrder.setOwnerName(tempUser.getFullName());
+        tempOrder.setPhoneNumber(tempUser.getPhoneNumber());
+        tempOrder.setEmail(tempUser.getEmail());
+        tempOrder.setBillingAddress(tempUser.getBillingAddress());
+        tempOrder.setShippingAddress(tempUser.getShippingAddress());
+        tempOrder.setTotal(total);
         session.setAttribute("order", tempOrder);
+        orderDao.update(tempOrder);
 
         // adding the items in the order to the DB
         orderDao.addToOrderItems(tempOrder);
-
-
-        // setting up info for the Checkout page
-        double total = 0;
-        String orderCurrency;
-        for (ListItem item:temp) {
-            total += item.getProductPrice();
+        int cartSize = 0;
+        tempCart = (Cart) session.getAttribute("cart");
+        if (tempCart == null) {
+            cartSize = 0;
+        } else {
+            cartSize = tempCart.getCartNumberOfProducts();
+            context.setVariable("cartSize", cartSize);
         }
-        if (temp.size()!=0) {
-            orderCurrency = temp.get(0).getProductCurrency();
-        }
-        else {
-            orderCurrency = "";
-        }
-
-        for (ListItem item :
-                tempOrder.getItems()) {
-            System.out.println(item.getProductName() + " " + item.getProductPrice());
-
-        }
-
+        context.setVariable("user", tempUser);
         context.setVariable("items", tempOrder.getItems());
         context.setVariable("total", total);
         context.setVariable("currency", orderCurrency);
+        User currentUser = (User) session.getAttribute("user");
+        String username = currentUser.getFullName();
+        if (username != null) {
+            context.setVariable("username", username);
+        } else {
+            context.setVariable("username", "null");
+        }
         engine.process("checkout.html", context, resp.getWriter());
     }
 
