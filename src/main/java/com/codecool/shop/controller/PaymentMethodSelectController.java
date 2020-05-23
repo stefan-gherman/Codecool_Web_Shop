@@ -8,6 +8,7 @@ import com.codecool.shop.model.Cart;
 import com.codecool.shop.model.ListItem;
 import com.codecool.shop.model.Order;
 import com.codecool.shop.model.User;
+import org.slf4j.LoggerFactory;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -21,12 +22,14 @@ import java.io.IOException;
 
 @WebServlet(urlPatterns = {"/payment-method-select"})
 public class PaymentMethodSelectController extends HttpServlet implements Logger {
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(PaymentMethodSelectController.class);
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
+        logger.info("Reached Payment method select page - doPost");
         HttpSession session = req.getSession(false);
         Cart tempCart = (Cart) session.getAttribute("cart");
         User tempUser = (User) session.getAttribute("user");
@@ -86,6 +89,8 @@ public class PaymentMethodSelectController extends HttpServlet implements Logger
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
+
+        logger.info("Reached Payment method select page - doGet");
 
         engine.process("paymentUnavailable.html", context, resp.getWriter());
     }

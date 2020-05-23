@@ -7,6 +7,8 @@ import com.codecool.shop.model.Cart;
 import com.codecool.shop.model.ListItem;
 import com.codecool.shop.model.Order;
 import com.codecool.shop.model.User;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -22,12 +24,14 @@ import java.util.List;
 
 @WebServlet(urlPatterns = {"/payment-details"})
 public class PaymentDetailsController extends HttpServlet {
+    private static final Logger logger = LoggerFactory.getLogger(PaymentDetailsController.class);
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
+        logger.info("Payment details controller reached - doPost");
         HttpSession session = req.getSession(false);
         Cart tempCart = (Cart) session.getAttribute("cart");
         User tempUser = (User) session.getAttribute("user");
@@ -106,9 +110,7 @@ public class PaymentDetailsController extends HttpServlet {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
 
-//        final int ORDERID = 1;
-//        final int USERID= 1;
-//        final int CARTID = 1;
+        logger.info("Payment details controller reached - doGet");
 
         HttpSession session = req.getSession();
         Cart tempCart = (Cart) session.getAttribute("cart");
