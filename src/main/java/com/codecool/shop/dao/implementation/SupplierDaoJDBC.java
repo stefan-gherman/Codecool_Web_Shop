@@ -7,6 +7,8 @@ import com.codecool.shop.dao.SupplierDao;
 import com.codecool.shop.model.Product;
 import com.codecool.shop.model.ProductCategory;
 import com.codecool.shop.model.Supplier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.transform.Result;
 import java.io.IOException;
@@ -23,17 +25,13 @@ public class SupplierDaoJDBC implements SupplierDao {
     PreparedStatement preparedStatement = null;
     ResultSet resultSet = null;
     List<Supplier> supplierList = new ArrayList<>();
-
     private static SupplierDaoJDBC instance;
+    private static Logger logger = LoggerFactory.getLogger(SupplierDaoJDBC.class);
 
-    private SupplierDaoJDBC() throws IOException {
-
-    }
+    private SupplierDaoJDBC() throws IOException { }
 
     public static SupplierDaoJDBC getInstance() throws IOException {
-        if (instance == null) {
-            instance = new SupplierDaoJDBC();
-        }
+        if (instance == null) instance = new SupplierDaoJDBC();
         return instance;
     }
 
@@ -47,7 +45,7 @@ public class SupplierDaoJDBC implements SupplierDao {
             preparedStatement.setString(2, supplier.getDescription());
             int insertRow = preparedStatement.executeUpdate();
         } catch (Exception ex) {
-            System.out.println("Error: " + ex.getMessage() + " when adding supplier.");
+            logger.error(ex.getMessage() + " when adding supplier.");
         } finally {
             try { resultSet.close(); } catch (Exception e) { /* ignored */ }
             try { preparedStatement.close(); } catch (Exception e) { /* ignored */ }
@@ -70,7 +68,7 @@ public class SupplierDaoJDBC implements SupplierDao {
             }
 
         } catch(Exception ex){
-            System.out.println("Error: " + ex.getMessage() + " when searching for category.");
+            logger.error(ex.getMessage() + " when searching for category.");
         } finally {
             try { resultSet.close(); } catch (Exception e) { /* ignored */ }
             try { preparedStatement.close(); } catch (Exception e) { /* ignored */ }
@@ -88,7 +86,7 @@ public class SupplierDaoJDBC implements SupplierDao {
             preparedStatement.setInt(1, id);
             int deleteRow = preparedStatement.executeUpdate();
         } catch (Exception ex) {
-            System.out.println("Error: " + ex.getMessage() + " when removing supplier from database.");
+            logger.error(ex.getMessage() + " when removing supplier from database.");
         } finally {
             try { resultSet.close(); } catch (Exception e) { /* ignored */ }
             try { preparedStatement.close(); } catch (Exception e) { /* ignored */ }
@@ -103,7 +101,6 @@ public class SupplierDaoJDBC implements SupplierDao {
             connection = dbConnect.getConnection();
             preparedStatement = connection.prepareStatement("SELECT * FROM suppliers");
             resultSet = preparedStatement.executeQuery();
-
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
                 String name = resultSet.getString("name");
@@ -112,7 +109,7 @@ public class SupplierDaoJDBC implements SupplierDao {
             }
             return supplierList;
         } catch (Exception ex) {
-            System.out.println("Error: " + ex.getMessage() + " when getting all suppliers from database.");
+            logger.error(ex.getMessage() + " when getting all suppliers from database.");
         } finally {
             try { resultSet.close(); } catch (Exception e) { /* ignored */ }
             try { preparedStatement.close(); } catch (Exception e) { /* ignored */ }
