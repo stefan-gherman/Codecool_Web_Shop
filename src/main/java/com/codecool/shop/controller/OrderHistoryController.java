@@ -6,6 +6,7 @@ import com.codecool.shop.dao.implementation.OrderDaoJDBC;
 import com.codecool.shop.model.Cart;
 import com.codecool.shop.model.Order;
 import com.codecool.shop.model.User;
+import org.slf4j.LoggerFactory;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -21,11 +22,14 @@ import java.util.List;
 
 @WebServlet(urlPatterns = {"/history"})
 public class OrderHistoryController extends HttpServlet {
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(OrderHistoryController.class);
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
+
+        logger.info("Reached order history.");
 
         HttpSession session = req.getSession(false);
         Cart tempCart = (Cart) session.getAttribute("cart");
