@@ -8,9 +8,9 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class DBConnect {
-    private final Properties dbProperties = new Properties();
-    private static DBConnect instance;
-    private static String propertiesFilePath = "connection.properties";
+    protected final Properties dbProperties = new Properties();
+    protected static DBConnect instance;
+    protected static String propertiesFilePath = "connection.properties";
 
     public static String getPropertiesFilePath() {
         return propertiesFilePath;
@@ -20,7 +20,7 @@ public class DBConnect {
         DBConnect.propertiesFilePath = propertiesFilePath;
     }
 
-    private DBConnect() throws IOException {
+    protected DBConnect() throws IOException {
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propertiesFilePath);
         dbProperties.load(inputStream);
     }

@@ -7,9 +7,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
-public class DBConnect {
-    private final Properties dbProperties = new Properties();
-    private static DBConnect instance;
+public class DBConnectTest extends DBConnect {
     private static String propertiesFilePath = "connection.properties";
 
     public static String getPropertiesFilePath() {
@@ -17,16 +15,17 @@ public class DBConnect {
     }
 
     public static void setPropertiesFilePath(String propertiesFilePath) {
-        DBConnect.propertiesFilePath = propertiesFilePath;
+        DBConnectTest.propertiesFilePath = propertiesFilePath;
     }
 
-    private DBConnect() throws IOException {
+    private DBConnectTest() throws IOException {
+        super();
         InputStream inputStream = getClass().getClassLoader().getResourceAsStream(propertiesFilePath);
         dbProperties.load(inputStream);
     }
 
-    public static DBConnect getInstance() throws IOException {
-        if (instance == null) instance = new DBConnect();
+    public static DBConnectTest getInstance() throws IOException {
+        if (instance == null) instance = new DBConnectTest();
         return instance;
     }
 
