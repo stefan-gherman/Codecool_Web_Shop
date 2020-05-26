@@ -8,6 +8,7 @@ import com.codecool.shop.dao.implementation.OrderDaoJDBC;
 import com.codecool.shop.model.Cart;
 import com.codecool.shop.model.ListItem;
 import com.codecool.shop.model.User;
+import org.slf4j.LoggerFactory;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.WebContext;
 
@@ -25,8 +26,10 @@ import java.util.Map;
 
 @WebServlet(urlPatterns = {"/cart"})
 public class CartController extends HttpServlet {
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CartController.class);
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        logger.info("Cart Controller started");
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
         CartDao cartDataStore = CartDaoJDBC.getInstance();
@@ -60,9 +63,9 @@ public class CartController extends HttpServlet {
         }
 
 
-        context.setVariable("cartSize", sessionCart.getCartNumberOfProducts());
+        context.setVariable("cartSize", cartSize);
         context.setVariable("cartContents", sessionCart.getCartContents());
-        context.setVariable("cartTotal", sessionCart.getTotalSum());
+        context.setVariable("cartTotal", cartTotal);
         context.setVariable("defaultCurrency", defaultCurrency);
         User currentUser = (User) session.getAttribute("user");
         String username = currentUser.getFullName();
@@ -90,7 +93,7 @@ public class CartController extends HttpServlet {
                 quantity = Integer.parseInt(req.getParameter("quantity"));
                 objectId = Integer.parseInt(req.getParameter("objectId"));
 
-                cartDataStore.add(objectId, quantity);
+                cartDataStore.addToCart(objectId, quantity);
 
                 //updating the session cart as well
                 int productId = objectId;
@@ -98,9 +101,10 @@ public class CartController extends HttpServlet {
                 HttpSession session = req.getSession(false);
                 Cart tempCart = (Cart) session.getAttribute("cart");
                 tempCart.add(objectId, quantity);
-                System.out.println("TTTEEEMMMMPPP cart contents len: " + tempCart.getCartNumberOfProducts());
+                logger.debug("Current cart length is '{}", tempCart.getCartNumberOfProducts());
                 session.setAttribute("cart", tempCart);
-                System.out.println("TTTEEEMMMMPPP cart added to session " + (Cart) ((Cart) session.getAttribute("cart")).getCartContents());
+                //System.out.println("TTTEEEMMMMPPP cart added to session " + ((Cart) session.getAttribute("cart")).getCartContents());
+                logger.debug("Cart added to session: {}", ((Cart) session.getAttribute("cart")).getCartContents());
 
             }
 
@@ -110,31 +114,35 @@ public class CartController extends HttpServlet {
         }
 
         if(req.getParameter("clearCart")!=null) {
+            logger.info("Cart Clear started");
             HttpSession session = req.getSession(false);
             Cart tempCart = (Cart) session.getAttribute("cart");
             User currentUser = (User) session.getAttribute("user");
             if(currentUser.getFullName() != null) {
                 try {
-                    cartDataStore.deleteUserCart(currentUser.getId());
+                    cartDataStore.delete(currentUser.getId());
                 } catch (SQLException throwables) {
                     throwables.printStackTrace();
                 }
             }
             tempCart.eraseMe();
             session.setAttribute("cart", tempCart);
+            logger.info("Cart clear stopped");
         }
         if (req.getParameter("saveCart") != null) {
             try {
-
+                logger.info("Save cart started");
                 HttpSession session = req.getSession(false);
                 if (session != null) {
                     Cart tempCart = (Cart) session.getAttribute("cart");
-                    int lastCart = cartDataStore.saveInDB(Integer.parseInt(req.getParameter("saveCart")));
+                    int lastCart = cartDataStore.update(Integer.parseInt(req.getParameter("saveCart")));
                     cartDataStore.saveCartAndListItems(lastCart, tempCart);
                 }
             } catch (SQLException throwables) {
+                logger.warn("Save cart failed");
                 throwables.printStackTrace();
             }
+            logger.info("Cart saved successfully");
         }
         doGet(req, resp);
     }
