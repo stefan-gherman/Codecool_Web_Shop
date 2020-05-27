@@ -7,7 +7,7 @@ import com.codecool.shop.dao.SupplierDao;
 import com.codecool.shop.model.Product;
 import com.codecool.shop.model.ProductCategory;
 import com.codecool.shop.model.Supplier;
-import jdk.jfr.Category;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
