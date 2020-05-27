@@ -1,8 +1,10 @@
 package com.codecool.shop.model;
 
+import com.codecool.shop.controller.CartController;
 import com.codecool.shop.dao.ProductDao;
 import com.codecool.shop.dao.implementation.ProductDaoJDBC;
 import com.codecool.shop.utils.Utils;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.sql.Date;
@@ -17,6 +19,7 @@ public class Cart {
     private int userId;
     private Map<ListItem, Integer> cartContents = new HashMap<>();
     private Date cartCreatedAtDate;
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(Cart.class);
 
     public int getId() {
         return id;
@@ -98,9 +101,9 @@ public class Cart {
         Product product = productsList.find(id);
         Map<ListItem, Integer> tempMap = cartContents;
         int count = 0;
-        //
-        System.out.println("Product to be added Id:" + product.getId());
-        System.out.println("Adding");
+        logger.info("Started add to cart with just id");
+        logger.debug("Product to be added Id:'{}'", product.getId());
+        logger.info("Adding");
         if (cartContents.size() == 0) {
             cartContents.put(new ListItem(id, product.getName(), product.getImage(),
                     product.getDefaultPrice(), product.getDefaultCurrency().toString()), 1);
@@ -109,7 +112,7 @@ public class Cart {
             ) {
 
                 if (entry.getKey().getProductId() == product.getId()) {
-                    System.out.println("Adding existing");
+                    logger.warn("Adding existing");
                     tempMap.put(entry.getKey(), entry.getValue() + 1);
                     break;
                 } else {
@@ -119,7 +122,7 @@ public class Cart {
             }
         }
         if (count == this.cartContents.size()) {
-            System.out.println("Adding non existing");
+            logger.warn("Adding non existing");
             tempMap.put(new ListItem(id, product.getName(), product.getImage(),
                     product.getDefaultPrice(), product.getDefaultCurrency().toString()), 1);
         }
@@ -131,9 +134,9 @@ public class Cart {
         Product product = productsList.find(id);
         Map<ListItem, Integer> tempMap = cartContents;
         int count = 0;
-        //
-        System.out.println("Product to be added Id:" + product.getId());
-        System.out.println("Adding");
+        logger.info("Started add to cart with id and quantity");
+        logger.debug("Product to be added Id:'{}'", product.getId());
+        logger.info("Adding");
         if (cartContents.size() == 0) {
             cartContents.put(new ListItem(id, product.getName(), product.getImage(),
                     product.getDefaultPrice(), product.getDefaultCurrency().toString()), 1);
@@ -142,14 +145,14 @@ public class Cart {
             ) {
 
                 if (entry.getKey().getProductId() == product.getId()) {
-                    System.out.println("Adding existing");
+                    logger.warn("Adding existing");
                     if (quantity == 0) {
 
                         if (tempMap.containsKey(entry.getKey())) {
                             System.out.println(entry.getKey().getProductName());
                             tempMap.remove(entry.getKey());
                         } else {
-                            System.out.println("Debug: Does not contain");
+                            logger.debug("Does not contain");
                         }
 
                     } else {
@@ -164,7 +167,7 @@ public class Cart {
             }
         }
         if (count == this.cartContents.size() && quantity != 0) {
-            System.out.println("Adding non existing");
+            logger.warn("Adding non existing");
             tempMap.put(new ListItem(id, product.getName(), product.getImage(),
                     product.getDefaultPrice(), product.getDefaultCurrency().toString()), 1);
         }
@@ -173,5 +176,6 @@ public class Cart {
 
     public void eraseMe() {
         this.cartContents.clear();
+        logger.warn("Cart Cleared");
     }
 }

@@ -11,30 +11,22 @@ import java.util.Map;
 
 public interface CartDao {
 
-    void add(int id) throws SQLException, IOException;
+    Cart add(Cart cartToBeAdded);
 
-    Cart addCartToDB(Cart cartToBeAdded);
-
-    //    void remove(int id);
-    Map<ListItem, Integer> getCartContents();
-
-    //    void update(int id);
-//    void getAll();
     int getCartNumberOfProducts();
-
-    //    void eraseMe();
-    float getTotalSum();
 
     Cart getCart();
 
-    int saveInDB(int userId) throws SQLException;
+    int update(int userId) throws SQLException;
 
     void saveCartAndListItems(int cartId, Cart cart);
 
-    void add(int id, int quantity) throws SQLException, IOException;
+    void addToCart(int id, int quantity) throws SQLException, IOException;
 
-    void deleteUserCart(int id) throws SQLException;
+    void delete(int id) throws SQLException;
 
     Cart createCartFromQuery(int id) throws SQLException, IOException;
+
+    Cart getCartById(int cartId);
 
 }

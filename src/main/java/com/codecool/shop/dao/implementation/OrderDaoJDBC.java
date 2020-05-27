@@ -41,7 +41,7 @@ public class OrderDaoJDBC implements OrderDao {
         String shippingAddress = order.getShippingAddress();
 
 
-        System.out.println("Attempting to add new order." + order.getItems().size() + fullName + phoneNumber + email);
+//        System.out.println("Attempting to add new order." + order.getItems().size() + fullName + phoneNumber + email);
         Connection conn = null;
         PreparedStatement pstmt = null;
         int orderIdFromDb = 0;

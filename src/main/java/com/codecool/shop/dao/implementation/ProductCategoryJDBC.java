@@ -7,7 +7,9 @@ import com.codecool.shop.dao.SupplierDao;
 import com.codecool.shop.model.Product;
 import com.codecool.shop.model.ProductCategory;
 import com.codecool.shop.model.Supplier;
-import jdk.jfr.Category;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.xml.transform.Result;
 import java.io.IOException;
@@ -19,23 +21,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProductCategoryJDBC implements ProductCategoryDao {
-    DBConnect dbConnect = DBConnect.getInstance();
-    Connection connection = null;
-    PreparedStatement preparedStatement = null;
-    ResultSet resultSet = null;
-    List<ProductCategory> productCategoryList = new ArrayList<>();
-
-
+    private static Logger logger = LoggerFactory.getLogger(ProductCategoryJDBC.class);
+    private DBConnect dbConnect = DBConnect.getInstance();
+    private Connection connection = null;
+    private PreparedStatement preparedStatement = null;
+    private ResultSet resultSet = null;
     private static ProductCategoryJDBC instance;
+    private List<ProductCategory> productCategoryList = new ArrayList<>();
 
-    private ProductCategoryJDBC() throws IOException {
-
-    }
+    private ProductCategoryJDBC() throws IOException { }
 
     public static ProductCategoryJDBC getInstance() throws IOException {
-        if (instance == null) {
-            instance = new ProductCategoryJDBC();
-        }
+        if (instance == null) instance = new ProductCategoryJDBC();
         return instance;
     }
 
@@ -49,9 +46,9 @@ public class ProductCategoryJDBC implements ProductCategoryDao {
             preparedStatement.setString(1, category.getName());
             preparedStatement.setString(2, category.getDepartment());
             preparedStatement.setString(3, category.getDescription());
-            int insertRow = preparedStatement.executeUpdate();
+            preparedStatement.executeUpdate();
         }catch(Exception ex){
-            System.out.println("Error: " + ex.getMessage() + " when adding category to database.");
+            logger.error(ex.getMessage() + " when adding category to database.");
         } finally {
             try { resultSet.close(); } catch (Exception e) { /* ignored */ }
             try { preparedStatement.close(); } catch (Exception e) { /* ignored */ }
@@ -66,7 +63,6 @@ public class ProductCategoryJDBC implements ProductCategoryDao {
             preparedStatement = connection.prepareStatement("SELECT * FROM categories WHERE id = ?");
             preparedStatement.setInt(1, id);
             resultSet = preparedStatement.executeQuery();
-
             while(resultSet.next()){
                 String name = resultSet.getString("name");
                 String department = resultSet.getString("department");
@@ -75,7 +71,7 @@ public class ProductCategoryJDBC implements ProductCategoryDao {
             }
 
         } catch(Exception ex){
-            System.out.println("Error: " + ex.getMessage() + " when searching for category.");
+            logger.error(ex.getMessage() + " when searching for category.");
         }  finally {
             try { resultSet.close(); } catch (Exception e) { /* ignored */ }
             try { preparedStatement.close(); } catch (Exception e) { /* ignored */ }
@@ -92,7 +88,7 @@ public class ProductCategoryJDBC implements ProductCategoryDao {
             preparedStatement.setInt(1, id);
             int deleteRow = preparedStatement.executeUpdate();
         } catch(Exception ex){
-            System.out.println("Error: " + ex.getMessage() + " when deleting category from database.");
+            logger.error(ex.getMessage() + " when deleting category from database.");
         }  finally {
             try { resultSet.close(); } catch (Exception e) { /* ignored */ }
             try { preparedStatement.close(); } catch (Exception e) { /* ignored */ }
@@ -115,7 +111,7 @@ public class ProductCategoryJDBC implements ProductCategoryDao {
             }
             return productCategoryList;
         }catch(Exception ex){
-            System.out.println("Error: " + ex.getMessage() + " when getting all categories from database.");
+            logger.error(ex.getMessage() + " when getting all categories from database.");
         } finally {
             try { resultSet.close(); } catch (Exception e) { /* ignored */ }
             try { preparedStatement.close(); } catch (Exception e) { /* ignored */ }

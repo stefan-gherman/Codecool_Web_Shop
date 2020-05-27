@@ -92,36 +92,7 @@ public class ProductController extends HttpServlet {
         //System.out.println(req.getParameter("addToCart"));
         if (req.getParameter("addToCart") != null) {
             try {
-                int prodIdParses = Integer.parseInt(req.getParameter("addToCart"));
-//                System.out.println(prodIdParses);
-//                cartDataStore.add(prodIdParses);
-//                System.out.println("Current in cart" +cartDataStore.getCartContents());
-//                cartSize = cartDataStore.getCartNumberOfProducts();
-//                System.out.println("Current size " +cartSize);
-
-                //updating the session cart as well
-                OrderDao orderDao = OrderDaoJDBC.getInstance();
-                int productId = prodIdParses;
-                ListItem tempItem = orderDao.getListItemByProductId(productId);
-                session = req.getSession(false);
-                System.out.println("AAAAAAAAAAAAAAAAAAAAAAAA - Got session.");
-                tempCart = (Cart) session.getAttribute("cart");
-                System.out.println("AAAAAAAAAAAAAAAAAAAAAAAA - Got session cart " + tempCart.getId());
-                tempCart.add(productId);
-                System.out.println("AAAAAAAAAAAAAAAAAAAAAAAA - Got session cart contents: " + tempCart.getCartContents());
-//                tempCartContents.put(tempItem, 1);
-                System.out.println("AAAAAAAAAAAAAAAAAAAAAAAA - put: " + tempItem.getProductName() + " in contents");
-//                tempCart.setCartContents(tempCartContents);
-                System.out.println("AAAAAAAAAAAAAAAAAAAAAAAA - set contents of temp cart again to: " + tempCart.getCartContents());
-                System.out.println("TTTEEEMMMMPPP cart contents len: " + tempCart.getCartNumberOfProducts());
-                session.removeAttribute("cart");
-                session.setAttribute("cart", tempCart);
-                tempCart = (Cart) session.getAttribute("cart");
-                cartSize = tempCart.getCartNumberOfProducts();
-//                Cart tempCart2 = (Cart) session.getAttribute("cart");
-//                System.out.println("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRemove and re-create cart: " + tempCart2.getCartContents());
-
-
+                cartSize = addToCartReturningID(req);
             } catch (Exception e) {
                 System.out.println(e.getStackTrace());
             }
@@ -248,6 +219,38 @@ public class ProductController extends HttpServlet {
         return 0;
 
 
+    }
+
+    private int addToCartReturningID(HttpServletRequest req) throws IOException, SQLException {
+        int prodIdParses = Integer.parseInt(req.getParameter("addToCart"));
+//                System.out.println(prodIdParses);
+//                cartDataStore.add(prodIdParses);
+//                System.out.println("Current in cart" +cartDataStore.getCartContents());
+//                cartSize = cartDataStore.getCartNumberOfProducts();
+//                System.out.println("Current size " +cartSize);
+
+        //updating the session cart as well
+        OrderDao orderDao = OrderDaoJDBC.getInstance();
+        int productId = prodIdParses;
+        ListItem tempItem = orderDao.getListItemByProductId(productId);
+        HttpSession session = req.getSession(false);
+//        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAA - Got session.");
+        Cart tempCart = (Cart) session.getAttribute("cart");
+//        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAA - Got session cart " + tempCart.getId());
+        tempCart.add(productId);
+//        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAA - Got session cart contents: " + tempCart.getCartContents());
+////                tempCartContents.put(tempItem, 1);
+//        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAA - put: " + tempItem.getProductName() + " in contents");
+////                tempCart.setCartContents(tempCartContents);
+//        System.out.println("AAAAAAAAAAAAAAAAAAAAAAAA - set contents of temp cart again to: " + tempCart.getCartContents());
+//        System.out.println("TTTEEEMMMMPPP cart contents len: " + tempCart.getCartNumberOfProducts());
+        session.removeAttribute("cart");
+        session.setAttribute("cart", tempCart);
+        tempCart = (Cart) session.getAttribute("cart");
+        int cartSize = tempCart.getCartNumberOfProducts();
+//                Cart tempCart2 = (Cart) session.getAttribute("cart");
+//                System.out.println("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRemove and re-create cart: " + tempCart2.getCartContents());
+        return cartSize;
     }
 
     @Override

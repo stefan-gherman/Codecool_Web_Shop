@@ -1,7 +1,9 @@
 package com.codecool.shop.controller;
 
 import com.codecool.shop.config.TemplateEngineUtil;
+import com.codecool.shop.dao.CartDao;
 import com.codecool.shop.dao.OrderDao;
+import com.codecool.shop.dao.implementation.CartDaoJDBC;
 import com.codecool.shop.dao.implementation.OrderDaoJDBC;
 import com.codecool.shop.model.Cart;
 import com.codecool.shop.model.ListItem;
@@ -19,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -82,6 +85,8 @@ public class CheckoutController extends HttpServlet {
 
         // adding the items in the order to the DB
         orderDao.addToOrderItems(tempOrder);
+
+
         int cartSize = 0;
         tempCart = (Cart) session.getAttribute("cart");
         if (tempCart == null) {
