@@ -36,8 +36,8 @@ public class CartDaoJDBC implements CartDao {
         return instance;
     }
 
-    public Cart addCartToDB(Cart cartToBeAdded) {
-        System.out.println("Attempting to add new cart.");
+    public Cart add(Cart cartToBeAdded) {
+       logger.info("Attempting to add new cart.");
         Connection conn = null;
         PreparedStatement pstmt = null;
         Cart cartToBeReturned = cartToBeAdded;
@@ -68,7 +68,7 @@ public class CartDaoJDBC implements CartDao {
             }
         }
 
-        System.out.println("New cart add process complete.");
+        logger.info("New cart add process complete.");
         return cartToBeReturned;
 
     }

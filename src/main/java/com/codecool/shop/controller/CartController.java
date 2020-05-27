@@ -52,7 +52,7 @@ public class CartController extends HttpServlet {
         String defaultCurrency = "";
         int cartSize = sessionCart.getCartNumberOfProducts();
         float cartTotal = sessionCart.getTotalSum();
-        sessionCart = cartDataStore.addCartToDB(sessionCart);
+        sessionCart = cartDataStore.add(sessionCart);
         session.setAttribute("cart", sessionCart);
 
 

@@ -1,7 +1,9 @@
 package com.codecool.shop.controller;
 
 import com.codecool.shop.config.TemplateEngineUtil;
+import com.codecool.shop.dao.CartDao;
 import com.codecool.shop.dao.OrderDao;
+import com.codecool.shop.dao.implementation.CartDaoJDBC;
 import com.codecool.shop.dao.implementation.OrderDaoJDBC;
 import com.codecool.shop.model.Cart;
 import com.codecool.shop.model.ListItem;
@@ -28,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.Properties;
 
 @WebServlet(urlPatterns = {"/payment-confirmation"})
@@ -38,7 +41,6 @@ public class ConfirmationController extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         TemplateEngine engine = TemplateEngineUtil.getTemplateEngine(req.getServletContext());
         WebContext context = new WebContext(req, resp, req.getServletContext());
-
         logger.info("Reached confirmation page - doPost.");
 
         HttpSession session = req.getSession(false);
@@ -68,6 +70,7 @@ public class ConfirmationController extends HttpServlet {
         } else {
             context.setVariable("username", "null");
         }
+
         int cartSize = 0;
         tempCart = (Cart) session.getAttribute("cart");
         if (tempCart == null) {

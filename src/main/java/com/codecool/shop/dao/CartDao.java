@@ -11,7 +11,7 @@ import java.util.Map;
 
 public interface CartDao {
 
-    Cart addCartToDB(Cart cartToBeAdded);
+    Cart add(Cart cartToBeAdded);
 
     int getCartNumberOfProducts();
 
