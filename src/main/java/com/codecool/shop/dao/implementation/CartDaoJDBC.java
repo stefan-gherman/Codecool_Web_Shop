@@ -43,8 +43,9 @@ public class CartDaoJDBC implements CartDao {
         Cart cartToBeReturned = cartToBeAdded;
         try {
             conn = dbConnect.getConnection();
-            pstmt = conn.prepareStatement("INSERT INTO carts (user_id) VALUES (1) RETURNING id");
+            pstmt = conn.prepareStatement("INSERT INTO carts (user_id) VALUES (?) RETURNING id");
             //pstmt.executeUpdate();
+            pstmt.setInt(1, cartToBeAdded.getUserId());
             ResultSet resultSet = pstmt.executeQuery();
             while (resultSet.next()) {
                 System.out.println(resultSet.getInt("id"));
@@ -210,6 +211,31 @@ public class CartDaoJDBC implements CartDao {
 
     public Cart getCart() {
         return this.cart;
+    }
+
+    public Cart getCartById(int cartId){
+        logger.warn("Saving item and list items");
+        String query = "SELECT * FROM carts WHERE id = ?";
+        Cart tempCart = new Cart();
+
+        try (
+                Connection connection = dbConnect.getConnection();
+                PreparedStatement statement = connection.prepareStatement(query);
+        ) {
+
+            logger.debug("Ge user '{}'", cartId);
+            statement.setInt(1, cartId);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                tempCart.setId(resultSet.getInt("id"));
+                tempCart.setUserId(resultSet.getInt("user_id"));
+                tempCart.setCartCreatedAtDate(resultSet.getDate("date_created"));
+            }
+        } catch (Exception e) {
+            logger.warn("Connection error");
+            e.printStackTrace();
+        }
+        return tempCart;
     }
 
     public void setCart(Cart cart) {

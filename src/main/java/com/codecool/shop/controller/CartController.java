@@ -35,12 +35,16 @@ public class CartController extends HttpServlet {
         CartDao cartDataStore = CartDaoJDBC.getInstance();
         Map<ListItem, Integer> cartContents;
 
+
+
         // adding a session cart to the session that will be available
         // regardless if the user is logged in or not
         // it has by default user 1 - which will be a default/admin user
         // which is added at the time of creating in the DB
         // the creation in the DB is also important because it gives the cart id
         HttpSession session = req.getSession(false);
+        User currentUser = (User) session.getAttribute("user");
+
         if (session.getAttribute("order")!=null) session.removeAttribute("order");
 
         Cart sessionCart = (Cart) session.getAttribute("cart");
@@ -52,6 +56,7 @@ public class CartController extends HttpServlet {
         String defaultCurrency = "";
         int cartSize = sessionCart.getCartNumberOfProducts();
         float cartTotal = sessionCart.getTotalSum();
+        sessionCart.setUserId(currentUser.getId());
         sessionCart = cartDataStore.add(sessionCart);
         session.setAttribute("cart", sessionCart);
 
@@ -67,7 +72,7 @@ public class CartController extends HttpServlet {
         context.setVariable("cartContents", sessionCart.getCartContents());
         context.setVariable("cartTotal", cartTotal);
         context.setVariable("defaultCurrency", defaultCurrency);
-        User currentUser = (User) session.getAttribute("user");
+
         String username = currentUser.getFullName();
         if(username != null) {
             context.setVariable("username", username);

@@ -27,4 +27,6 @@ public interface CartDao {
 
     Cart createCartFromQuery(int id) throws SQLException, IOException;
 
+    Cart getCartById(int cartId);
+
 }
