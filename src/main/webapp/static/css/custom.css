@@ -231,5 +231,61 @@ Logo
 }
 .logo_container a span
 {
-    color: #0984e3;
+    color: #fe4c50;
+}
+
+/*********************************
+Button style
+*********************************/
+
+
+.btn-success, btn-success:active , btn-success:focus, .btn-success:visited {
+    background-color: #fe4c50;
+    border-color: #fe4c50;
+}
+
+.btn-success:hover {
+    background-color: #1e1e27
+}
+
+.btn-primary,
+.btn-primary:hover,
+.btn-primary:active,
+.btn-primary:visited,
+.btn-primary:focus {
+    background-color: #fe4c50 !important;
+    border-color: #fe4c50 !important;
+}
+
+.btn-success,
+.btn-success:active,
+.btn-success:visited,
+.btn-success:focus {
+    background-color: #fe4c50 !important;
+    border-color: #fe4c50 !important;
+}
+
+.btn-success:hover, .btn-primary:hover {
+    background-color: #fe7073 !important;
+
+}
+
+#supplier-select {
+    margin-left: 20px;
+}
+
+.display-5 {
+    margin-top: 50px;
+    margin-bottom: 60px;
+}
+
+label {
+    font-size: 20px;
+}
+
+.card {
+    /* Added */
+    float: none; /* Added */
+    /* Added */
+    margin: 0 auto 10px;
 }

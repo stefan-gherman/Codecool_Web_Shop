@@ -23,7 +23,7 @@
     <div class="col ">
         <form>
             <div class="form-row">
-                <div class="form-group">
+                <div class="form-group" >
                     <label for="categoryProducts">Category</label>
                     <select id="categoryProducts" class="form-control">
                         <option id="tablets" value="/?productCategory=tablets">Tablets</option>
@@ -34,7 +34,7 @@
                         <option id="monitors" value="/?productCategory=monitors">Monitors</option>
                     </select>
                 </div>
-                <div class="form-group">
+                <div class="form-group" id="supplier-select">
                     <label for="supplier">Supplier</label>
                     <select id="supplier" class="form-control">
                         <option value="supplier=all">All Suppliers</option>
@@ -44,53 +44,15 @@
                 </div>
             </div>
 
-
         </form>
-
     </div>
 
-    <div class="jumbotron text-center">
-        <h3 th:text="${category.name}"></h3>
-    </div>
+    <h2 class="text-center" th:text="${category.name}"></h2>
+    <br>
     <br>
 
-    <!--    product cards -->
-<!--    <div id="products" class="row">-->
-<!--        <div class="col col-sm-12 col-md-6 col-lg-4" th:each="prod,iterStat : ${products}">-->
-<!--            <div class="card">-->
-<!--                <img class="" src="http://placehold.it/400x250/000/fff"-->
-<!--                     th:attr="src='/static/img/' + ${prod.image}" alt=""/>-->
-<!--                <div class="card-header">-->
-<!--                    <h4 class="card-title" th:text="${prod.name}">Product name</h4>-->
-<!--                    <p class="card-text" th:text="${prod.description}">Product description... </p>-->
-<!--                </div>-->
-<!--                <div class="card-body">-->
-<!--                    <div class="card-text">-->
-<!--                        <p class="lead" th:text="${prod.getPrice()}">100 USD</p>-->
-<!--                    </div>-->
-<!--                    <div class="card-text">-->
-<!--                        <div th:if="${supplier} == 'all'">-->
-<!--                            <form method="post"-->
-<!--                                  th:action="@{/(productCategory=${category.getName().toLowerCase()})}">-->
-<!--                                <input type="hidden" name="addToCart" th:value="${prod.getId()}">-->
-<!--                                <input type="submit" class="btn btn-success" value="Add to Cart">-->
-<!--                            </form>-->
-<!--                        </div>-->
-<!--                        <div th:if="${supplier} != 'all'">-->
-<!--                            <form method="post"-->
-<!--                                  th:action="@{/(productCategory=${category.getName().toLowerCase()}, supplier=${supplier.getName().toLowerCase()})}">-->
-<!--                                <input type="hidden" name="addToCart" th:value="${prod.getId()}">-->
-<!--                                <input type="submit" class="btn btn-success" value="Add to Cart">-->
-<!--                            </form>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-
     <div id="products" class="row">
-        <div class="col col-sm-12 col-md-4 col-lg-4" th:each="prod,iterStat : ${products}">
+        <div class="col col-md-6 col-lg-4" th:each="prod,iterStat : ${products}">
             <div class="card bg-light mb-3" style="width: 18rem;">
                 <img class="" src="http://placehold.it/400x250/000/fff"
                      th:attr="src='/static/img/' + ${prod.image}" alt=""/>
@@ -119,8 +81,6 @@
             <br>
         </div>
     </div>
-
-
 </div>
 
 <div th:replace="footer.html :: copy"></div>

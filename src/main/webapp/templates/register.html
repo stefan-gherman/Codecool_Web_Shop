@@ -5,10 +5,9 @@
 </head>
 <body>
 <div th:replace="navbar.html :: copy"></div>
+<br>
+<h1 class="text-center">Register</h1>
 
-<div class="jumbotron text-center">
-    <h1>Register</h1>
-</div>
 <br>
 <div class="text-center">
     <h2><strong>Please fill in the account details.</strong></h2>
@@ -18,37 +17,46 @@
     <form action="/register" method="post">
         <div class="form-group">
             <label for="full-name">First and last name</label>
-            <input type="text" class="form-control" id="full-name" name="full-name" aria-describedby="full-name-help" placeholder="First and last name">
+            <input aria-describedby="full-name-help" class="form-control" id="full-name" name="full-name" placeholder="First and last name"
+                   type="text">
             <!--            <small id="full-name-help" class="form-text text-muted">First and last name of the person receiving the order.</small><small class="text-danger" th:text="${order.invalidFullNameEntryMessage}"></small>-->
         </div>
         <div class="form-group">
             <label for="input-email">Email address</label>
-            <input type="email" class="form-control" id="input-email" name="input-email" aria-describedby="emailHelp" placeholder="Enter email">
+            <input aria-describedby="emailHelp" class="form-control" id="input-email" name="input-email" placeholder="Enter email"
+                   type="email">
             <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
         </div>
         <div class="form-group">
             <label for="password">Password</label>
-            <input type="password" class="form-control" id="password" name="password" aria-describedby="password-help" >
+            <input aria-describedby="password-help" class="form-control" id="password" name="password" type="password">
             <small id="password-help" class="form-text text-muted">Choose a strong password!</small>
         </div>
         <div class="form-group">
             <label for="input-phone">Phone number</label>
-            <input type="text" class="form-control" id="input-phone" name="input-phone" aria-describedby="phone-help" placeholder="Phone number">
+            <input aria-describedby="phone-help" class="form-control" id="input-phone" name="input-phone" placeholder="Phone number"
+                   type="text">
             <small id="phone-help" class="form-text text-muted">Phone number of the person receiving the order.</small>
         </div>
         <div class="form-group">
             <label for="billing-address">Billing address</label>
-            <input type="text" class="form-control" id="billing-address" name="billing-address" aria-describedby="billing-address-help" placeholder="Billing address">
-            <small id="billing-address-help" class="form-text text-muted">Billing address for accounting purposes. Country, city, zip code, address. </small>
+            <input aria-describedby="billing-address-help" class="form-control" id="billing-address" name="billing-address"
+                   placeholder="Billing address" type="text">
+            <small class="form-text text-muted" id="billing-address-help">Billing address for accounting purposes.
+                Country, city, zip code, address. </small>
         </div>
         <div class="form-group">
             <label for="shipping-address">Shipping address</label>
-            <input type="text" class="form-control" id="shipping-address" name="shipping-address" aria-describedby="shipping-address-help" placeholder="Shipping address">
-            <small id="shipping-address-help" class="form-text text-muted">Shipping address for the product delivery. Country, city, zip code, address. </small>
+            <input aria-describedby="shipping-address-help" class="form-control" id="shipping-address" name="shipping-address"
+                   placeholder="Shipping address" type="text">
+            <small class="form-text text-muted" id="shipping-address-help">Shipping address for the product delivery.
+                Country, city, zip code, address. </small>
         </div>
 
         <button type="submit" class="btn btn-primary">Register</button>
-        <a href="/login"><button class="btn btn-primary" type="button">Login</button></a>
+        <a href="/login">
+            <button class="btn btn-primary" type="button">Login</button>
+        </a>
 
     </form>
     <br>

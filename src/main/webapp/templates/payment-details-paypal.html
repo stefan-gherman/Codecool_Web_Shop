@@ -6,9 +6,9 @@
 <body>
 <div th:replace="navbar.html :: copy"></div>
 
-<div class="jumbotron text-center">
-    <h1>Please fill in the payment details</h1>
-</div>
+    <br>
+    <h1 class="text-center">Please fill in the payment details</h1>
+
 <br>
 <div class="text-center">
     <h2 th:text="${'Order number '} +${order.getId()} + ${' totalling '} + ${ #numbers.formatDecimal(total, 0 , 'COMMA', 2, 'POINT')} + ${' '} + ${currency}" >Order number</h2>
