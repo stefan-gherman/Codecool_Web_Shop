@@ -4,67 +4,45 @@
     <title id="pageTitle"></title>
 </head>
 <body>
-<nav class="navbar navbar-dark bg-primary" th:fragment="copy">
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+
+<!-- Header -->
+<header class="header trans_300" th:fragment="copy">
+
+    <!-- Main Navigation -->
+    <div class="main_nav_container">
         <div class="container">
-            <a class="navbar-brand" href="/">CodeCool Shop</a>
-            <button aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler"
-                    data-target="#navbarResponsive" data-toggle="collapse" type="button">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarResponsive">
-
-
-                <ul class="navbar-nav ml-auto" th:if="${username} == 'null'">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="/">Home
-                            <span class="sr-only">(current)</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/register">Register</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/login">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav_link" href="/cart"><i class="fas fa-shopping-cart fa-2x"></i></a>
-                        <span th:if="${cartSize > 0}">
-                            <sup class="badge badge-danger" th:text="${cartSize}">300</sup>
-                        </span>
-                    </li>
-                </ul>
-
-                <ul class="navbar-nav ml-auto" th:if="${username} != 'null'">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="/">Home
-                            <span class="sr-only">(current)</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" th:text="${username}"></a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/logout">Logout</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/history">History</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav_link" href="/cart"><i class="fas fa-shopping-cart fa-2x"></i></a>
-                        <span th:if="${cartSize > 0}">
-                            <sup class="badge badge-danger" th:text="${cartSize}">300</sup>
-                        </span>
-                    </li>
-                </ul>
-
+            <div class="row">
+                <div class="col-lg-12 text-right">
+                    <div class="logo_container">
+                        <a href="/">CodeCool<span>shop</span></a>
+                    </div>
+                    <nav class="navbar">
+                        <ul class="navbar_menu" th:if="${username} == 'null'">
+                            <li><a href="/">home</a></li>
+                            <li><a href="/login">Login</a></li>
+                            <li><a href="/register">register</a></li>
+                        </ul>
+                        <ul class="navbar_menu" th:if="${username} != 'null'">
+                            <li><a href="/">home</a></li>
+                            <li><a th:text="${username}"></a></li>
+                            <li><a href="/logout">Logout</a></li>
+                            <li><a href="/history">History</a></li>
+                        </ul>
+                        <ul class="navbar_user">
+                            <li class="checkout">
+                                <a href="/cart">
+                                    <i class="fa fa-shopping-cart"></i>
+                                    <span th:if="${cartSize > 0}">
+                                        <sup class="checkout_items" th:text="${cartSize}">100</sup>
+                                    </span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
             </div>
         </div>
-
-        <div th:if="${username} == 'null'">
-
-        </div>
-    </nav>
-</nav>
+    </div>
+</header>
 </body>
 </html>
