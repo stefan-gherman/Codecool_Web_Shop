@@ -188,11 +188,13 @@ public class ProductDaoJDBC implements ProductDao {
                         image, price, currency));
             }
         } catch(Exception ex){
-            logger.error(ex.getMessage() + " when getting products by category.");
+            logger.error(ex.getMessage() + " when getting products by category.", ex);
         } finally {
             try { resultSet.close(); } catch (Exception e) { /* ignored */ }
             try { preparedStatement.close(); } catch (Exception e) { /* ignored */ }
-            try { connection.close(); } catch (Exception e) { /* ignored */ }
+            try { connection.close(); } catch (Exception e) {
+                logger.error("Problem when .");
+            }
         }
         return productList;
 

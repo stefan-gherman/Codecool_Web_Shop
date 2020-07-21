@@ -35,20 +35,6 @@ class UserDaoJDBCTest {
         }
     }
 
-
-//    @AfterEach
-//    public static void tearDown() {
-//        try {
-////            worldDBCreator.executeUpdate("TRUNCATE TABLE city CASCADE;");
-////            worldDBCreator.executeUpdate("TRUNCATE TABLE country CASCADE;");
-////            worldDBCreator.executeUpdate("TRUNCATE TABLE countrylanguage CASCADE;");
-//
-//        } catch (SQLException e) {
-//            System.err.println("ERROR: Data cleanup failed.");
-//            e.printStackTrace();
-//        }
-//    }
-
     public static void executeUpdate(String query) throws SQLException {
         try (Connection connection = DBConnect.getInstance().getConnection()) {
 
