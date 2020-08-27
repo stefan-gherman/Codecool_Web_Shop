@@ -1,8 +1,14 @@
 # Codecool Online Shop
 
-Java SE: Web Project skeleton
+## Description
+A web shop written in Java where users can browse products, add them to cart, proceed to checkout(mock)
 
-# Install
-
-Import this project to IntelliJ as a Maven project.
-IntelliJ can auto-install the dependencies based on the pom.xml
+## Key Features
+- Lightweight design
+- User Login and Registration
+- Users can browse products via category or supplier
+- Products can be added to cart
+- Cart state persists until checkout
+- Cart products can be augmented or decremented
+- Payment(mock) via Credit Card or PayPal
+- Order History for completed orders
